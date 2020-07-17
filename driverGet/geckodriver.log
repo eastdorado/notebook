@@ -1,0 +1,420 @@
+1592284527503	mozrunner::runner	INFO	Running command: "C:\\Program Files\\Mozilla Firefox\\firefox.exe" "-marionette" "-foreground" "-no-remote" "-profile" "C:\\Users\\big\\AppData\\Local\\Temp\\rust_mozprofilefZlOhz"
+JavaScript error: resource://gre/modules/XULStore.jsm, line 66: Error: Can't find profile directory.
+1592284529882	Marionette	INFO	Listening on port 1755
+1592284530288	Marionette	WARN	TLS certificate errors will be ignored for this session
+1592284534165	Marionette	INFO	Stopped listening on port 1755
+
+###!!! [Child][MessageChannel::SendAndWait] Error: Channel error: cannot send/recv
+
+1592284603517	mozrunner::runner	INFO	Running command: "C:\\Program Files\\Mozilla Firefox\\firefox.exe" "-marionette" "-foreground" "-no-remote" "-profile" "C:\\Users\\big\\AppData\\Local\\Temp\\rust_mozprofileSgCqBf"
+JavaScript error: resource://gre/modules/XULStore.jsm, line 66: Error: Can't find profile directory.
+1592284605884	Marionette	INFO	Listening on port 1841
+1592284606276	Marionette	WARN	TLS certificate errors will be ignored for this session
+1592284628884	Marionette	INFO	Stopped listening on port 1841
+
+###!!! [Child][RunMessage] Error: Channel closing: too late to send/recv, messages will be lost
+
+
+###!!! [Child][MessageChannel::SendAndWait] Error: Channel error: cannot send/recv
+
+1592284807402	mozrunner::runner	INFO	Running command: "C:\\Program Files\\Mozilla Firefox\\firefox.exe" "-marionette" "-foreground" "-no-remote" "-profile" "C:\\Users\\big\\AppData\\Local\\Temp\\rust_mozprofileZ1xBko"
+JavaScript error: resource://gre/modules/XULStore.jsm, line 66: Error: Can't find profile directory.
+1592284809510	Marionette	INFO	Listening on port 2087
+1592284809560	Marionette	WARN	TLS certificate errors will be ignored for this session
+JavaScript error: resource://gre/modules/URIFixup.jsm, line 203: NS_ERROR_FAILURE: Should pass a non-null uri
+JavaScript warning: https://g.alicdn.com/??kissy/k/6.2.4/seed-min.js,kg/global-util/1.0.7/index-min.js,tb/tracker/4.3.12/index.js,kg/tb-nav/2.5.10/index-min.js,secdev/sufei_data/3.8.7/index.js, line 6: WebGL context was lost.
+JavaScript warning: https://g.alicdn.com/AWSC/et/1.62.1/et_n.js, line 4: WebGL context was lost.
+JavaScript warning: https://g.alicdn.com/AWSC/WebUMID/1.81.0/um.js, line 7: WebGL context was lost.
+JavaScript warning: https://g.alicdn.com/secdev/sufei_data/3.9.0/index.js, line 1: WebGL context was lost.
+JavaScript warning: https://g.alicdn.com/secdev/nsv/1.0.78/ns_e_88_3_n.js, line 4: WebGL context was lost.
+JavaScript warning: https://g.alicdn.com/AWSC/WebUMID/1.81.0/um.js, line 7: WebGL context was lost.
+1592284819541	Marionette	INFO	Stopped listening on port 2087
+
+###!!! [Child][RunMessage] Error: Channel closing: too late to send/recv, messages will be lost
+
+
+###!!! [Child][MessageChannel::SendAndWait] Error: Channel error: cannot send/recv
+
+1592284841335	mozrunner::runner	INFO	Running command: "C:\\Program Files\\Mozilla Firefox\\firefox.exe" "-marionette" "-foreground" "-no-remote" "-profile" "C:\\Users\\big\\AppData\\Local\\Temp\\rust_mozprofileW3ymZB"
+JavaScript error: resource://gre/modules/XULStore.jsm, line 66: Error: Can't find profile directory.
+1592284843266	Marionette	INFO	Listening on port 2179
+1592284843485	Marionette	WARN	TLS certificate errors will be ignored for this session
+JavaScript error: resource://gre/modules/URIFixup.jsm, line 203: NS_ERROR_FAILURE: Should pass a non-null uri
+JavaScript warning: https://g.alicdn.com/??kissy/k/6.2.4/seed-min.js,kg/global-util/1.0.7/index-min.js,tb/tracker/4.3.12/index.js,kg/tb-nav/2.5.10/index-min.js,secdev/sufei_data/3.8.7/index.js, line 6: WebGL context was lost.
+JavaScript warning: https://g.alicdn.com/AWSC/et/1.62.1/et_n.js, line 4: WebGL context was lost.
+JavaScript warning: https://g.alicdn.com/AWSC/WebUMID/1.81.0/um.js, line 7: WebGL context was lost.
+JavaScript warning: https://g.alicdn.com/secdev/sufei_data/3.9.0/index.js, line 1: WebGL context was lost.
+JavaScript warning: https://g.alicdn.com/secdev/nsv/1.0.78/ns_e_88_3_n.js, line 4: WebGL context was lost.
+JavaScript warning: https://g.alicdn.com/AWSC/WebUMID/1.81.0/um.js, line 7: WebGL context was lost.
+
+###!!! [Child][MessageChannel] Error: (msgtype=0xB40006,name=PWebSocket::Msg_DeleteSelf) Channel closing: too late to send/recv, messages will be lost
+
+
+###!!! [Child][RunMessage] Error: Channel closing: too late to send/recv, messages will be lost
+
+1592284852860	Marionette	INFO	Stopped listening on port 2179
+
+###!!! [Child][RunMessage] Error: Channel closing: too late to send/recv, messages will be lost
+
+
+###!!! [Child][MessageChannel::SendAndWait] Error: Channel error: cannot send/recv
+
+1592284917481	mozrunner::runner	INFO	Running command: "C:\\Program Files\\Mozilla Firefox\\firefox.exe" "-marionette" "-foreground" "-no-remote" "-profile" "C:\\Users\\big\\AppData\\Local\\Temp\\rust_mozprofile4cHS1B"
+JavaScript error: resource://gre/modules/XULStore.jsm, line 66: Error: Can't find profile directory.
+1592284919471	Marionette	INFO	Listening on port 2287
+1592284919632	Marionette	WARN	TLS certificate errors will be ignored for this session
+JavaScript error: resource://gre/modules/URIFixup.jsm, line 203: NS_ERROR_FAILURE: Should pass a non-null uri
+JavaScript warning: https://g.alicdn.com/??kissy/k/6.2.4/seed-min.js,kg/global-util/1.0.7/index-min.js,tb/tracker/4.3.12/index.js,kg/tb-nav/2.5.10/index-min.js,secdev/sufei_data/3.8.7/index.js, line 6: WebGL context was lost.
+JavaScript warning: https://g.alicdn.com/AWSC/et/1.62.1/et_n.js, line 4: WebGL context was lost.
+JavaScript warning: https://g.alicdn.com/AWSC/WebUMID/1.81.0/um.js, line 7: WebGL context was lost.
+JavaScript warning: https://g.alicdn.com/secdev/sufei_data/3.9.0/index.js, line 1: WebGL context was lost.
+JavaScript warning: https://g.alicdn.com/secdev/nsv/1.0.78/ns_e_88_3_n.js, line 4: WebGL context was lost.
+JavaScript warning: https://g.alicdn.com/AWSC/WebUMID/1.81.0/um.js, line 7: WebGL context was lost.
+
+###!!! [Child][MessageChannel] Error: (msgtype=0x59000D,name=PHttpChannel::Msg_DeletingChannel) Channel closing: too late to send/recv, messages will be lost
+
+1592284927882	Marionette	INFO	Stopped listening on port 2287
+
+###!!! [Child][MessageChannel::SendAndWait] Error: Channel error: cannot send/recv
+
+1592284950459	mozrunner::runner	INFO	Running command: "C:\\Program Files\\Mozilla Firefox\\firefox.exe" "-marionette" "-foreground" "-no-remote" "-profile" "C:\\Users\\big\\AppData\\Local\\Temp\\rust_mozprofile5O0hNL"
+JavaScript error: resource://gre/modules/XULStore.jsm, line 66: Error: Can't find profile directory.
+1592284952645	Marionette	INFO	Listening on port 2386
+1592284952747	Marionette	WARN	TLS certificate errors will be ignored for this session
+JavaScript error: resource://gre/modules/URIFixup.jsm, line 203: NS_ERROR_FAILURE: Should pass a non-null uri
+JavaScript warning: https://g.alicdn.com/??kissy/k/6.2.4/seed-min.js,kg/global-util/1.0.7/index-min.js,tb/tracker/4.3.12/index.js,kg/tb-nav/2.5.10/index-min.js,secdev/sufei_data/3.8.7/index.js, line 6: WebGL context was lost.
+JavaScript warning: https://g.alicdn.com/AWSC/et/1.62.1/et_n.js, line 4: WebGL context was lost.
+JavaScript warning: https://g.alicdn.com/secdev/sufei_data/3.9.0/index.js, line 1: WebGL context was lost.
+JavaScript warning: https://g.alicdn.com/secdev/nsv/1.0.78/ns_e_88_3_n.js, line 4: WebGL context was lost.
+JavaScript warning: https://g.alicdn.com/AWSC/WebUMID/1.81.0/um.js, line 7: WebGL context was lost.
+JavaScript warning: https://g.alicdn.com/AWSC/WebUMID/1.81.0/um.js, line 7: WebGL context was lost.
+console.warn: LoginRecipes: "getRecipes: falling back to a synchronous message for:" "https://login.taobao.com"
+console.error: "Store does not have a valid reducer. Make sure the argument passed to combineReducers is an object whose values are reducers."
+JavaScript warning: https://g.alicdn.com/AWSC/WebUMID/1.81.0/um.js, line 7: WebGL context was lost.
+JavaScript warning: https://g.alicdn.com/AWSC/WebUMID/1.81.0/um.js, line 7: WebGL context was lost.
+
+###!!! [Child][MessageChannel] Error: (msgtype=0x590005,name=PHttpChannel::Msg_Cancel) Channel closing: too late to send/recv, messages will be lost
+
+
+###!!! [Child][RunMessage] Error: Channel closing: too late toJavaScript error: resource://gre/modules/XULStore.jsm, line 66: Error: Can't find profile directory.
+1592285253917	Marionette	INFO	Listening on port 2548
+1592285254275	Marionette	WARN	TLS certificate errors will be ignored for this session
+JavaScript error: resource://gre/modules/URIFixup.jsm, line 203: NS_ERROR_FAILURE: Should pass a non-null uri
+JavaScript warning: https://g.alicdn.com/??kissy/k/6.2.4/seed-min.js,kg/global-util/1.0.7/index-min.js,tb/tracker/4.3.12/index.js,kg/tb-nav/2.5.10/index-min.js,secdev/sufei_data/3.8.7/index.js, line 6: WebGL context was lost.
+JavaScript warning: https://g.alicdn.com/secdev/nsv/1.0.78/ns_e_88_3_n.js, line 4: WebGL context was lost.
+1592285304340	Marionette	INFO	Stopped listening on port 2548
+
+###!!! [Child][MessageChannel::SendAndWait] Error: Channel error: cannot send/recv
+
+file" "C:\\Users\\big\\AppData\\Local\\Temp\\rust_mozprofileDCGTJx"
+JavaScript error: resource://gre/modules/XULStore.jsm, line 66: Error: Can't find profile directory.
+1592285301814	Marionette	INFO	Listening on port 2661
+1592285302221	Marionette	WARN	TLS certificate errors will be ignored for this session
+JavaScript error: resource://gre/modules/URIFixup.jsm, line 203: NS_ERROR_FAILURE: Should pass a non-null uri
+JavaScript warning: https://g.alicdn.com/??kissy/k/6.2.4/seed-min.js,kg/global-util/1.0.7/index-min.js,tb/tracker/4.3.12/index.js,kg/tb-nav/2.5.10/index-min.js,secdev/sufei_data/3.8.7/index.js, line 6: WebGL context was lost.
+JavaScript warning: https://g.alicdn.com/AWSC/et/1.62.1/et_n.js, line 4: WebGL context was lost.
+JavaScript warning: https://g.alicdn.com/AWSC/WebUMID/1.81.0/um.js, line 7: WebGL context was lost.
+JavaScript warning: https://g.alicdn.com/secdev/sufei_data/3.9.0/index.js, line 1: WebGL context was lost.
+JavaScript warning: https://g.alicdn.com/secdev/nsv/1.0.78/ns_e_88_3_n.js, line 4: WebGL context was lost.
+JavaScript warning: https://g.alicdn.com/AWSC/WebUMID/1.81.0/um.js, line 7: WebGL context was lost.
+1592285380750	mozrunner::runner	INFO	Running command: "C:\\Program Files\\Mozilla Firefox\\firefox.exe" "-marionette" "-foreground" "-no-remote" "-profile" "C:\\Users\\big\\AppData\\Local\\Temp\\rust_mozprofilew2MNIy"
+JavaScript error: resource://gre/modules/XULStore.jsm, line 66: Error: Can't find profile directory.
+1592285382860	Marionette	INFO	Listening on port 2767
+1592285382920	Marionette	WARN	TLS certificate errors will be ignored for this session
+JavaScript error: resource://gre/modules/URIFixup.jsm, line 203: NS_ERROR_FAILURE: Should pass a non-null uri
+JavaScript warning: https://g.alicdn.com/??kissy/k/6.2.4/seed-min.js,kg/global-util/1.0.7/index-min.js,tb/tracker/4.3.12/index.js,kg/tb-nav/2.5.10/index-min.js,secdev/sufei_data/3.8.7/index.js, line 6: WebGL context was lost.
+JavaScript warning: https://g.alicdn.com/AWSC/et/1.62.1/et_n.js, line 4: WebGL context was lost.
+JavaScript warning: https://g.alicdn.com/AWSC/WebUMID/1.81.0/um.js, line 7: WebGL context was lost.
+JavaScript warning: https://g.alicdn.com/secdev/sufei_data/3.9.0/index.js, line 1: WebGL context was lost.
+JavaScript warning: https://g.alicdn.com/secdev/nsv/1.0.78/ns_e_88_3_n.js, line 4: WebGL context was lost.
+JavaScript warning: https://g.alicdn.com/AWSC/WebUMID/1.81.0/um.js, line 7: WebGL context was lost.
+JavaScript warning: https://g.alicdn.com/AWSC/WebUMID/1.81.0/um.js, line 7: WebGL context was lost.
+JavaScript warning: https://g.alicdn.com/AWSC/WebUMID/1.81.0/um.js, line 7: WebGL context was lost.
+JavaScript warning: https://g.alicdn.com/AWSC/WebUMID/1.81.0/um.js, line 7: WebGL context was lost.
+JavaScript warning: https://g.alicdn.com/AWSC/WebUMID/1.81.0/um.js, line 7: WebGL context was lost.
+
+###!!! [Child][RunMessage] Error: Channel closing: too late to send/recv, messages will be lost
+
+1592285826991	Marionette	INFO	Stopped listening on port 2767
+
+###!!! [Child][RunMessage] Error: Channel closing: too late to send/recv, messages will be lost
+
+
+###!!! [Child][MessageChannel::SendAndWait] Error: Channel error: cannot send/recv
+
+stening on port 2977
+1592285785233	Marionette	WARN	TLS certificate errors will be ignored for this session
+JavaScript error: resource://gre/modules/URIFixup.jsm, line 203: NS_ERROR_FAILURE: Should pass a non-null uri
+JavaScript warning: https://g.alicdn.com/??kissy/k/6.2.4/seed-min.js,kg/global-util/1.0.7/index-min.js,tb/tracker/4.3.12/index.js,kg/tb-nav/2.5.10/index-min.js,secdev/sufei_data/3.8.7/index.js, line 6: WebGL context was lost.
+JavaScript warning: https://g.alicdn.com/AWSC/et/1.62.1/et_n.js, line 4: WebGL context was lost.
+JavaScript warning: https://g.alicdn.com/AWSC/WebUMID/1.81.0/um.js, line 7: WebGL context was lost.
+JavaScript warning: https://g.alicdn.com/secdev/sufei_data/3.9.0/index.js, line 1: WebGL context was lost.
+JavaScript warning: https://g.alicdn.com/secdev/nsv/1.0.78/ns_e_88_3_n.js, line 4: WebGL context was lost.
+JavaScript warning: https://g.alicdn.com/AWSC/WebUMID/1.81.0/um.js, line 7: WebGL context was lost.
+1592285823690	mozrunner::runner	INFO	Running command: "C:\\Program Files\\Mozilla Firefox\\firefox.exe" "-marionette" "-foreground" "-no-remote" "-profile" "C:\\Users\\big\\AppData\\Local\\Temp\\rust_mozprofileJwfs0Q"
+JavaScript error: resource://gre/modules/XULStore.jsm, line 66: Error: Can't find profile directory.
+1592285826469	Marionette	INFO	Listening on port 3085
+1592285826969	Marionette	WARN	TLS certificate errors will be ignored for this session
+JavaScript error: resource://gre/modules/URIFixup.jsm, line 203: NS_ERROR_FAILURE: Should pass a non-null uri
+JavaScript warning: https://g.alicdn.com/??kissy/k/6.2.4/seed-min.js,kg/global-util/1.0.7/index-min.js,tb/tracker/4.3.12/index.js,kg/tb-nav/2.5.10/index-min.js,secdev/sufei_data/3.8.7/index.js, line 6: WebGL context was lost.
+JavaScript warning: https://g.alicdn.com/AWSC/et/1.62.1/et_n.js, line 4: WebGL context was lost.
+JavaScript warning: https://g.alicdn.com/AWSC/WebUMID/1.81.0/um.js, line 7: WebGL context was lost.
+JavaScript warning: https://g.alicdn.com/secdev/sufei_data/3.9.0/index.js, line 1: WebGL context was lost.
+JavaScript warning: https://g.alicdn.com/secdev/nsv/1.0.78/ns_e_88_3_n.js, line 4: WebGL context was lost.
+JavaScript warning: https://g.alicdn.com/AWSC/WebUMID/1.81.0/um.js, line 7: WebGL context was lost.
+1592286043650	mozrunner::runner	INFO	Running command: "C:\\Program Files\\Mozilla Firefox\\firefox.exe" "-marionette" "-foreground" "-no-remote" "-profile" "C:\\Users\\big\\AppData\\Local\\Temp\\rust_mozprofilel20uPX"
+JavaScript error: resource://gre/modules/XULStore.jsm, line 66: Error: Can't find profile directory.
+1592286045901	Marionette	INFO	Listening on port 3369
+1592286045915	Marionette	WARN	TLS certificate errors will be ignored for this session
+JavaScript error: resource://gre/modules/URIFixup.jsm, line 203: NS_ERROR_FAILURE: Should pass a non-null uri
+JavaScript warning: https://g.alicdn.com/??kissy/k/6.2.4/seed-min.js,kg/global-util/1.0.7/index-min.js,tb/tracker/4.3.12/index.js,kg/tb-nav/2.5.10/index-min.js,secdev/sufei_data/3.8.7/index.js, line 6: WebGL context was lost.
+JavaScript warning: https://g.alicdn.com/AWSC/et/1.62.1/et_n.js, line 4: WebGL context was lost.
+JavaScript warning: https://g.alicdn.com/secdev/nsv/1.0.78/ns_e_88_3_n.js, line 4: WebGL context was lost.
+JavaScript warning: https://g.alicdn.com/AWSC/WebUMID/1.81.0/um.js, line 7: WebGL context was lost.
+JavaScript warning: https://g.alicdn.com/secdev/sufei_data/3.9.0/index.js, line 1: WebGL context was lost.
+JavaScript warning: https://g.alicdn.com/AWSC/WebUMID/1.81.0/um.js, line 7: WebGL context was lost.
+JavaScript warning: https://g.alicdn.com/AWSC/WebUMID/1.81.0/um.js, line 7: WebGL context was lost.
+JavaScript warning: https://g.alicdn.com/AWSC/WebUMID/1.81.0/um.js, line 7: WebGL context was lost.
+JavaScript warning: https://g.alicdn.com/AWSC/WebUMID/1.81.0/um.js, line 7: WebGL context was lost.
+JavaScript warning: https://g.alicdn.com/AWSC/WebUMID/1.81.0/um.js, line 7: WebGL context was lost.
+JavaScript warning: https://g.alicdn.com/AWSC/WebUMID/1.81.0/um.js, line 7: WebGL context was lost.
+JavaScript warning: https://g.alicdn.com/AWSC/WebUMID/1.81.0/um.js, line 7: WebGL context was lost.
+JavaScript warning: https://g.alicdn.com/AWSC/et/1.62.1/et_n.js, line 4: WebGL context was lost.
+JavaScript warning: https://g.alicdn.com/AWSC/WebUMID/1.81.0/um.js, line 7: WebGL context was lost.
+JavaScript warning: https://g.alicdn.com/secdev/sufei_data/3.9.0/index.js, line 1: WebGL context was lost.
+JavaScript warning: https://g.alicdn.com/secdev/nsv/1.0.78/ns_e_88_3_n.js, line 4: WebGL context was lost.
+JavaScript warning: https://g.alicdn.com/AWSC/WebUMID/1.81.0/um.js, line 7: WebGL context was lost.
+JavaScript warning: https://g.alicdn.com/AWSC/WebUMID/1.81.0/um.js, line 7: WebGL context was lost.
+JavaScript warning: https://g.alicdn.com/AWSC/WebUMID/1.81.0/um.js, line 7: WebGL context was lost.
+console.warn: LoginRecipes: "getRecipes: falling back to a synchronous message for:" "https://login.taobao.com"
+console.error: "Store does not have a valid reducer. Make sure the argument passed to combineReducers is an object whose values are reducers."
+SourceActor threw an exception: [Exception... "Failed to open input source 'javascript:void(0);'"  nsresult: "0x80040111 (NS_ERROR_NOT_AVAILABLE)"  location: "JS frame :: resource://devtools/shared/DevToolsUtils.js :: mainThreadFetch/< :: line 659"  data: yes]
+Stack: mainThreadFetch/<@resource://devtools/shared/DevToolsUtils.js:659:15
+mainThreadFetch@resource://devtools/shared/DevToolsUtils.js:509:10
+_fetchURLContents@resource://devtools/server/actors/utils/TabSources.js:580:22
+urlContents@resource://devtools/server/actors/utils/TabSources.js:547:17
+_resurrectSource@resource://devtools/server/actors/thread.js:1955:69
+addAllSources@resource://devtools/server/actors/thread.js:1339:14
+onSources@resource://devtools/server/actors/thread.js:1345:10
+onPacket@resource://devtools/server/devtools-server-connection.js:380:58
+receiveMessage@resource://devtools/shared/transport/child-transport.js:66:16
+Line: 659, column: 0
+console.error: ({})
+JavaScript error: resource://devtools/shared/DevToolsUtils.js, line 659: NS_ERROR_NOT_AVAILABLE: Failed to open input source 'javascript:void(0);'
+1592286161544	Marionette	INFO	Stopped listening on port 3369
+
+###!!! [Child][RunMessage] Error: Channel closing: too late to send/recv, messages will be lost
+
+
+###!!! [Child][MessageChannel::SendAndWait] Error: Channel error: cannot send/recv
+
+modules/XULStore.jsm, line 66: Error: Can't find profile directory.
+1592286154845	Marionette	INFO	Listening on port 3491
+1592286154957	Marionette	WARN	TLS certificate errors will be ignored for this session
+JavaScript error: resource://gre/modules/URIFixup.jsm, line 203: NS_ERROR_FAILURE: Should pass a non-null uri
+JavaScript warning: https://g.alicdn.com/??kissy/k/6.2.4/seed-min.js,kg/global-util/1.0.7/index-min.js,tb/tracker/4.3.12/index.js,kg/tb-nav/2.5.10/index-min.js,secdev/sufei_data/3.8.7/index.js, line 6: WebGL context was lost.
+JavaScript warning: https://g.alicdn.com/AWSC/et/1.62.1/et_n.js, line 4: WebGL context was lost.
+JavaScript warning: https://g.alicdn.com/AWSC/WebUMID/1.81.0/um.js, line 7: WebGL context was lost.
+JavaScript warning: https://g.alicdn.com/secdev/sufei_data/3.9.0/index.js, line 1: WebGL context was lost.
+JavaScript warning: https://g.alicdn.com/secdev/nsv/1.0.78/ns_e_88_3_n.js, line 4: WebGL context was lost.
+
+###!!! [Child][MessageChannel] Error: (msgtype=0x59000D,name=PHttpChannel::Msg_DeletingChannel) Channel closing: too late to send/recv, messages will be lost
+
+
+###!!! [Child][MessageChannel] Error: (msgtype=0x590005,name=PHttpChannel::Msg_Cancel) Closed channel: cannot send/recv
+
+
+###!!! [Child][MessageChannel] Error: (msgtype=0x59002D,name=PHttpChannel::Msg_SetPriority) Closed channel: cannot send/recv
+
+1592286160693	Marionette	INFO	Stopped listening on port 3491
+
+###!!! [Child][RunMessage] Error: Channel closing: too late to send/recv, messages will be lost
+
+
+###!!! [Child][MessageChannel::SendAndWait] Error: Channel error: cannot send/recv
+
+1592286170243	mozrunner::runner	INFO	Running command: "C:\\Program Files\\Mozilla Firefox\\firefox.exe" "-marionette" "-foreground" "-no-remote" "-profile" "C:\\Users\\big\\AppData\\Local\\Temp\\rust_mozprofileZ3kxgu"
+JavaScript error: resource://gre/modules/XULStore.jsm, line 66: Error: Can't find profile directory.
+1592286172527	Marionette	INFO	Listening on port 3592
+1592286172994	Marionette	WARN	TLS certificate errors will be ignored for this session
+JavaScript error: resource://gre/modules/URIFixup.jsm, line 203: NS_ERROR_FAILURE: Should pass a non-null uri
+JavaScript warning: https://g.alicdn.com/??kissy/k/6.2.4/seed-min.js,kg/global-util/1.0.7/index-min.js,tb/tracker/4.3.12/index.js,kg/tb-nav/2.5.10/index-min.js,secdev/sufei_data/3.8.7/index.js, line 6: WebGL context was lost.
+JavaScript warning: https://g.alicdn.com/AWSC/et/1.62.1/et_n.js, line 4: WebGL context was lost.
+JavaScript warning: https://g.alicdn.com/AWSC/WebUMID/1.81.0/um.js, line 7: WebGL context was lost.
+JavaScript warning: https://g.alicdn.com/secdev/sufei_data/3.9.0/index.js, line 1: WebGL context was lost.
+JavaScript warning: https://g.alicdn.com/secdev/nsv/1.0.78/ns_e_88_3_n.js, line 4: WebGL context was lost.
+JavaScript warning: https://g.alicdn.com/AWSC/WebUMID/1.81.0/um.js, line 7: WebGL context was lost.
+console.warn: LoginRecipes: "getRecipes: falling back to a synchronous message for:" "https://login.taobao.com"
+console.error: "Store does not have a valid reducer. Make sure the argument passed to combineReducers is an object whose values are reducers."
+1592286338805	Marionette	INFO	Stopped listening on port 3592
+
+###!!! [Child][RunMessage] Error: Channel closing: too late to send/recv, messages will be lost
+
+
+###!!! [Child][MessageChannel::SendAndWait] Error: Channel error: cannot send/recv
+
+modules/XULStore.jsm, line 66: Error: Can't find profile directory.
+1592286328602	Marionette	INFO	Listening on port 3728
+1592286328988	Marionette	WARN	TLS certificate errors will be ignored for this session
+JavaScript error: resource://gre/modules/URIFixup.jsm, line 203: NS_ERROR_FAILURE: Should pass a non-null uri
+JavaScript warning: https://g.alicdn.com/??kissy/k/6.2.4/seed-min.js,kg/global-util/1.0.7/index-min.js,tb/tracker/4.3.12/index.js,kg/tb-nav/2.5.10/index-min.js,secdev/sufei_data/3.8.7/index.js, line 6: WebGL context was lost.
+JavaScript warning: https://g.alicdn.com/AWSC/et/1.62.1/et_n.js, line 4: WebGL context was lost.
+JavaScript warning: https://g.alicdn.com/secdev/sufei_data/3.9.0/index.js, line 1: WebGL context was lost.
+JavaScript warning: https://g.alicdn.com/secdev/nsv/1.0.78/ns_e_88_3_n.js, line 4: WebGL context was lost.
+JavaScript warning: https://g.alicdn.com/AWSC/WebUMID/1.81.0/um.js, line 7: WebGL context was lost.
+JavaScript warning: https://g.alicdn.com/AWSC/WebUMID/1.81.0/um.js, line 7: WebGL context was lost.
+
+###!!! [Child][MessageChannel] Error: (msgtype=0x59000D,name=PHttpChannel::Msg_DeletingChannel) Channel closing: too late to send/recv, messages will be lost
+
+1592286337521	Marionette	INFO	Stopped listening on port 3728
+
+###!!! [Child][RunMessage] Error: Channel closing: too late to send/recv, messages will be lost
+
+
+###!!! [Child][MessageChannel::SendAndWait] Error: Channel error: cannot send/recv
+
+1592286374636	mozrunner::runner	INFO	Running command: "C:\\Program Files\\Mozilla Firefox\\firefox.exe" "-marionette" "-foreground" "-no-remote" "-profile" "C:\\Users\\big\\AppData\\Local\\Temp\\rust_mozprofileGZm56j"
+JavaScript error: resource://gre/modules/XULStore.jsm, line 66: Error: Can't find profile directory.
+1592286376900	Marionette	INFO	Listening on port 3843
+1592286377402	Marionette	WARN	TLS certificate errors will be ignored for this session
+JavaScript error: resource://gre/modules/URIFixup.jsm, line 203: NS_ERROR_FAILURE: Should pass a non-null uri
+JavaScript warning: https://g.alicdn.com/??kissy/k/6.2.4/seed-min.js,kg/global-util/1.0.7/index-min.js,tb/tracker/4.3.12/index.js,kg/tb-nav/2.5.10/index-min.js,secdev/sufei_data/3.8.7/index.js, line 6: WebGL context was lost.
+JavaScript warning: https://g.alicdn.com/AWSC/et/1.62.1/et_n.js, line 4: WebGL context was lost.
+JavaScript warning: https://g.alicdn.com/AWSC/WebUMID/1.81.0/um.js, line 7: WebGL context was lost.
+JavaScript warning: https://g.alicdn.com/secdev/sufei_data/3.9.0/index.js, line 1: WebGL context was lost.
+JavaScript warning: https://g.alicdn.com/secdev/nsv/1.0.78/ns_e_88_3_n.js, line 4: WebGL context was lost.
+JavaScript warning: https://g.alicdn.com/AWSC/WebUMID/1.81.0/um.js, line 7: WebGL context was lost.
+console.error: "Store does not have a valid reducer. Make sure the argument passed to combineReducers is an object whose values are reducers."
+console.warn: LoginRecipes: "getRecipes: falling back to a synchronous message for:" "https://login.taobao.com"
+1592286502671	mozrunner::runner	INFO	Running command: "C:\\Program Files\\Mozilla Firefox\\firefox.exe" "-marionette" "-foreground" "-no-remote" "-profile" "C:\\Users\\big\\AppData\\Local\\Temp\\rust_mozprofileEuUxwX"
+JavaScript error: resource://gre/modules/XULStore.jsm, line 66: Error: Can't find profile directory.
+1592286504790	Marionette	INFO	Listening on port 3976
+1592286504828	Marionette	WARN	TLS certificate errors will be ignored for this session
+JavaScript error: resource://gre/modules/URIFixup.jsm, line 203: NS_ERROR_FAILURE: Should pass a non-null uri
+JavaScript warning: https://g.alicdn.com/??kissy/k/6.2.4/seed-min.js,kg/global-util/1.0.7/index-min.js,tb/tracker/4.3.12/index.js,kg/tb-nav/2.5.10/index-min.js,secdev/sufei_data/3.8.7/index.js, line 6: WebGL context was lost.
+JavaScript warning: https://g.alicdn.com/AWSC/et/1.62.1/et_n.js, line 4: WebGL context was lost.
+JavaScript warning: https://g.alicdn.com/AWSC/WebUMID/1.81.0/um.js, line 7: WebGL context was lost.
+JavaScript warning: https://g.alicdn.com/secdev/sufei_data/3.9.0/index.js, line 1: WebGL context was lost.
+JavaScript warning: https://g.alicdn.com/secdev/nsv/1.0.78/ns_e_88_3_n.js, line 4: WebGL context was lost.
+JavaScript warning: https://g.alicdn.com/AWSC/WebUMID/1.81.0/um.js, line 7: WebGL context was lost.
+1592286565038	mozrunner::runner	INFO	Running command: "C:\\Program Files\\Mozilla Firefox\\firefox.exe" "-marionette" "-foreground" "-no-remote" "-profile" "C:\\Users\\big\\AppData\\Local\\Temp\\rust_mozprofiled7qOmy"
+JavaScript error: resource://gre/modules/XULStore.jsm, line 66: Error: Can't find profile directory.
+1592286567170	Marionette	INFO	Listening on port 4079
+1592286567194	Marionette	WARN	TLS certificate errors will be ignored for this session
+JavaScript error: resource://gre/modules/URIFixup.jsm, line 203: NS_ERROR_FAILURE: Should pass a non-null uri
+JavaScript warning: https://g.alicdn.com/??kissy/k/6.2.4/seed-min.js,kg/global-util/1.0.7/index-min.js,tb/tracker/4.3.12/index.js,kg/tb-nav/2.5.10/index-min.js,secdev/sufei_data/3.8.7/index.js, line 6: WebGL context was lost.
+JavaScript warning: https://g.alicdn.com/AWSC/et/1.62.1/et_n.js, line 4: WebGL context was lost.
+JavaScript warning: https://g.alicdn.com/AWSC/WebUMID/1.81.0/um.js, line 7: WebGL context was lost.
+JavaScript warning: https://g.alicdn.com/secdev/sufei_data/3.9.0/index.js, line 1: WebGL context was lost.
+JavaScript warning: https://g.alicdn.com/secdev/nsv/1.0.78/ns_e_88_3_n.js, line 4: WebGL context was lost.
+JavaScript warning: https://g.alicdn.com/AWSC/WebUMID/1.81.0/um.js, line 7: WebGL context was lost.
+1592286582441	Marionette	INFO	Stopped listening on port 4079
+
+###!!! [Child][RunMessage] Error: Channel closing: too late to send/recv, messages will be lost
+
+
+###!!! [Child][MessageChannel::SendAndWait] Error: Channel error: cannot send/recv
+
+1592286588711	mozrunner::runner	INFO	Running command: "C:\\Program Files\\Mozilla Firefox\\firefox.exe" "-marionette" "-foreground" "-no-remote" "-profile" "C:\\Users\\big\\AppData\\Local\\Temp\\rust_mozprofile8e8EgT"
+JavaScript error: resource://gre/modules/XULStore.jsm, line 66: Error: Can't find profile directory.
+1592286590970	Marionette	INFO	Listening on port 4175
+1592286590987	Marionette	WARN	TLS certificate errors will be ignored for this session
+JavaScript error: resource://gre/modules/URIFixup.jsm, line 203: NS_ERROR_FAILURE: Should pass a non-null uri
+JavaScript warning: https://g.alicdn.com/??kissy/k/6.2.4/seed-min.js,kg/global-util/1.0.7/index-min.js,tb/tracker/4.3.12/index.js,kg/tb-nav/2.5.10/index-min.js,secdev/sufei_data/3.8.7/index.js, line 6: WebGL context was lost.
+JavaScript warning: https://g.alicdn.com/AWSC/et/1.62.1/et_n.js, line 4: WebGL context was lost.
+JavaScript warning: https://g.alicdn.com/AWSC/WebUMID/1.81.0/um.js, line 7: WebGL context was lost.
+JavaScript warning: https://g.alicdn.com/secdev/sufei_data/3.9.0/index.js, line 1: WebGL context was lost.
+JavaScript warning: https://g.alicdn.com/secdev/nsv/1.0.78/ns_e_88_3_n.js, line 4: WebGL context was lost.
+JavaScript warning: https://g.alicdn.com/AWSC/WebUMID/1.81.0/um.js, line 7: WebGL context was lost.
+console.warn: LoginRecipes: "getRecipes: falling back to a synchronous message for:" "https://login.taobao.com"
+console.error: "Store does not have a valid reducer. Make sure the argument passed to combineReducers is an object whose values are reducers."
+1592286638101	mozrunner::runner	INFO	Running command: "C:\\Program Files\\Mozilla Firefox\\firefox.exe" "-marionette" "-foreground" "-no-remote" "-profile" "C:\\Users\\big\\AppData\\Local\\Temp\\rust_mozprofile9eddOt"
+JavaScript error: resource://gre/modules/XULStore.jsm, line 66: Error: Can't find profile directory.
+1592286640153	Marionette	INFO	Listening on port 4287
+1592286640262	Marionette	WARN	TLS certificate errors will be ignored for this session
+JavaScript error: resource://gre/modules/URIFixup.jsm, line 203: NS_ERROR_FAILURE: Should pass a non-null uri
+JavaScript warning: https://g.alicdn.com/??kissy/k/6.2.4/seed-min.js,kg/global-util/1.0.7/index-min.js,tb/tracker/4.3.12/index.js,kg/tb-nav/2.5.10/index-min.js,secdev/sufei_data/3.8.7/index.js, line 6: WebGL context was lost.
+JavaScript warning: https://g.alicdn.com/AWSC/et/1.62.1/et_n.js, line 4: WebGL context was lost.
+JavaScript warning: https://g.alicdn.com/AWSC/WebUMID/1.81.0/um.js, line 7: WebGL context was lost.
+JavaScript warning: https://g.alicdn.com/secdev/sufei_data/3.9.0/index.js, line 1: WebGL context was lost.
+JavaScript warning: https://g.alicdn.com/secdev/nsv/1.0.78/ns_e_88_3_n.js, line 4: WebGL context was lost.
+JavaScript warning: https://g.alicdn.com/AWSC/WebUMID/1.81.0/um.js, line 7: WebGL context was lost.
+console.error: "Store does not have a valid reducer. Make sure the argument passed to combineReducers is an object whose values are reducers."
+1592286715455	mozrunner::runner	INFO	Running command: "C:\\Program Files\\Mozilla Firefox\\firefox.exe" "-marionette" "-foreground" "-no-remote" "-profile" "C:\\Users\\big\\AppData\\Local\\Temp\\rust_mozprofilenmOgo8"
+JavaScript error: resource://gre/modules/XULStore.jsm, line 66: Error: Can't find profile directory.
+1592286717604	Marionette	INFO	Listening on port 4407
+1592286717710	Marionette	WARN	TLS certificate errors will be ignored for this session
+JavaScript error: resource://gre/modules/URIFixup.jsm, line 203: NS_ERROR_FAILURE: Should pass a non-null uri
+JavaScript warning: https://g.alicdn.com/??kissy/k/6.2.4/seed-min.js,kg/global-util/1.0.7/index-min.js,tb/tracker/4.3.12/index.js,kg/tb-nav/2.5.10/index-min.js,secdev/sufei_data/3.8.7/index.js, line 6: WebGL context was lost.
+JavaScript warning: https://g.alicdn.com/AWSC/et/1.62.1/et_n.js, line 4: WebGL context was lost.
+JavaScript warning: https://g.alicdn.com/AWSC/WebUMID/1.81.0/um.js, line 7: WebGL context was lost.
+JavaScript warning: https://g.alicdn.com/secdev/sufei_data/3.9.0/index.js, line 1: WebGL context was lost.
+JavaScript warning: https://g.alicdn.com/secdev/nsv/1.0.78/ns_e_88_3_n.js, line 4: WebGL context was lost.
+JavaScript warning: https://g.alicdn.com/AWSC/WebUMID/1.81.0/um.js, line 7: WebGL context was lost.
+console.error: "Store does not have a valid reducer. Make sure the argument passed to combineReducers is an object whose values are reducers."
+1592286788711	mozrunner::runner	INFO	Running command: "C:\\Program Files\\Mozilla Firefox\\firefox.exe" "-marionette" "-foreground" "-no-remote" "-profile" "C:\\Users\\big\\AppData\\Local\\Temp\\rust_mozprofileqJaC0z"
+JavaScript error: resource://gre/modules/XULStore.jsm, line 66: Error: Can't find profile directory.
+1592286790736	Marionette	INFO	Listening on port 4519
+1592286790876	Marionette	WARN	TLS certificate errors will be ignored for this session
+JavaScript error: resource://gre/modules/URIFixup.jsm, line 203: NS_ERROR_FAILURE: Should pass a non-null uri
+JavaScript warning: https://g.alicdn.com/??kissy/k/6.2.4/seed-min.js,kg/global-util/1.0.7/index-min.js,tb/tracker/4.3.12/index.js,kg/tb-nav/2.5.10/index-min.js,secdev/sufei_data/3.8.7/index.js, line 6: WebGL context was lost.
+JavaScript warning: https://g.alicdn.com/AWSC/et/1.62.1/et_n.js, line 4: WebGL context was lost.
+JavaScript warning: https://g.alicdn.com/AWSC/WebUMID/1.81.0/um.js, line 7: WebGL context was lost.
+JavaScript warning: https://g.alicdn.com/secdev/sufei_data/3.9.0/index.js, line 1: WebGL context was lost.
+JavaScript warning: https://g.alicdn.com/secdev/nsv/1.0.78/ns_e_88_3_n.js, line 4: WebGL context was lost.
+JavaScript warning: https://g.alicdn.com/AWSC/WebUMID/1.81.0/um.js, line 7: WebGL context was lost.
+console.error: "Store does not have a valid reducer. Make sure the argument passed to combineReducers is an object whose values are reducers."
+
+###!!! [Child][MessageChannel] Error: (msgtype=0x59000D,name=PHttpChannel::Msg_DeletingChannel) Channel closing: too late to send/recv, messages will be lost
+
+1592286976410	Marionette	INFO	Stopped listening on port 4519
+
+###!!! [Child][RunMessage] Error: Channel closing: too late to send/recv, messages will be lost
+
+
+###!!! [Child][MessageChannel::SendAndWait] Error: Channel error: cannot send/recv
+
+1592287488555	mozrunner::runner	INFO	Running command: "C:\\Program Files\\Mozilla Firefox\\firefox.exe" "-marionette" "-foreground" "-no-remote" "-profile" "C:\\Users\\big\\AppData\\Local\\Temp\\rust_mozprofileLOz2hy"
+JavaScript error: resource://gre/modules/XULStore.jsm, line 66: Error: Can't find profile directory.
+1592287490589	Marionette	INFO	Listening on port 4810
+1592287490707	Marionette	WARN	TLS certificate errors will be ignored for this session
+JavaScript warning: https://g.alicdn.com/AWSC/et/1.62.1/et_n.js, line 4: WebGL context was lost.
+JavaScript warning: https://g.alicdn.com/AWSC/WebUMID/1.81.0/um.js, line 7: WebGL context was lost.
+JavaScript warning: https://g.alicdn.com/secdev/sufei_data/3.9.0/index.js, line 1: WebGL context was lost.
+JavaScript warning: https://g.alicdn.com/secdev/nsv/1.0.78/ns_e_88_3_n.js, line 4: WebGL context was lost.
+JavaScript warning: https://g.alicdn.com/AWSC/WebUMID/1.81.0/um.js, line 7: WebGL context was lost.
+JavaScript warning: https://g.alicdn.com/AWSC/et/1.62.1/et_n.js, line 4: WebGL context was lost.
+JavaScript warning: https://g.alicdn.com/secdev/sufei_data/3.9.0/index.js, line 1: WebGL context was lost.
+JavaScript warning: https://g.alicdn.com/secdev/nsv/1.0.78/ns_e_88_3_n.js, line 4: WebGL context was lost.
+JavaScript warning: https://g.alicdn.com/AWSC/WebUMID/1.81.0/um.js, line 7: WebGL context was lost.
+JavaScript warning: https://g.alicdn.com/secdev/sufei_data/3.9.0/index.js, line 1: WebGL context was lost.
+JavaScript warning: https://g.alicdn.com/secdev/nsv/1.0.78/ns_e_88_3_n.js, line 4: WebGL context was lost.
+JavaScript warning: https://g.alicdn.com/secdev/sufei_data/3.9.0/index.js, line 1: WebGL context was lost.
+JavaScript warning: https://g.alicdn.com/secdev/nsv/1.0.78/ns_e_88_3_n.js, line 4: WebGL context was lost.
+JavaScript warning: https://g.alicdn.com/AWSC/et/1.62.1/et_n.js, line 4: WebGL context was lost.
+JavaScript warning: https://g.alicdn.com/AWSC/WebUMID/1.81.0/um.js, line 7: WebGL context was lost.
+JavaScript warning: https://g.alicdn.com/secdev/sufei_data/3.9.0/index.js, line 1: WebGL context was lost.
+JavaScript warning: https://g.alicdn.com/secdev/nsv/1.0.78/ns_e_88_3_n.js, line 4: WebGL context was lost.
+JavaScript warning: https://g.alicdn.com/??mui/mallbar/3.2.37/index.js,kissy/k/1.4.2/swf-min.js,kissy/k/1.4.2/xtemplate-min.js,kissy/k/1.4.2/xtemplate/runtime-min.js,kissy/k/1.4.2/xtemplate/compiler-min.js,mui/mallbar/3.2.37/conf.js,mui/mallbar/3.2.37/util.js,mui/minilogin/3.1.6/index.js,mui/overlay/3.0.10/dialog.js,kissy/k/1.4.2/overlay-min.js,kissy/k/1.4.2/component/container-min.js,kissy/k/1.4.2/component/control-min.js,kissy/k/1.4.2/component/manager-min.js,kissy/k/1.4.2/component/extension/shim-min.js,kissy/k/1.4.2/component/extension/align-min.js,kissy/k/1.4.2/component/extension/content-xtpl-min.js,kissy/k/1.4.2/component/extension/content-render-min.js,mui/mallbar/3.2.37/model.js,mui/mallbar/3.2.37/store.js,mui/storage/3.0.5/index.js,mui/storage/3.0.5/conf.js,mui/storage/3.0.5/util.js,mui/storage/3.0.5/xd.js,mui/storage/3.0.5/name.js,mui/mallbar/3.2.37/mallbar-item.js,mui/mallbar/3.2.37/mallbar-guide.js,mui/mallbar/3.2.37/plugin-prof.js,mui/mallbar/3.2.37/plugin-asset.js,mui/mallbar/3.2.37/plugin-brand.js,mui/mallbar/3.2.37/plugin-live.js,mui/mallbar/3.2.37/plugin-foot.js,mui/mallbar/3.2.37/plugin-top.js,mui/mallbar/3.2.37/plugin-ue.js,mui/mallbar/3.2.37/plugin-qrcode.js,mui/mallbar/3.2.37/plugin-favor.js,mui/mallbar/3.2.37/plugin-charge.js,mui/mallbar/3.2.37/plugin-cart.js,mui/minicart/3.0.38/minicart.js,mui/minicart/3.0.38/model.js,mui/minicart/3.0.38/util.js?t=1_2013072520131122.js, line 24: Using //@ to indicate sourceURL pragmas is deprecated. Use //# instead
+JavaScript warning: https://g.alicdn.com/??mui/mallbar/3.2.37/index.js,kissy/k/1.4.2/swf-min.js,kissy/k/1.4.2/xtemplate-min.js,kissy/k/1.4.2/xtemplate/runtime-min.js,kissy/k/1.4.2/xtemplate/compiler-min.js,mui/mallbar/3.2.37/conf.js,mui/mallbar/3.2.37/util.js,mui/minilogin/3.1.6/index.js,mui/overlay/3.0.10/dialog.js,kissy/k/1.4.2/overlay-min.js,kissy/k/1.4.2/component/container-min.js,kissy/k/1.4.2/component/control-min.js,kissy/k/1.4.2/component/manager-min.js,kissy/k/1.4.2/component/extension/shim-min.js,kissy/k/1.4.2/component/extension/align-min.js,kissy/k/1.4.2/component/extension/content-xtpl-min.js,kissy/k/1.4.2/component/extension/content-render-min.js,mui/mallbar/3.2.37/model.js,mui/mallbar/3.2.37/store.js,mui/storage/3.0.5/index.js,mui/storage/3.0.5/conf.js,mui/storage/3.0.5/util.js,mui/storage/3.0.5/xd.js,mui/storage/3.0.5/name.js,mui/mallbar/3.2.37/mallbar-item.js,mui/mallbar/3.2.37/mallbar-guide.js,mui/mallbar/3.2.37/plugin-prof.js,mui/mallbar/3.2.37/plugin-asset.js,mui/mallbar/3.2.37/plugin-brand.js,mui/mallbar/3.2.37/plugin-live.js,mui/mallbar/3.2.37/plugin-foot.js,mui/mallbar/3.2.37/plugin-top.js,mui/mallbar/3.2.37/plugin-ue.js,mui/mallbar/3.2.37/plugin-qrcode.js,mui/mallbar/3.2.37/plugin-favor.js,mui/mallbar/3.2.37/plugin-charge.js,mui/mallbar/3.2.37/plugin-cart.js,mui/minicart/3.0.38/minicart.js,mui/minicart/3.0.38/model.js,mui/minicart/3.0.38/util.js?t=1_2013072520131122.js, line 9: Using //@ to indicate sourceURL pragmas is deprecated. Use //# instead
+JavaScript warning: https://g.alicdn.com/??mui/mallbar/3.2.37/index.js,kissy/k/1.4.2/swf-min.js,kissy/k/1.4.2/xtemplate-min.js,kissy/k/1.4.2/xtemplate/runtime-min.js,kissy/k/1.4.2/xtemplate/compiler-min.js,mui/mallbar/3.2.37/conf.js,mui/mallbar/3.2.37/util.js,mui/minilogin/3.1.6/index.js,mui/overlay/3.0.10/dialog.js,kissy/k/1.4.2/overlay-min.js,kissy/k/1.4.2/component/container-min.js,kissy/k/1.4.2/component/control-min.js,kissy/k/1.4.2/component/manager-min.js,kissy/k/1.4.2/component/extension/shim-min.js,kissy/k/1.4.2/component/extension/align-min.js,kissy/k/1.4.2/component/extension/content-xtpl-min.js,kissy/k/1.4.2/component/extension/content-render-min.js,mui/mallbar/3.2.37/model.js,mui/mallbar/3.2.37/store.js,mui/storage/3.0.5/index.js,mui/storage/3.0.5/conf.js,mui/storage/3.0.5/util.js,mui/storage/3.0.5/xd.js,mui/storage/3.0.5/name.js,mui/mallbar/3.2.37/mallbar-item.js,mui/mallbar/3.2.37/mallbar-guide.js,mui/mallbar/3.2.37/plugin-prof.js,mui/mallbar/3.2.37/plugin-asset.js,mui/mallbar/3.2.37/plugin-brand.js,mui/mallbar/3.2.37/plugin-live.js,mui/mallbar/3.2.37/plugin-foot.js,mui/mallbar/3.2.37/plugin-top.js,mui/mallbar/3.2.37/plugin-ue.js,mui/mallbar/3.2.37/plugin-qrcode.js,mui/mallbar/3.2.37/plugin-favor.js,mui/mallbar/3.2.37/plugin-charge.js,mui/mallbar/3.2.37/plugin-cart.js,mui/minicart/3.0.38/minicart.js,mui/minicart/3.0.38/model.js,mui/minicart/3.0.38/util.js?t=1_2013072520131122.js, line 218: Using //@ to indicate sourceURL pragmas is deprecated. Use //# instead
+JavaScript warning: https://g.alicdn.com/??mui/mallbar/3.2.37/index.js,kissy/k/1.4.2/swf-min.js,kissy/k/1.4.2/xtemplate-min.js,kissy/k/1.4.2/xtemplate/runtime-min.js,kissy/k/1.4.2/xtemplate/compiler-min.js,mui/mallbar/3.2.37/conf.js,mui/mallbar/3.2.37/util.js,mui/minilogin/3.1.6/index.js,mui/overlay/3.0.10/dialog.js,kissy/k/1.4.2/overlay-min.js,kissy/k/1.4.2/component/container-min.js,kissy/k/1.4.2/component/control-min.js,kissy/k/1.4.2/component/manager-min.js,kissy/k/1.4.2/component/extension/shim-min.js,kissy/k/1.4.2/component/extension/align-min.js,kissy/k/1.4.2/component/extension/content-xtpl-min.js,kissy/k/1.4.2/component/extension/content-render-min.js,mui/mallbar/3.2.37/model.js,mui/mallbar/3.2.37/store.js,mui/storage/3.0.5/index.js,mui/storage/3.0.5/conf.js,mui/storage/3.0.5/util.js,mui/storage/3.0.5/xd.js,mui/storage/3.0.5/name.js,mui/mallbar/3.2.37/mallbar-item.js,mui/mallbar/3.2.37/mallbar-guide.js,mui/mallbar/3.2.37/plugin-prof.js,mui/mallbar/3.2.37/plugin-asset.js,mui/mallbar/3.2.37/plugin-brand.js,mui/mallbar/3.2.37/plugin-live.js,mui/mallbar/3.2.37/plugin-foot.js,mui/mallbar/3.2.37/plugin-top.js,mui/mallbar/3.2.37/plugin-ue.js,mui/mallbar/3.2.37/plugin-qrcode.js,mui/mallbar/3.2.37/plugin-favor.js,mui/mallbar/3.2.37/plugin-charge.js,mui/mallbar/3.2.37/plugin-cart.js,mui/minicart/3.0.38/minicart.js,mui/minicart/3.0.38/model.js,mui/minicart/3.0.38/util.js?t=1_2013072520131122.js, line 148: Using //@ to indicate sourceURL pragmas is deprecated. Use //# instead
+JavaScript warning: https://g.alicdn.com/??mui/mallbar/3.2.37/index.js,kissy/k/1.4.2/swf-min.js,kissy/k/1.4.2/xtemplate-min.js,kissy/k/1.4.2/xtemplate/runtime-min.js,kissy/k/1.4.2/xtemplate/compiler-min.js,mui/mallbar/3.2.37/conf.js,mui/mallbar/3.2.37/util.js,mui/minilogin/3.1.6/index.js,mui/overlay/3.0.10/dialog.js,kissy/k/1.4.2/overlay-min.js,kissy/k/1.4.2/component/container-min.js,kissy/k/1.4.2/component/control-min.js,kissy/k/1.4.2/component/manager-min.js,kissy/k/1.4.2/component/extension/shim-min.js,kissy/k/1.4.2/component/extension/align-min.js,kissy/k/1.4.2/component/extension/content-xtpl-min.js,kissy/k/1.4.2/component/extension/content-render-min.js,mui/mallbar/3.2.37/model.js,mui/mallbar/3.2.37/store.js,mui/storage/3.0.5/index.js,mui/storage/3.0.5/conf.js,mui/storage/3.0.5/util.js,mui/storage/3.0.5/xd.js,mui/storage/3.0.5/name.js,mui/mallbar/3.2.37/mallbar-item.js,mui/mallbar/3.2.37/mallbar-guide.js,mui/mallbar/3.2.37/plugin-prof.js,mui/mallbar/3.2.37/plugin-asset.js,mui/mallbar/3.2.37/plugin-brand.js,mui/mallbar/3.2.37/plugin-live.js,mui/mallbar/3.2.37/plugin-foot.js,mui/mallbar/3.2.37/plugin-top.js,mui/mallbar/3.2.37/plugin-ue.js,mui/mallbar/3.2.37/plugin-qrcode.js,mui/mallbar/3.2.37/plugin-favor.js,mui/mallbar/3.2.37/plugin-charge.js,mui/mallbar/3.2.37/plugin-cart.js,mui/minicart/3.0.38/minicart.js,mui/minicart/3.0.38/model.js,mui/minicart/3.0.38/util.js?t=1_2013072520131122.js, line 38: Using //@ to indicate sourceURL pragmas is deprecated. Use //# instead
+JavaScript warning: https://g.alicdn.com/??mui/mallbar/3.2.37/index.js,kissy/k/1.4.2/swf-min.js,kissy/k/1.4.2/xtemplate-min.js,kissy/k/1.4.2/xtemplate/runtime-min.js,kissy/k/1.4.2/xtemplate/compiler-min.js,mui/mallbar/3.2.37/conf.js,mui/mallbar/3.2.37/util.js,mui/minilogin/3.1.6/index.js,mui/overlay/3.0.10/dialog.js,kissy/k/1.4.2/overlay-min.js,kissy/k/1.4.2/component/container-min.js,kissy/k/1.4.2/component/control-min.js,kissy/k/1.4.2/component/manager-min.js,kissy/k/1.4.2/component/extension/shim-min.js,kissy/k/1.4.2/component/extension/align-min.js,kissy/k/1.4.2/component/extension/content-xtpl-min.js,kissy/k/1.4.2/component/extension/content-render-min.js,mui/mallbar/3.2.37/model.js,mui/mallbar/3.2.37/store.js,mui/storage/3.0.5/index.js,mui/storage/3.0.5/conf.js,mui/storage/3.0.5/util.js,mui/storage/3.0.5/xd.js,mui/storage/3.0.5/name.js,mui/mallbar/3.2.37/mallbar-item.js,mui/mallbar/3.2.37/mallbar-guide.js,mui/mallbar/3.2.37/plugin-prof.js,mui/mallbar/3.2.37/plugin-asset.js,mui/mallbar/3.2.37/plugin-brand.js,mui/mallbar/3.2.37/plugin-live.js,mui/mallbar/3.2.37/plugin-foot.js,mui/mallbar/3.2.37/plugin-top.js,mui/mallbar/3.2.37/plugin-ue.js,mui/mallbar/3.2.37/plugin-qrcode.js,mui/mallbar/3.2.37/plugin-favor.js,mui/mallbar/3.2.37/plugin-charge.js,mui/mallbar/3.2.37/plugin-cart.js,mui/minicart/3.0.38/minicart.js,mui/minicart/3.0.38/model.js,mui/minicart/3.0.38/util.js?t=1_2013072520131122.js, line 100: Using //@ to indicate sourceURL pragmas is deprecated. Use //# instead
+JavaScript warning: https://g.alicdn.com/??mui/mallbar/3.2.37/index.js,kissy/k/1.4.2/swf-min.js,kissy/k/1.4.2/xtemplate-min.js,kissy/k/1.4.2/xtemplate/runtime-min.js,kissy/k/1.4.2/xtemplate/compiler-min.js,mui/mallbar/3.2.37/conf.js,mui/mallbar/3.2.37/util.js,mui/minilogin/3.1.6/index.js,mui/overlay/3.0.10/dialog.js,kissy/k/1.4.2/overlay-min.js,kissy/k/1.4.2/component/container-min.js,kissy/k/1.4.2/component/control-min.js,kissy/k/1.4.2/component/manager-min.js,kissy/k/1.4.2/component/extension/shim-min.js,kissy/k/1.4.2/component/extension/align-min.js,kissy/k/1.4.2/component/extension/content-xtpl-min.js,kissy/k/1.4.2/component/extension/content-render-min.js,mui/mallbar/3.2.37/model.js,mui/mallbar/3.2.37/store.js,mui/storage/3.0.5/index.js,mui/storage/3.0.5/conf.js,mui/storage/3.0.5/util.js,mui/storage/3.0.5/xd.js,mui/storage/3.0.5/name.js,mui/mallbar/3.2.37/mallbar-item.js,mui/mallbar/3.2.37/mallbar-guide.js,mui/mallbar/3.2.37/plugin-prof.js,mui/mallbar/3.2.37/plugin-asset.js,mui/mallbar/3.2.37/plugin-brand.js,mui/mallbar/3.2.37/plugin-live.js,mui/mallbar/3.2.37/plugin-foot.js,mui/mallbar/3.2.37/plugin-top.js,mui/mallbar/3.2.37/plugin-ue.js,mui/mallbar/3.2.37/plugin-qrcode.js,mui/mallbar/3.2.37/plugin-favor.js,mui/mallbar/3.2.37/plugin-charge.js,mui/mallbar/3.2.37/plugin-cart.js,mui/minicart/3.0.38/minicart.js,mui/minicart/3.0.38/model.js,mui/minicart/3.0.38/util.js?t=1_2013072520131122.js, line 21: Using //@ to indicate sourceURL pragmas is deprecated. Use //# instead
+JavaScript warning: https://g.alicdn.com/AWSC/WebUMID/1.81.0/um.js, line 7: WebGL context was lost.
+IPDL protocol error: Handler returned error code!
+
+###!!! [Parent][DispatchAsyncMessage] Error: PImageBridge::Msg_Update Processing error: message was deserialized, but the handler returned false (indicating failure)
+
+IPDL protocol error: Handler returned error code!
+
+###!!! [Parent][DispatchAsyncMessage] Error: PImageBridge::Msg_Update Processing error: message was deserialized, but the handler returned false (indicating failure)
+
+1592287726850	Marionette	INFO	Stopped listening on port 4810
+
+###!!! [Child][RunMessage] Error: Channel closing: too late to send/recv, messages will be lost
+
+
+###!!! [Child][MessageChannel::SendAndWait] Error: Channel error: cannot send/recv
+
