@@ -14,8 +14,29 @@ from PyQt5.QtWidgets import QGraphicsDropShadowEffect, QGraphicsOpacityEffect, \
     QGraphicsBlurEffect, QGraphicsPixmapItem, QGraphicsItem
 import sys
 import math
+from enum import Enum, IntEnum, unique
 
-PADDING = 4
+
+# @unique  # 装饰器可以帮助我们检查保证value没有重复值
+class Const(IntEnum):
+    # 继承于Enum的枚举类中的Key不能相同，Value可以相，要Value也不能相同，那么在导入Enum的同时，需要导入unique函数
+    # 枚举项可以用来比较，使用==，或者is。枚举类不能用来实例化对象,在类外部不能修改Value值
+    OTHER = '0'
+    CENTER = '0'
+    TOP = 1
+    BOTTOM = '2'
+    LEFT = 3
+    RIGHT = 4
+    TL_CORNER = 5  # 左上角
+    TR_CORNER = 6  # 右上角
+    BL_CORNER = 7
+    BR_CORNER = 8
+
+    PADDING = 50  # 边距
+    MARGIN = 15  # 四周边距
+
+
+PADDING = 50  # 边距
 
 
 # sys.setrecursionlimit(10000)
@@ -59,12 +80,13 @@ class ShadowWidget(QtWidgets.QWidget):
 
         self.SHADOW_WIDTH = 0  # 边框距离
         self.isLeftPressDown = False  # 鼠标左键是否按下
+        self.LOCATION = Const.OTHER
         self.dragPosition = 0  # 拖动时坐标
-        self.Numbers = self.enum(UP=0, DOWN=1, LEFT=2, RIGHT=3, LEFTTOP=4, LEFTBOTTOM=5, RIGHTBOTTOM=6, RIGHTTOP=7,
-                                 NONE=8)  # 枚举参数
+        self.Numbers = type('Enum', (), dict(UP=0, DOWN=1, LEFT=2, RIGHT=3, LEFTTOP=4,
+                                             LEFTBOTTOM=5, RIGHTBOTTOM=6, RIGHTTOP=7, NONE=8))  # 枚举参数
         print(type(self.Numbers))
-        self.setMinimumHeight(500)  # 窗体最小高度
-        self.setMinimumWidth(800)  # 窗体最小宽度
+        # self.setMinimumHeight(500)  # 窗体最小高度
+        # self.setMinimumWidth(800)  # 窗体最小宽度
         self.dir = self.Numbers.NONE  # 初始鼠标状态
         self.setMouseTracking(True)
 
@@ -108,41 +130,41 @@ class ShadowWidget(QtWidgets.QWidget):
         # 获取窗体在屏幕上的位置区域，tl为topleft点，rb为rightbottom点
         rect = self.rect()
         tl = self.mapToGlobal(rect.topLeft())
-        rb = self.mapToGlobal(rect.bottomRight())
+        br = self.mapToGlobal(rect.bottomRight())
 
         x = cursorGlobalPoint.x()
         y = cursorGlobalPoint.y()
 
-        if (tl.x() + PADDING >= x and tl.x() <= x and tl.y() + PADDING >= y and tl.y() <= y):
-            # 左上角
+        if tl.x() <= x <= tl.x() + PADDING and tl.y() <= y <= tl.y() + PADDING:
+            # 左上角内侧
             self.dir = self.Numbers.LEFTTOP
             self.setCursor(QCursor(Qt.SizeFDiagCursor))  # 设置鼠标形状
-        elif (x >= rb.x() - PADDING and x <= rb.x() and y >= rb.y() - PADDING and y <= rb.y()):
-            # 右下角
+        elif br.x() - PADDING <= x <= br.x() and br.y() - PADDING <= y <= br.y():
+            # 右下角内侧
             self.dir = self.Numbers.RIGHTBOTTOM
             self.setCursor(QCursor(Qt.SizeFDiagCursor))
-        elif (x <= tl.x() + PADDING and x >= tl.x() and y >= rb.y() - PADDING and y <= rb.y()):
-            # 左下角
+        elif tl.x() <= x <= tl.x() + PADDING and br.y() - PADDING <= y <= br.y():
+            # 左下角内侧
             self.dir = self.Numbers.LEFTBOTTOM
             self.setCursor(QCursor(Qt.SizeBDiagCursor))
-        elif (x <= rb.x() and x >= rb.x() - PADDING and y >= tl.y() and y <= tl.y() + PADDING):
-            # 右上角
+        elif br.x() - PADDING <= x <= br.x() and tl.y() <= y <= tl.y() + PADDING:
+            # 右上角内侧
             self.dir = self.Numbers.RIGHTTOP
             self.setCursor(QCursor(Qt.SizeBDiagCursor))
-        elif (x <= tl.x() + PADDING and x >= tl.x()):
-            # 左边
+
+        elif tl.x() - PADDING <= x <= tl.x() + PADDING:
+            # 左边内侧
             self.dir = self.Numbers.LEFT
             self.setCursor(QCursor(Qt.SizeHorCursor))
-        elif (x <= rb.x() and x >= rb.x() - PADDING):
-            # 右边
-
+        elif br.x() - PADDING <= x <= br.x():
+            # 右边内侧
             self.dir = self.Numbers.RIGHT
             self.setCursor(QCursor(Qt.SizeHorCursor))
-        elif (y >= tl.y() and y <= tl.y() + PADDING):
+        elif tl.y() <= y <= tl.y() + PADDING:
             # 上边
             self.dir = self.Numbers.UP
             self.setCursor(QCursor(Qt.SizeVerCursor))
-        elif (y <= rb.y() and y >= rb.y() - PADDING):
+        elif br.y() - PADDING <= y <= br.y():
             # 下边
             self.dir = self.Numbers.DOWN
             self.setCursor(QCursor(Qt.SizeVerCursor))
@@ -150,23 +172,25 @@ class ShadowWidget(QtWidgets.QWidget):
             # 默认
             self.dir = self.Numbers.NONE
             self.setCursor(QtGui.QCursor(Qt.ArrowCursor))
+        print(self.dir)
 
     def mouseReleaseEvent(self, event):
-        if (event.button() == Qt.LeftButton):
+        if event.button() == Qt.LeftButton:
             self.isLeftPressDown = False
-            if (self.dir != self.Numbers.NONE):
+            if self.dir != self.Numbers.NONE:  # 非边线附件的一律改回鼠标形状
                 self.releaseMouse()
                 self.setCursor(QtGui.QCursor(Qt.ArrowCursor))
 
     def mousePressEvent(self, event):
         if event.button() == Qt.LeftButton:
             self.isLeftPressDown = True
-            if (self.dir != self.Numbers.NONE):
-                self.mouseGrabber()
+            if self.dir != self.Numbers.NONE:
+                self.mouseGrabber()  # 得到正在捕获键盘事件的窗口
             else:
                 self.dragPosition = event.globalPos() - self.frameGeometry().topLeft()
 
     def mouseMoveEvent(self, event):
+        # print(type(event))
         gloPoint = event.globalPos()
         rect = self.rect()
         tl = self.mapToGlobal(rect.topLeft())
@@ -178,13 +202,11 @@ class ShadowWidget(QtWidgets.QWidget):
             if (self.dir != self.Numbers.NONE):
                 rmove = QtCore.QRect(tl, rb)
                 if (self.dir == self.Numbers.LEFT):
-                    if (rb.x() - gloPoint.x() <= self.minimumWidth()):
-                        rmove.setX(tl.x())
-                    else:
+                    # if (rb.x() - gloPoint.x() <= self.minimumWidth()):
+                    #     rmove.setX(tl.x())
+                    # else:
                         rmove.setX(gloPoint.x())
                 elif (self.dir == self.Numbers.RIGHT):
-                    print
-                    u"youbian"
                     rmove.setWidth(gloPoint.x() - tl.x())
                 elif (self.dir == self.Numbers.UP):
                     if (rb.y() - gloPoint.y() <= self.minimumHeight()):
@@ -218,7 +240,6 @@ class ShadowWidget(QtWidgets.QWidget):
                 self.move(event.globalPos() - self.dragPosition)
                 event.accept()
 
-    # 在widget四周画阴影
     def paintEvent(self, event):
         # 四周都有阴影的
         m = 9

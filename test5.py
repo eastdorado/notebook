@@ -189,6 +189,7 @@ class QUnFrameWindow(QWidget):
                              for y in range(self.height() - self._padding, self.height() + 1)]
         self._corner_rect = [QPoint(x, y) for x in range(self.width() - self._padding, self.width() + 1)
                              for y in range(self.height() - self._padding, self.height() + 1)]
+        print('too long',len(self._right_rect))
 
     def mousePressEvent(self, event):
         # 重写鼠标点击的事件

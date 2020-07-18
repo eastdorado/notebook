@@ -10,22 +10,21 @@
 #            Email: 260125177@qq.com 
 #  Copyright = Copyright (c) 2020 CYH
 #  Version   = 1.0
-
-
 import os
 import sys
 import webbrowser
 
 from PyQt5.QtCore import QSize, Qt, QUrl, QTimer
-from PyQt5.QtGui import QPainter, QFont, QLinearGradient, QGradient, QColor, \
+from PyQt5.QtGui import QPainter, QFont, QLinearGradient, QGradient, QColor,\
     QBrush, QPaintEvent, QPixmap
 from PyQt5.QtNetwork import QNetworkAccessManager, QNetworkRequest
 from PyQt5.QtSvg import QSvgWidget
-from PyQt5.QtWidgets import QWidget, QApplication, QVBoxLayout, QLabel, \
-    QHBoxLayout, QSpacerItem, QSizePolicy, QAbstractSlider, \
+from PyQt5.QtWidgets import QWidget, QApplication, QVBoxLayout, QLabel,\
+    QHBoxLayout, QSpacerItem, QSizePolicy, QAbstractSlider,\
     QListWidget, QListWidgetItem
 
 from lxml.etree import HTML  # @UnresolvedImport
+
 
 __Author__ = "By: Irony.\"[讽刺]\nQQ: 892768447\nEmail: 892768447@qq.com"
 __Copyright__ = "Copyright (c) 2018 Irony.\"[讽刺]"
@@ -80,8 +79,8 @@ class CoverLabel(QLabel):
 
     def __init__(self, cover_path, cover_title, video_url, *args, **kwargs):
         super(CoverLabel, self).__init__(*args, **kwargs)
-        #         super(CoverLabel, self).__init__(
-        #             '<html><head/><body><img src="{0}"/></body></html>'.format(os.path.abspath(cover_path)), *args, **kwargs)
+#         super(CoverLabel, self).__init__(
+#             '<html><head/><body><img src="{0}"/></body></html>'.format(os.path.abspath(cover_path)), *args, **kwargs)
         self.setCursor(Qt.PointingHandCursor)
         self.setScaledContents(True)
         self.setMinimumSize(220, 308)
@@ -171,8 +170,7 @@ class ItemWidget(QWidget):
     def setCover(self, path):
         self.clabel.setCoverPath(path)
         self.clabel.setPixmap(QPixmap(path))
-
-    #         self.clabel.setText('<img src="{0}"/>'.format(os.path.abspath(path)))
+#         self.clabel.setText('<img src="{0}"/>'.format(os.path.abspath(path)))
 
     def sizeHint(self):
         # 每个item控件的大小
@@ -192,12 +190,13 @@ class ItemWidget(QWidget):
 
 
 class Window(QListWidget):
+
     Page = 0
 
     def __init__(self, *args, **kwargs):
         super(Window, self).__init__(*args, **kwargs)
         self.resize(800, 600)
-        # self.setFrameShape(self.NoFrame)  # 无边框
+        self.setFrameShape(self.NoFrame)  # 无边框
         self.setFlow(self.LeftToRight)  # 从左到右
         self.setWrapping(True)  # 这三个组合可以达到和FlowLayout一样的效果
         self.setResizeMode(self.Adjust)
@@ -206,7 +205,8 @@ class Window(QListWidget):
         # 连接竖着的滚动条滚动事件
         self.verticalScrollBar().actionTriggered.connect(self.onActionTriggered)
         # 进度条
-        self.loadWidget = QSvgWidget(self, minimumHeight=120, minimumWidth=120, visible=False)
+        self.loadWidget = QSvgWidget(
+            self, minimumHeight=120, minimumWidth=120, visible=False)
         self.loadWidget.load(Svg_icon_loading)
 
         # 异步网络下载管理器
@@ -268,19 +268,18 @@ class Window(QListWidget):
             figure_score = "".join(li.xpath(".//em/text()"))  # 评分
             # 主演
             figure_desc = "<span style=\"font-size: 12px;\">主演：</span>" + \
-                          "".join([Actor.format(**dict(fd.items()))
-                                   for fd in li.xpath(".//div[@class='figure_desc']/a")])
+                "".join([Actor.format(**dict(fd.items()))
+                         for fd in li.xpath(".//div[@class='figure_desc']/a")])
             # 播放数
             figure_count = (
-                    li.xpath(".//div[@class='figure_count']/span/text()") or [""])[0]
+                li.xpath(".//div[@class='figure_count']/span/text()") or [""])[0]
             path = "cache/{0}.jpg".format(
                 os.path.splitext(os.path.basename(video_url))[0])
             cover_path = "Data/pic_v.png"
             if os.path.isfile(path):
                 cover_path = path
             iwidget = ItemWidget(cover_path, figure_info, figure_title,
-                                 figure_score, figure_desc, figure_count, video_url, cover_url, path, self._manager,
-                                 self)
+                                 figure_score, figure_desc, figure_count, video_url, cover_url, path, self._manager, self)
             item = QListWidgetItem(self)
             item.setSizeHint(iwidget.sizeHint())
             self.setItemWidget(item, iwidget)
@@ -304,99 +303,11 @@ class Window(QListWidget):
             self.loadWidget.minimumHeight()
         )
 
-import win32gui
-import win32com
-
-
-# 访问Windows API
-class WinInfo(object):
-    hwnd_title_class = dict()
-
-    def __init__(self, *args, **kwargs):
-        super(WinInfo, self).__init__(*args, **kwargs)
-
-    @staticmethod
-    def get_hwnd_pos(class_name="MozillaWindowClass", title_name="百度一下，你就知道"):
-        # 通过类名和标题查找窗口句柄，并获得窗口位置和大小
-        hwnd = win32gui.FindWindow(class_name, title_name)  # 获取句柄
-        left, top, right, bottom = win32gui.GetWindowRect(hwnd)  # 获取窗口左上角和右下角坐标
-
-        return hwnd, left, top, right, bottom
-
-    @staticmethod
-    def get_title_class(hwnd, mouse):
-        # 获取某个句柄的类名和标题
-
-        if win32gui.IsWindow(hwnd):
-            # 去掉条件就输出所有
-            if win32gui.IsWindowEnabled(hwnd) and win32gui.IsWindowVisible(hwnd):
-                title = win32gui.GetWindowText(hwnd)
-                class_name = win32gui.GetClassName(hwnd)
-
-                WinInfo.hwnd_title_class.update({hwnd: (title, class_name)})
-
-    @staticmethod
-    def get_child_by_name(hwnd, class_name):
-        # 获取父句柄hwnd类名为class_name的子句柄
-        return win32gui.FindWindowEx(hwnd, None, class_name, None)
-
-    @staticmethod
-    def get_child_wins(hwnd):
-        """
-        获得 hwnd的所有子窗口句柄
-         返回子窗口句柄列表
-         """
-        if not hwnd:
-            return
-        hwndChildList = []
-        win32gui.EnumChildWindows(hwnd, lambda hwnd, param: param.append(hwnd), hwndChildList)
-        return hwndChildList
-
-        # 实现遍历windows所有窗口并输出窗口标题的方法
-
-    @staticmethod
-    def set_mouse_pos(x, y):
-        # 鼠标定位到(30,50)
-        win32api.SetCursorPos([x, y])
-
-    @staticmethod
-    def mouse_clicked(flag=1):
-        if flag == 1:  # 执行左单键击，若需要双击则延时几毫秒再点击一次即可
-            win32api.mouse_event(win32con.MOUSEEVENTF_LEFTUP | win32con.MOUSEEVENTF_LEFTDOWN, 0, 0, 0, 0)
-        else:  # 右键单击
-            win32api.mouse_event(win32con.MOUSEEVENTF_RIGHTUP | win32con.MOUSEEVENTF_RIGHTDOWN, 0, 0, 0, 0)
-
-    @staticmethod
-    def key_enter():
-        # 发送回车键
-        win32api.keybd_event(13, 0, 0, 0)
-        win32api.keybd_event(13, 0, win32con.KEYEVENTF_KEYUP, 0)
-
-    @staticmethod
-    def close_win(classname, titlename):
-        # 关闭窗口
-        win32gui.PostMessage(win32gui.findWindow(classname, titlename), win32con.WM_CLOSE, 0, 0)
-
-    @staticmethod
-    def get_all_win():
-        # 输出所有窗口
-        win32gui.EnumWindows(WinInfo.get_title_class, 0)
-
-        for h, t in WinInfo.hwnd_title_class.items():
-            if t:
-                print(h, t)
-
 
 if __name__ == "__main__":
-    # os.makedirs("cache", exist_ok=True)
-    # app = QApplication(sys.argv)
-    # w = Window()
-    # w.show()
-    # w.load()
-    # sys.exit(app.exec_())
-    w = WinInfo()
-    w.get_all_win()
-
-
-
-
+    os.makedirs("cache", exist_ok=True)
+    app = QApplication(sys.argv)
+    w = Window()
+    w.show()
+    w.load()
+    sys.exit(app.exec_())
