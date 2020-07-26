@@ -11,9 +11,12 @@ import os
 import sys
 import re
 import psutil
-# from PIL import Image, ImageStat, ImageEnhance
+from PIL import Image, ImageStat, ImageEnhance, ImageQt
 import win32api
 import win32com
+import win32con
+import win32gui
+
 from win32com.client import constants, gencache, Dispatch
 import docx
 import json
@@ -24,9 +27,9 @@ import uuid
 from PIL import Image
 from PyQt5 import QtCore, QtGui, QtWidgets
 import functools
+import cgitb  # 相当管用
 
-
-# from PyQt5 import object
+cgitb.enable(format='text')  # 解决 pyqt5 异常只要进入事件循环,程序就崩溃,而没有任何提示
 
 
 class AllData(object):
@@ -82,34 +85,199 @@ class AllData(object):
         self.favorites = []  # 保存收藏夹各项在cards里的序号
 
 
-class MyEncoder(json.JSONEncoder):
-    def default(self, obj):
-        """
-        只要检查到了是bytes等特殊类型的数据就把它转为str类型
-        :param obj:
-        :return:
-        """
-        from datetime import date, datetime, time
-        if isinstance(obj, int):
-            return int(obj)
-        elif isinstance(obj, float):
-            return float(obj)
-        elif isinstance(obj, bytes):
-            # return str(obj, encoding='utf-8')
-            return str(obj, encoding='ISO-8859-1')
-        elif isinstance(obj, time):
-            return obj.__str__()
-        elif isinstance(obj, datetime):
-            return obj.strftime('%Y-%m-%d %H:%M:%S')
-        elif isinstance(obj, date):
-            return obj.strftime('%Y-%m-%d')
-        else:
-            return json.JSONEncoder.default(self, obj)
+# class MyEncoder(json.JSONEncoder):
+#     def default(self, obj):
+#         """
+#         只要检查到了是bytes等特殊类型的数据就把它转为str类型
+#         :param obj:
+#         :return:
+#         """
+#         from datetime import date, datetime, time
+#         if isinstance(obj, int):
+#             return int(obj)
+#         elif isinstance(obj, float):
+#             return float(obj)
+#         elif isinstance(obj, bytes):
+#             # return str(obj, encoding='utf-8')
+#             return str(obj, encoding='ISO-8859-1')
+#         elif isinstance(obj, time):
+#             return obj.__str__()
+#         elif isinstance(obj, datetime):
+#             return obj.strftime('%Y-%m-%d %H:%M:%S')
+#         elif isinstance(obj, date):
+#             return obj.strftime('%Y-%m-%d')
+#         else:
+#             return json.JSONEncoder.default(self, obj)
+class MyJson(object):
+    # data = [{'a': '中国'}, {'c': 'ddd'}, {'e': 'fff'}]
+
+    def __init__(self, *args, **kwargs):
+        super(MyJson, self).__init__(*args, **kwargs)
+
+    @staticmethod
+    def read(file):
+        # json文件的读入
+        if not os.path.exists(file):
+            print('read error：json文件不存在')
+            return None
+        with open(file, 'r', errors='ignore')as f:
+            data = json.load(f)  # data是字典等原型
+            # data = f.read()  # data是字符串
+            # self.data = pickle.load(f)
+            # print(type(data), data)
+            # self.data = json.loads(data)  # 把字符串变成字典等原型
+            # print(type(self.data), self.data)
+            return data
+
+    @staticmethod
+    def write(data, file):
+        # 以json格式写入文件
+        path, _ = os.path.split(file)
+        if not os.path.exists(path):
+            os.makedirs(path)  # 创建多级目录
+        if os.path.exists(file):
+            os.remove(file)
+        fd = open(file, mode="w", encoding="utf-8")  # 无文件时创建
+        fd.close()
+        j_data = json.dumps(data, sort_keys=True,  # 先dumps打包成字典,再写入
+                            indent=4, separators=(',', ': '),  # 数据格式化输出
+                            ensure_ascii=False)  # 默认为True，会将中文编码成ascii
+        with open(file, "w", ) as file:
+            file.write(j_data)  # json
+            # json.dump(j_data, file)  # assic码
+            # pickle.dump(data, file, 0) #
+
+    def __str__(self):
+        return "json文件读写"
+
+    __repr__ = __str__
+
+
+# 图片类型的相互转换
+class ImageConvert(object):
+
+    # Qpixmap -> Qimage
+    @staticmethod
+    def get_QImage_QPixmap(img: QtGui.QPixmap):
+        return img.toImage()
+        # painter.drawImage(0, 0, image)
+
+    # Qimage -> Qpixmap
+    @staticmethod
+    def get_QPixmap_QImage(img: QtGui.QImage):
+        return QtGui.QPixmap.fromImage(img)
+        # painter.drawPixmap(0, 0, pixtemp)
+
+    # QImage 转 Image
+    @staticmethod
+    def get_QImage_Image(img: QtGui.QImage):
+        return ImageQt.fromqimage(img)
+
+    # Image 转 QImage
+    @staticmethod
+    def get_QImage_Image(img: Image):
+        return ImageQt.ImageQt(img)
+
+    # PIL格式转 QPixmap 格式
+    @staticmethod
+    def get_QPixmap_Image(img: Image):
+        print("PIL格式转 QPixmap 格式")
+        return ImageQt.toqpixmap(img)
+
+    # QPixmap格式转PIL格式
+    @staticmethod
+    def get_Image_QPixmap(img: QtGui.QPixmap):
+        print("QPixmap格式转PIL格式")
+        return ImageQt.fromqpixmap(img)
+
+    def __init__(self):
+        pass
+
+    def __str__(self):
+        return '图片类型转换类'
+
+    __repr__ = __str__
 
 
 class Utils(object):
     def __init__(self):
         pass
+
+    # 为窗体、控件设置背景图片，可伸缩
+    @staticmethod
+    def setBg(win, label: QtWidgets.QLabel, img_file, flag_show=0, scale=1):
+        """
+            label作为底图，应该是父窗体win中的第一个控件，否则覆盖前面控件，
+            因为label跟窗口一样大小，且不加入窗口布局。
+            函数要在 resize event 的最后调用
+            :param win: 父窗体
+            :param label: 底图载体
+            :param img_file: 底图文件
+            :param flag_show:
+                        0-默认方式，图片适应窗口，任意伸缩
+                        1-图片按比例显示全宽或全高，无空白，且显示图片中心
+                        2-图片按比例全部显示在窗口里，会留空白
+                        （后面的必须放在主窗体开始调用，窗口应固定大小 不能改变)
+                        2-保持窗口宽度不变，根据图片调整窗口高度，保证图片全景显示
+                        3-保持窗口高度不变，根据图片调整窗口宽度，保证图片全景显示
+                        4-根据图片宽高按比例调整窗体宽高，保证图片全景显示，需系数
+            :param scale: 系数
+            :return:
+        """
+        label.resize(win.width(), win.height())
+        if flag_show == 0:
+                label.setScaledContents(True)
+                label.setPixmap(QtGui.QPixmap(img_file))
+        elif flag_show == 1:
+                pass
+        elif flag_show == 2:
+                pass
+                # MainWin.show_center_img(win, label, img_file)
+                # label.setPixmap(MainWin.get_center_image(win.width(), win.height()), img_file)
+            # label.setStyleSheet('background-color: rgba(0,0,0,155);/**/')
+
+    # 给窗体产生特效
+    @staticmethod
+    def set_effect(*args):
+        """
+        使用 QGraphicsEffect 产生三大特效
+        :param args: 需要特效的窗体、特效类型、特效参数等
+        :return:
+        """
+        if not args or not isinstance(args[0], object):
+            return
+
+        effect = None
+
+        if args[1] == 0:  # 模糊特效
+            effect = QtWidgets.QGraphicsBlurEffect()  # 虚化
+            # m_pBlurEffect = QGraphicsBlurEffect()
+            effect.setBlurRadius(args[2])  # 设置模糊半径，半径越大，模糊效果越明显，默认为5
+            effect.setBlurHints(args[3])
+            # 设置模糊质量 参数如下：
+            # PerformanceHint = 0 表明渲染性能是最重要的因素，但可能会降低渲染质量。（默认参数）
+            # QualityHint = 1 表明渲染质量是最重要的因素，但潜在的代价是降低性能。
+            # AnimationHint = 2 表示模糊半径将是动画的，暗示实现可以保留一个源的模糊路径缓存。如果源要动态更改，则不要使用此提示。
+        elif args[1] == 1:  # 阴影特效
+            effect = QtWidgets.QGraphicsDropShadowEffect()  # 阴影
+            effect.setBlurRadius(args[2])  # 阴影半径，虚化程度，不能大于圆角半径
+            effect.setOffset(args[3], args[4])  # 阴影宽度
+            effect.setColor(args[5])  # 阴影颜色
+            # widget.setContentsMargins(50, 50, 50, 50) # 父窗口要留显示阴影的边距
+
+        elif args[1] == 2:  # 透明特效
+            # effect = QGraphicsOpacityEffect(self)  # 透明
+            # effect.setOpacity(0.5)  # 透明度
+            # 你的控件.setGraphicsEffect(op)
+            # 你的控件.setAutoFillBackground(True)
+            pass
+        elif args[1] == 3:  # 颜色化
+            # effect = QGraphicsColorizeEffect(self)
+            pass
+        else:
+            return
+
+        args[0].setGraphicsEffect(effect)
 
     # 语言国际化
     @staticmethod
@@ -159,9 +327,10 @@ class Utils(object):
 
     @staticmethod
     def swaps(a, b):
-        a ^= b
-        b ^= a
-        a ^= b
+        # a ^= b
+        # b ^= a
+        # a ^= b
+        a, b = b, a
         return a, b
 
     @staticmethod
@@ -523,7 +692,7 @@ class Utils(object):
         return result
 
     @staticmethod
-    def file_is_given_type(img_filename, file_extension=('.jpg', '.jpeg', '.gif', '.bmp', '.png', '*.xpm')):
+    def file_is_given_type(img_filename, file_extension=('.jpg', '.jpeg', '.gif', '.tiff', '.bmp', '.png', '*.xpm')):
         """
         忽略大小写，忽略list还是tuple，判断文件后缀是否在内，后缀最好带上‘，’，以免误判
         :param img_filename: 文件名
@@ -657,23 +826,21 @@ class Utils(object):
         # finally:
         #     w.Quit(constants.wdDoNotSaveChanges)
 
-        try:
-            # 打开word软件
-            word = gencache.EnsureDispatch('Word.Application')
-            # 非可视化运行
-            word.Visible = False
-            doc = word.Documents.Open(wordPath, ReadOnly=1)
+        # 打开word软件
+        print(wordPath, pdfPath)
+        word = gencache.EnsureDispatch('Word.Application')
+        # 非可视化运行
+        word.Visible = False
+        doc = word.Documents.Open(wordPath, ReadOnly=1)
 
-            doc.ExportAsFixedFormat(pdfPath,
-                                    constants.wdExportFormatPDF,
-                                    Item=constants.wdExportDocumentWithMarkup,
-                                    CreateBookmarks=constants.wdExportCreateHeadingBookmarks)
-            doc.Close()
-            word.Quit(constants.wdDoNotSaveChanges)
-        except Exception as e:
-            return -1
-        finally:
-            return 0
+        doc.ExportAsFixedFormat(pdfPath,
+                                constants.wdExportFormatPDF,
+                                Item=constants.wdExportDocumentWithMarkup,
+                                CreateBookmarks=constants.wdExportCreateHeadingBookmarks)
+        doc.Close()
+        word.Quit(constants.wdDoNotSaveChanges)
+
+        return 0
 
     @staticmethod
     def doc2docx(srcdoc_path, dstdocx_path):
@@ -838,7 +1005,28 @@ class Utils(object):
         return img
 
     @staticmethod
-    def pil2pixmap(im):
+    def bg_trans(save_file: str = None, width=200, height=100, bk_color=(255, 255, 255, 125)):
+        """
+        创建某种颜色半透明的图片，用于控件的底图，可创造出半透明效果。
+        因为 qss不支持背景半透明
+        :param save_file: 保存的图片
+        :param width:
+        :param height:
+        :param bk_color:
+        :return: 有文件名则 None，无则返回内存中的 pix
+        """
+        img = Image.new("RGBA", (width, height), bk_color)
+        if save_file:
+            # 文件不存在则应该强制创造出文件
+            # if not os.path.exists(save_file):
+
+            return img.save(save_file, "PNG")  # None
+        else:
+            return Utils.pil2pix(img)
+
+    @staticmethod
+    # PIL Image -> QPixmap
+    def pil2pix(im):
         if im.mode == "RGB":
             r, g, b = im.split()
             im = Image.merge("RGB", (b, g, r))
@@ -851,8 +1039,86 @@ class Utils(object):
         im2 = im.convert("RGBA")
         data = im2.tobytes("raw", "RGBA")
         qim = QtGui.QImage(data, im.size[0], im.size[1], QtGui.QImage.Format_ARGB32)
-        pixmap = QtGui.QPixmap.fromImage(qim)
-        return pixmap
+        return QtGui.QPixmap.fromImage(qim)
+
+    @staticmethod
+    # 窗口置于屏幕中心
+    def center_win(win):
+        # desktop.width() 多屏幕的累加宽度   desktop.screenGeometry() 单个屏幕的整个屏幕
+        # desktop.availableGeometry() 单屏幕的可用区域
+        # self.frameGeometry() 包括标题栏和边框的高度,但是要在显示之后调用才有效
+        # self.geometry() 不包括标题栏和边框的高度
+        # move(int x,int y) 包括标题栏的高度和边框的宽度
+        # setGeometry() resize() 不包括题栏的高度和边框
+
+        # self.move(self.width() * (-2), 0)  # 先将窗口放到屏幕外，可避免移动窗口时的闪烁现象。
+        # self.show()
+
+        win.show()  # 必须先显示，geo才有效果
+        desktop = QtWidgets.QApplication.desktop()
+
+        x = (desktop.availableGeometry().width() - win.frameSize().width()) // 2
+        y = (desktop.availableGeometry().height() - win.frameSize().height()) // 2
+        win.move(x, y)
+
+        # print(x, y, self.x(), self.y(), self.frameGeometry(), self.frameSize())
+        # print(desktop.width(), desktop.height(), desktop.screenGeometry(), desktop.availableGeometry())
+
+        # qr = self.frameGeometry()
+        # # print(type(qr), qr)
+        # cp = QtWidgets.QDesktopWidget().availableGeometry().center() + QtCore.QPoint(1600, 0)
+        # qr.moveCenter(cp)
+        # self.move(qr.topLeft())
+
+        # screen = QtWidgets.QDesktopWidget().screenGeometry()
+        # size = self.geometry()
+        # print(size.height())
+        # self.move((screen.width() - size.width()) / 2,
+        #           (screen.height() - size.height()) / 2)
+
+    # @staticmethod
+    # # 为窗口设置底图   失败的函数
+    # def set_background(win, label, img_file, flag_show=0, scale=1):
+    #     """
+    #     """
+    #
+    #     img = QtGui.QPixmap(img_file)
+    #     w_win, h_win = win.width(), win.height()
+    #     w_img, h_img = img.width(), img.height()
+    #
+    #     ratio_w = w_img / w_win
+    #     ratio_h = h_img / h_win
+    #
+    #     img_new = None
+    #     is_w = True if ratio_w > ratio_h else False
+    #     if flag_show == 0:
+    #         print(is_w)
+    #         img_new = img.scaledToWidth(w_win, QtCore.Qt.SmoothTransformation) if is_w else \
+    #             img.scaledToHeight(h_win, QtCore.Qt.SmoothTransformation)
+    #     elif flag_show == 1:
+    #         img_new = img.scaledToHeight(h_win, QtCore.Qt.SmoothTransformation) if is_w else \
+    #             img.scaledToWidth(w_win, QtCore.Qt.SmoothTransformation)
+    #     elif flag_show == 2:
+    #         height = h_img / w_img * w_win  # 窗口要调整的高度
+    #         win.resize(w_win, height)
+    #         img_new = img.scaled(w_win, height, QtCore.Qt.KeepAspectRatio, QtCore.Qt.SmoothTransformation)
+    #     elif flag_show == 3:
+    #         width = w_img / h_img * h_win
+    #         win.resize(width, h_win)
+    #         img_new = img.scaled(width, h_win)
+    #     elif flag_show == 4:
+    #         width, height = w_img * scale, h_img * scale
+    #         win.resize(width, height)
+    #         img_new = img.scaled(width, height, QtCore.Qt.KeepAspectRatio, QtCore.Qt.SmoothTransformation)
+    #
+    #     else:
+    #         print('类型不对')
+    #         pass
+    #     print('adf', win.width(), img_new.width())
+    #     label.setPixmap(img_new)
+    #     label.resize(win.width(), win.height())
+    #
+    #     # bg.setAlignment(QtCore.Qt.AlignCenter)
 
     # # 读取图片原有的亮度值
     # @staticmethod
@@ -984,10 +1250,227 @@ class AnimWin(QtWidgets.QWidget):
             self.move(window.topLeft())
 
 
+# 样式管理类
+class StyleSheet(object):
+    """
+           设置窗口边框圆角时有两种方式，一种是设置样式，另一种是在paintEvent事件中绘制窗口
+                    border-radius 属性，关于这个属性，可选的样式有
+                    border-top-left-radius 设置左上角圆角;
+                    border-top-right-radius 设置右上角圆角;
+                    border-bottom-left-radius 设置左下角圆角;
+                    border-bottom-right-radius 设置右下角圆角;
+                    border-radius 设置四个角圆角;
+                        border-radius:15px 一个参数
+                        border-radius: 15px 50px  两个参数 第一个参数设置X轴方向的半径 第二个参数设置Y轴方向的半径
+
+                    设置无边框或者背景透明可以去掉按钮的白色方框
+                    给按钮设置如下样式即可。
+                    {background-color:transparent;}
+                    或者
+                    {border:none;}
+
+            图片是白色半透明，作为子窗体的底图，则子窗体半透明，上面控件不透明。
+            实现底图半透明化
+            # Tool_Widget{
+            border - radius: 10
+            px;
+            border - image: url(img / toolbg.png)
+            }
+        """
+    # 美化样式表
+    Stylesheets = [
+        """     /*******************主窗体***********************/
+                #Canvas{
+                    /*background-image: url(./res/background/bk5.jpg);*/
+                    border-radius:15px;     /*画出圆角*/
+                    /*background-repeat: no-repeat;       背景不要重复*/
+                    background-position: center center;      /*图片的位置，居中，靠左对齐*/
+
+                                  /*  min-width: 1000px;      屏幕宽度在1000px以内时，图片大小保持不变*/
+                                  /*  position:absolute;      固定在屏幕的最上方和最左方*/
+                                  /*  top: 0;             固定在屏幕的最上方和最左方*/
+                                  /*  left: 0;            固定在屏幕的最上方和最左方*/
+                                  /*  width:100%;     屏幕一样的大小，从而达到全屏效果
+                                    height:100%;   */
+
+                                    /* 下面都不识别*/
+                                    /*z-index:-10;            最下层级, 背景图片
+                                    zoom: 1;*/
+                                    /*background-size: cover;
+                                    -webkit-background-size: cover;
+                                    -o-background-size: cover;          让图片随屏幕大小同步缩放*/
+                }
+        """,
+        """     /*******************列表控件***********************/
+                /*去掉item虚线边框*/
+                QListWidget, QListView, QTreeWidget, QTreeView {
+                    outline: 0px;
+                }
+                /*设置左侧选项的最小最大宽度,文字颜色和背景颜色*/
+                QListWidget {
+                    /*border-bottom-left-radius:15;
+                    min-width: 120px;
+                    max-width: 120px;*/
+                    color: white;
+                    background: rgba(25,25,25, 150);
+                    font-size:24px;font-weight:bold;font-family:Roman times;
+                }
+                /*被选中时的背景颜色和左边框颜色*/
+                QListWidget::item:selected {
+                    /*background: rgb(52, 52, 52);*/
+                    border-left: 2px solid rgb(9, 187, 7);
+                }
+                /*鼠标悬停颜色*/
+                QListWidget::item:hover {
+                    color: rgb(94, 172, 230);
+                    /*background: black;*/
+                }
+
+                /*右侧的层叠窗口的背景颜色*/
+                QStackedWidget {
+                    background: transparent;     /*全透明*/
+                    /*background: rgb(30, 30, 30);
+                    background: white;*/
+                    margin: 0px;
+                    border-bottom-right-radius: 15
+                }
+
+                /*模拟的页面
+                QLabel {
+                    color: white;
+                }*/
+
+                QWidget {
+                    border: 1px
+                }
+        """
+    ]
+
+    # 初始化并可添加多个样式，字符串型
+    def __init__(self, *args, **kwargs):
+        super(StyleSheet, self).__init__()
+
+        # print(type(args), args)
+        # print(type(kwargs), kwargs)
+        if args:
+            for each in args:
+                if isinstance(each, str):
+                    self.Stylesheets.append(each)
+
+    # 输出样式库
+    def __str__(self):
+        return '\n'.join(self.Stylesheets)
+
+    # 运行时也能输出样式库
+    __repr__ = __str__
+
+    # 添加多个样式，字符串型
+    def add(self, *args):
+        if args:
+            for each in args:
+                if isinstance(each, str):
+                    self.Stylesheets.append(each)
+
+    # 用下标指定的样式列表库中的样式设置的控件/窗体
+    def set(self, widget, *args):
+        # print(type(args), args)
+        style = []
+        length = len(self.Stylesheets)
+        if args:
+            for each in args:
+                if isinstance(each, int) and each < length:
+                    style.append(self.Stylesheets[each])
+        else:
+            style = self.Stylesheets
+
+        widget.setStyleSheet(''.join(style))
+        # print('\n'.join(style))
+
+
+# 访问Windows API
+# 访问Windows API
+class WinInfo(object):
+    hwnd_title_class = dict()
+
+    def __init__(self, *args, **kwargs):
+        super(WinInfo, self).__init__(*args, **kwargs)
+
+    @staticmethod
+    def get_hwnd_pos(class_name="MozillaWindowClass", title_name="百度一下，你就知道"):
+        # 通过类名和标题查找窗口句柄，并获得窗口位置和大小
+        hwnd = win32gui.FindWindow(class_name, title_name)  # 获取句柄
+        left, top, right, bottom = win32gui.GetWindowRect(hwnd)  # 获取窗口左上角和右下角坐标
+
+        return hwnd, left, top, right, bottom
+
+    @staticmethod
+    def get_title_class(hwnd, mouse):
+        # 获取某个句柄的类名和标题
+
+        if win32gui.IsWindow(hwnd):
+            # 去掉条件就输出所有
+            if win32gui.IsWindowEnabled(hwnd) and win32gui.IsWindowVisible(hwnd):
+                title = win32gui.GetWindowText(hwnd)
+                class_name = win32gui.GetClassName(hwnd)
+
+                WinInfo.hwnd_title_class.update({hwnd: (title, class_name)})
+
+    @staticmethod
+    def get_child_by_name(hwnd, class_name):
+        # 获取父句柄hwnd类名为class_name的子句柄
+        return win32gui.FindWindowEx(hwnd, None, class_name, None)
+
+    @staticmethod
+    def get_child_wins(hwnd):
+        """
+        获得 hwnd的所有子窗口句柄
+         返回子窗口句柄列表
+         """
+        if not hwnd:
+            return
+        hwndChildList = []
+        win32gui.EnumChildWindows(hwnd, lambda hwnd, param: param.append(hwnd), hwndChildList)
+        return hwndChildList
+
+        # 实现遍历windows所有窗口并输出窗口标题的方法
+
+    @staticmethod
+    def get_all_win():
+        # 输出所有窗口
+        win32gui.EnumWindows(WinInfo.get_title_class, 0)
+
+        for h, t in WinInfo.hwnd_title_class.items():
+            if t:
+                print(h, t)
+
+    @staticmethod
+    def set_mouse_pos(x, y):
+        # 鼠标定位到(30,50)
+        win32api.SetCursorPos([x, y])
+
+    @staticmethod
+    def mouse_clicked(flag=1):
+        if flag == 1:  # 执行左单键击，若需要双击则延时几毫秒再点击一次即可
+            win32api.mouse_event(win32con.MOUSEEVENTF_LEFTUP | win32con.MOUSEEVENTF_LEFTDOWN, 0, 0, 0, 0)
+        else:  # 右键单击
+            win32api.mouse_event(win32con.MOUSEEVENTF_RIGHTUP | win32con.MOUSEEVENTF_RIGHTDOWN, 0, 0, 0, 0)
+
+    @staticmethod
+    def key_enter():
+        # 发送回车键
+        win32api.keybd_event(13, 0, 0, 0)
+        win32api.keybd_event(13, 0, win32con.KEYEVENTF_KEYUP, 0)
+
+    @staticmethod
+    def close_win(classname, titlename):
+        # 关闭窗口
+        win32gui.PostMessage(win32gui.findWindow(classname, titlename), win32con.WM_CLOSE, 0, 0)
+
+
 # 圆形按钮
 class EllipseButton(QtWidgets.QPushButton):
     def __init__(self, parent=None, width=100, height=100):
-        super(EllipseButton, self).__init__(parent, width=100, height=100)
+        super(EllipseButton, self).__init__(parent)
         self.parent = parent
         self.setFixedSize(width, height)
 

@@ -21,21 +21,19 @@ import cv2
 import pyttsx3
 import win32com.client
 # from aip import AipSpeech  # 百度文本转语音
-
 # from apscheduler.schedulers.blocking import BlockingScheduler
-import schedule  # 轻量级定时任务调度库
-import sched  # 定时
-import time
-from datetime import datetime
-
-import multiprocessing  # 进程
+# import schedule  # 轻量级定时任务调度库
+# import sched  # 定时
+# import time
+# from datetime import datetime
+# import multiprocessing  # 进程
 import threading  # 线程
-from threading import Timer
 
-from utilities import Utils, AnimWin
+from utilities import Utils, AnimWin, MyJson
+from test3 import Curtain
 import cgitb
 
-cgitb.enable(format='text')  # 解决pyqt5异常只要进入事件循环,程序就崩溃,而没有任何提示
+cgitb.enable(format='text')  # 解决 pyqt5异常只要进入事件循环,程序就崩溃,而没有任何提示
 
 data1 = [
     '每个动作10-15次，循环2-3组。训练过程每个动作尽量慢一点，动作都做到位，体会每个肌群的发力。',  # 每组循环提醒
@@ -151,7 +149,7 @@ class LeftTabWidget(QtWidgets.QWidget):
         # self.setObjectName('LeftTabWidget')
         # self.setWindowTitle('LeftTabWidget')
         self.parent = parent
-        self.data_list = None
+        self.data = None
         self.list_style = """
             QListWidget, QListView, QTreeWidget, QTreeView {
                 outline: 0px;
@@ -160,11 +158,11 @@ class LeftTabWidget(QtWidgets.QWidget):
                 border-collapse: collapse;
             }
             QListWidget {
-                font-size:17px;
+                font-size:22px;
                 font-weight:bold;
                 font-family:verdana,arial,Roman times;
-                min-width: 120px;
-                max-width: 240px;
+                /*min-width: 220px;
+                max-width: 240px;*/
                 color: green;
                 background: #F5F5F5;
                 /*background: green;*/
@@ -179,11 +177,11 @@ class LeftTabWidget(QtWidgets.QWidget):
             }
             """
 
-        self.main_layout = QtWidgets.QHBoxLayout(self, spacing=0)  # 窗口的整体布局
+        self.main_layout = QtWidgets.QHBoxLayout(self)  # 窗口的整体布局
         self.main_layout.setContentsMargins(0, 0, 0, 0)
 
         self.left_widget = QtWidgets.QListWidget()  # 左侧选项列表
-        self.left_widget.setStyleSheet(self.list_style)
+        self.setStyleSheet(self.list_style)
         self.main_layout.addWidget(self.left_widget)
 
         # self.right_widget = QtWidgets.QStackedWidget()
@@ -192,7 +190,7 @@ class LeftTabWidget(QtWidgets.QWidget):
     def _setup_ui(self):
         """加载界面ui"""
         # self.left_widget.currentRowChanged.connect(self.slot_current_row_changed)  # list和右侧窗口的index对应绑定
-        self.left_widget.clicked.connect(self.slot_clicked)  # 双击列表控件时发出信号
+        self.left_widget.itemClicked.connect(self.slot_clicked)  # 双击列表控件时发出信号
         # for each in self.plans:
         #     self.wl_plans.addItem(each[0])
         # self.wl_plans.setCurrentRow(0)
@@ -202,8 +200,8 @@ class LeftTabWidget(QtWidgets.QWidget):
         self.left_widget.setVerticalScrollBarPolicy(QtCore.Qt.ScrollBarAlwaysOff)  # 隐藏滚动条
         self.left_widget.setHorizontalScrollBarPolicy(QtCore.Qt.ScrollBarAlwaysOff)
 
-        for i in range(len(self.data_list)):
-            self.item = QtWidgets.QListWidgetItem(self.data_list[i], self.left_widget)  # 左侧选项的添加
+        for i in range(len(self.data)):
+            self.item = QtWidgets.QListWidgetItem(self.data[i], self.left_widget)  # 左侧选项的添加
             self.item.setSizeHint(QtCore.QSize(30, 60))
             self.item.setTextAlignment(QtCore.Qt.AlignCenter)  # 居中显示
 
@@ -213,7 +211,7 @@ class LeftTabWidget(QtWidgets.QWidget):
             # self.right_widget.addWidget(QtWidgets.QLabel(f'tu pian a {i}'))
 
     def set_date(self, data_list):
-        self.data_list = data_list
+        self.data = data_list
         self._setup_ui()
 
     # def slot_current_row_changed(self, row):
@@ -223,47 +221,6 @@ class LeftTabWidget(QtWidgets.QWidget):
     def slot_clicked(self):
         row = self.left_widget.currentRow()
         self.parent.slot_plan_selected(row)
-
-
-# class BaiDuAI(object):
-#     """ 你的 APPID AK SK """
-#     APP_ID = '15289879'
-#     API_KEY = 'Uwaa5zMsdq0KmXygY2EZCWyO'
-#     SECRET_KEY = 'wP9aCnyB0byI4Zra7TzZc7k3PdWNfXaf'
-#
-#     def __init__(self):
-#         self.client = AipSpeech(BaiDuAI.APP_ID, BaiDuAI.API_KEY, BaiDuAI.SECRET_KEY)
-#         # print(type(self.client))
-#         self.vol = 5
-#         self.person = 3
-#         self.speed = 7
-#
-#     def __str__(self):
-#         return "百度智能"
-#
-#     def setArgs(self, args):
-#         assert args, '默认参数'
-#         self.vol = args[0] if 0 <= args[0] <= 15 else 5
-#         self.person = args[1] if 0 <= args[1] <= 4 else 3
-#         self.speed = args[2] if 0 <= args[2] <= 15 else 7
-#
-#     def talking(self, essay='你好百度'):
-#         try:
-#             print(essay)
-#             # 详细参数可看python sdk 文档
-#             args = {'vol': self.vol,  # 音量，取值0-15，默认为5中音量
-#                     'per': self.person,  # 发音人选择, 0为女声，1为男声，3为情感合成-度逍遥，4为情感合成-度丫丫，默认为普通女
-#                     'spd': self.speed, }  # 语速，取值0-15，默认为5中语速
-#             result = self.client.synthesis(essay, 'zh', 1, args)
-#             print(type(result), result)
-#         except Exception as e:
-#             print(e)
-#
-#         # # 识别正确返回语音二进制 错误则返回dict 参照下面错误码
-#         # if not isinstance(result, dict):
-#         #     with open('audio.mp3', 'wb') as f:
-#         #         f.write(result)
-#         # # 在工程目录下,就可以看到 audio.mp3 这个文件了,来听一听
 
 
 class Talker(threading.Thread):
@@ -326,34 +283,35 @@ class Speaker(object):
 
 
 class SportsPlan(QtWidgets.QFrame):
-    def __init__(self, parent=None, pwd_size=8):
+    def __init__(self, parent=None):
         super(SportsPlan, self).__init__(parent)
 
         # <editor-fold desc="数据声明">
-        self.plans = []  # 锻炼计划
+        self.plans = []  # 锻炼计划,计划名称
         self.cur_plan = -1  # 选中的锻炼计划
-        self.summaries = []  # 每天所有锻炼动作的总体要求
-        self.actions = []  # 每天的锻炼动作
+        self.data_dir = r'E:\dumbbell\运动资源\文案'
+        self.is_carousel = False  # 轮播展示还是单幅图展示
+        self.is_acting = False  # 动作图还是封面图
 
-        self.dir = r'C:\Users\big\Desktop\15图'
+        self.timer = QTimer(self)  # 初始化一个定时器
+        self.timer.timeout.connect(self._update_motion)  # 每次计时到时间时发出信号
+
         # self.talker = Talker()
         # self.ai_speaker = BaiDuAI()
         # self.speaker = win32com.client.Dispatch("SAPI.SpVoice")
-        self.engine = pyttsx3.init()  # 初始化语音库
+        # self.engine = pyttsx3.init()  # 初始化语音库
         # self.schedule = sched.scheduler(time.time, time.sleep)  # scheduler的两个参数用法复杂,可以不做任何更改
         # </editor-fold>
 
         # <editor-fold desc="窗体控件声明">
-
-
         self.toolbar = QtWidgets.QToolBar(self.tr("工具栏"))  # 工具栏
         self.wl_plans = LeftTabWidget(self)
-        self.stage = QtWidgets.QFrame()
-        self.lb_title = QtWidgets.QLabel()  # 每个锻炼计划的标题及意义
-        self.lb_summary = QtWidgets.QLabel()  # 当日提示
-        self.lb_gist = QtWidgets.QLabel()  # 锻炼步骤
-        self.lb_img = QtWidgets.QLabel()  # 锻炼动图
-        self.movie = QtGui.QMovie()  # 锻炼动图
+        self.stage = Curtain(self)
+        # self.lb_resume = QtWidgets.QLabel()  # 每个锻炼计划的标题及意义
+        # self.lb_notice = QtWidgets.QLabel()  # 当日提示
+        # self.lb_gist = QtWidgets.QLabel()  # 锻炼步骤
+        # self.lb_img = QtWidgets.QLabel()  # 锻炼动图
+        # self.movie = QtGui.QMovie()  # 锻炼动图
 
         # # QMediaPlayer
         # self.mediaPlayer = QMediaPlayer(None, QMediaPlayer.VideoSurface)
@@ -369,206 +327,168 @@ class SportsPlan(QtWidgets.QFrame):
         # self.media.prepare_audio("一百万个可能.mp3")
         #
         # self.mediaPlayer.play()
+        # self.canvas = QWidget()
+        # lh = QtWidgets.QHBoxLayout(self.canvas)  # 展示区
+        # lh.addWidget(self.lb_gist)
+        # lh.addStretch()
+        # lh.addWidget(self.lb_img)
+        # lh.addStretch()
+        #
+        # lv = QtWidgets.QVBoxLayout(self.stage)
+        # lv.addWidget(self.lb_resume)
+        # lv.addWidget(self.lb_notice)
+        # lv.addStretch()
+        # lv.addWidget(self.canvas)
+        # lv.addStretch()
 
-        lh = QtWidgets.QHBoxLayout()  # 展示区
-        lh.addWidget(self.lb_gist)
-        lh.addStretch()
-        lh.addWidget(self.lb_img)
-        lh.addStretch()
-
-        lv = QtWidgets.QVBoxLayout(self.stage)
-        lv.addWidget(self.lb_title)
-        lv.addWidget(self.lb_summary)
-        lv.addStretch()
-        lv.addLayout(lh)
-        lv.addStretch()
-
-        lh_main = QtWidgets.QHBoxLayout(spacing=0)
+        lh_bench = QtWidgets.QHBoxLayout()
         # lh_main.setContentsMargins(0, 0, 0,0)
-        lh_main.addWidget(self.wl_plans)
-        lh_main.addWidget(self.stage)
+        lh_bench.addWidget(self.wl_plans)
+        lh_bench.addWidget(self.stage)
 
         main_lv = QtWidgets.QVBoxLayout(self)
         main_lv.addWidget(self.toolbar)
-        main_lv.addLayout(lh_main)
+        main_lv.addLayout(lh_bench)
         main_lv.setContentsMargins(0, 0, 0, 0)
         # </editor-fold>
 
         self.data_stores()
-        self.initialize()
+        self.init_ui()
 
     def data_stores(self):
-        # 计划名称，简介，周期，间隔天数
-        self.plans = [
-            ('一副哑铃练全身', '    大部分的初学者都会选择哑铃来锻炼身体，这套计划用15个哑铃动作锻炼全身各个部位。'
-                        '适合体格不太健壮的初级达人。30天一个周期，不间歇。', 30, 0),
-            ('30天新手全身训练计划', '    真男人，练就男性完美身材。肌肉是支撑人体结构的重要组织，'
-                            '全身肌肉共有600余块，约占体重的40％。力量训练可以提升体内肌肉生长激素的含量。'
-                            '这几个动作可以全面的练到身体各个部位！包括胸，背，肩，肱二，肱三，腿！', 30, 0),
-            ('一周哑铃训练计划', '要好身材不是说少吃点，多动点就能做到的.而想要玲珑好身材，就一定人有力量训练。'
-                         '一周哑铃训练计划，每周4次，每次4个动作，在家打造完美身材，效果丝毫不逊健身房。', 7, 1),
-            ('居家哑铃高效训练计划', '', 0, 0)]
-        # 日日念念
-        self.summaries = [
-            ('每个动作为一组，每组1-2分钟，组间休息30s，记得练习!', ['0.jpg', '1.png']),
-            ('每个动作10-15次，循环2-3组。训练过程每个动作尽量慢一点，动作都做到位，体会每个肌群的发力。', ['1.png', '0.jpg']),
-            ('每周4次，每次4个动作，在家打造完美身材。', ['0.jpg', '1.png']),
-            ('每周只需要练4次，每次只需要4个动作，每个动作8-12次，每次做3-5组，', ['0.jpg', '1.png'])]
+        # plans = ['8个最好用的哑铃训练动作',
+        #     "一副哑铃练全身"]
+        # MyJson.write(plans, os.path.join(self.data_dir, 'plan.json'))
+        files = Utils.files_in_dir(self.data_dir, ['.json'], True)
+        file = files[0]
 
-        # 组数，次数，休息时间，动作(名称、要领、动图示范)
-        self.actions = [[3, 5, 10, [['动作1、哑铃弯举+肩推', '训练肱二、三头肌、三角肌前束、中束；', '1_1.gif'],
-                                    ['动作2、哑铃弯举+深蹲', '训练臀腿+肱二头肌，促睾就练腿。', '1_2.gif'],
-                                    ['动作3、哑铃划船', '训练肩背部、手臂肌群', '1_3.gif'],
-                                    ['动作4、负重行走', '别小看这个动作，这是提高体能的最原始方法之一。', '1_4.gif'],
-                                    ['动作5、深蹲推举', '训练臀腿、手臂肌肉，几乎可以锻炼到全身70%肌肉，很有难度的动作。', '1_5.gif'],
-                                    ['动作6、哑铃摇摆', '训练身体后侧中断肌肉、心肺功能。男的建议10-15kg，女的6-8kg。', '1_6.gif'],
-                                    ['动作7、哑铃卧推', '训练胸大肌、二三头肌', '1_7.gif'],
-                                    ['动作8、仰卧上拉', '训练背阔肌、胸大肌、三角肌后束、核心肌肉群', '1_8.gif'],
-                                    ['动作9、仰卧负重卷腹', '训练腰腹核心肌群。', '1_9.gif']]],
-                        []]
+        self.plans.clear()
+        self.plans.extend(MyJson.read(file))
+        # print(file, self.plans)
 
-        # dumbbell = None
+    def init_ui(self):
+        # self.setWindowFlags(QtCore.Qt.WindowCloseButtonHint |
+        #                     QtCore.Qt.MSWindowsFixedSizeDialogHint)
+        self.resize(1200, 1000)
+        Utils.center_win(self)
 
-    def initialize(self):
-        self.setWindowFlags(QtCore.Qt.WindowCloseButtonHint | QtCore.Qt.MSWindowsFixedSizeDialogHint)
-        self.resize(1200, 800)
-
-        font = QtGui.QFont('Times New Roman', 14)
+        font = QtGui.QFont('微软雅黑', 14)
         self.setFont(font)
 
-        # 工具栏
+        # <editor-fold desc="工具栏">
         # action = QtWidgets.QAction(QtGui.QIcon('./res/images/1.png'), '启动计划', self)
         # action.setShortcut('Ctrl+Q')
         # action.triggered['QAction*'].connect(self.slot_actions_triggered)
-        action0 = QtWidgets.QAction('热身', self)
+        action0 = QtWidgets.QAction('热身运动', self)
         action0.setToolTip('运动前要做好动态拉伸')
         action1 = QtWidgets.QAction('开始', self)
-        action2 = QtWidgets.QAction('暂停', self)
-        action3 = QtWidgets.QAction('继续', self)
-        action4 = QtWidgets.QAction('终止', self)
-        action9 = QtWidgets.QAction('放松', self)
+        action1.setToolTip('动作图与封面图的切换')
+        action2 = QtWidgets.QAction('前图', self)
+        action2.setToolTip('人工模式下前一个动作图')
+        action3 = QtWidgets.QAction('后图', self)
+        action3.setToolTip('人工模式下后一个动作图')
+        action4 = QtWidgets.QAction('轮播', self)
+        action4.setToolTip('自动轮播图模式与人工单幅图模式的切换')
+        action5 = QtWidgets.QAction('终止', self)
+        action9 = QtWidgets.QAction('放松运动', self)
         action9.setToolTip('运动后要做好静态拉伸')
 
         self.toolbar.setIconSize(QtCore.QSize(16, 16))
         self.toolbar.addAction(action0)
         self.toolbar.addSeparator()
-        self.toolbar.addActions([action1, action2, action3, action4])
+        self.toolbar.addActions([action1, action2, action3])
+        self.toolbar.addSeparator()
+        self.toolbar.addActions([action4, action5])
         self.toolbar.addSeparator()
         self.toolbar.addAction(action9)
-
-        self.wl_plans.setFixedWidth(200)
-        data = np.array(self.plans)
-        self.wl_plans.set_date(data[:, 0])
-
-        # self.stage.setFixedWidth(self.width)
-        self.stage.setFrameStyle(2)
-
-        self.lb_title.setMinimumHeight(40)
-        # self.lb_summary.setFixedWidth(self.width)
-        # self.lb_gist.setFixedWidth(self.width // 2)
-        self.lb_title.setWordWrap(True)
-        self.lb_title.setFrameStyle(QtWidgets.QFrame.Panel | QtWidgets.QFrame.Sunken)
-        self.lb_title.setStyleSheet(
-            "QLabel{background:white;color:rgba(255,0,0,255);}"
-            "QLabel{font-size:24px;font-weight:bold;font-family:Roman times;}"
-            "QLabel:hover{color:blue;}")
-        self.lb_summary.setAlignment(QtCore.Qt.AlignCenter)
-        self.lb_summary.setWordWrap(True)
-        self.lb_summary.setStyleSheet(
-            "QLabel{background:white;color:blue;}"
-            "QLabel{font-size:24px;font-weight:bold;font-family:Roman times;}"
-            "QLabel:hover{color:skyblue;}")
-
-        self.lb_gist.setWordWrap(True)
-
-        self.lb_img.setAlignment(QtCore.Qt.AlignCenter)
-        # self.lb_img.setStyleSheet("border: 2px solid blue")
-        # self.lb_img.setScaledContents(True)
-        self.lb_img.setMovie(self.movie)
-        # 设置GIF位置以及大小---和label一致
-        self.movie.setScaledSize(self.lb_img.size())
-        # speed = self.movie.speed()
-        # print(speed)
-        # self.movie.setSpeed(100)
-
         self.toolbar.actionTriggered.connect(self.slot_actions_triggered)
-        # self.bt_begin.pressed.connect(self.slot_begin_clicked)
+        self.toolbar.setStyleSheet('background:skyblue')
+        # </editor-fold>
 
-        # self.engine = pyttsx3.init()  # 初始化语音库
-        self.engine.setProperty('rate', self.engine.getProperty('rate') - 50)  # 设置语速
-        self.engine.setProperty('volume', self.engine.getProperty('volume') + 5)  # 设置音量
+        self.wl_plans.setFixedWidth(300)
+        self.wl_plans.set_date(self.plans)
 
-        voices = self.engine.getProperty('voices')  # 选择语音
-        # for voice in voices:
-        #     print(voice.id, voice.languages)
-        self.engine.setProperty("voice", voices[0].id)
+        # <editor-fold desc="右侧工作区">
+        # self.stage.setFixedWidth(self.width)
+        # self.stage.setFrameStyle(2)
+        # self.lb_resume.setMinimumHeight(40)
+        # # self.lb_summary.setFixedWidth(self.width)
+        # # self.lb_gist.setFixedWidth(self.width // 2)
+        # self.lb_resume.setWordWrap(True)
+        # self.lb_resume.setFrameStyle(QtWidgets.QFrame.Panel | QtWidgets.QFrame.Sunken)
+        # self.lb_resume.setStyleSheet(
+        #     "background:skyblue;color:rgba(255,0,0,255);"
+        #     "font-size:24px;font-weight:bold;font-family:Roman times;")
+        # self.lb_notice.setAlignment(QtCore.Qt.AlignCenter)
+        # self.lb_notice.setWordWrap(True)
+        # self.lb_notice.setStyleSheet(
+        #     "background:white;color:blue;"
+        #     "font-size:24px;font-weight:bold;font-family:Roman times;")
+        #
+        # # self.canvas
+        # self.canvas.setMinimumHeight(500)
+        #
+        # self.lb_gist.setWordWrap(True)
+        # # self.lb_gist.setMaximumWidth(200)
+        #
+        # self.lb_img.setFixedSize(800, 800)
+        # # self.lb_img.setStyleSheet("background:blue;")
+        # self.lb_img.setAlignment(QtCore.Qt.AlignCenter)
+        #
+        # # self.lb_img.setStyleSheet("border: 2px solid gray")
+        # # self.lb_img.setScaledContents(True)
+        # # self.lb_img.setMovie(self.movie)
+        # # 设置GIF位置以及大小---和label一致
+        # self.movie.setScaledSize(self.lb_img.size())
+        # # speed = self.movie.speed()
+        # # print(speed)
+        # # self.movie.setSpeed(100)
+        # # </editor-fold>
+        #
+        # self.engine.setProperty('rate', self.engine.getProperty('rate') - 50)  # 设置语速
+        # self.engine.setProperty('volume', self.engine.getProperty('volume') + 5)  # 设置音量
+        #
+        # voices = self.engine.getProperty('voices')  # 选择语音
+        # # for voice in voices:
+        # #     print(voice.id, voice.languages)
+        # self.engine.setProperty("voice", voices[0].id)
 
-    # def update_UI(self):
-    #     summary = self.summaries[self.cur_plan]
-    #     self.lb_summary.setText(summary)
-    #
-    #     self.lb_gist.setVisible(True)
-    #
-    #     """
-    #     第一个参数是一个整数或浮点数，代表多少秒后执行这个action任务
-    #     第二个参数priority是优先级，0 代表优先级最高，1 次之，2 次次之，当两个任务是预定在同一个时刻执行时，根据优先级决定谁先执行。
-    #     第三个参数就是你要执行的任务，可以简单理解成你要执行任务的函数的函数名
-    #     第四个参数是你要传入这个定时执行函数名函数的参数，最好用括号包起来，
-    #     如果只传入一个 参数的时候用括号包起来，该参数后面一定要加一个逗号，如果不打逗号，会出现错误。
-    #     """
-    #     for i in range(2):
-    #         dalay = 3
-    #         self.schedule.enter(i * dalay, 0, self._motioning, (i,))
-
-    # 播放语音
-    def _talking(self, msg_list):
-        print(msg_list)
-        # self.speaker.Speak(msg_list)
-        # for each in msg_list:
-        #     # print('dd', type(each), each)
-        #     self.speaker.Speak(each)  # speak() pause()暂停 resume() 继续
-
-        for each in msg_list:
-            self.engine.say(each)  # 读的内容
-            # time.sleep(2)
-        self.engine.runAndWait()
-
-        # self.engine.endLoop()  # 朗读一次
-        self.engine.stop()
-
-    # 界面更新
+    # 动作流程
     def _update_motion(self):
-        act_id = 0
-        tip = '\n\t'.join(self.actions[self.cur_plan][3][act_id][:2])
-        self.lb_gist.setText(tip)
-        self.lb_gist.setVisible(True)
+        print('当前有线程数量：%d' % threading.activeCount())  # 用来显示当前活跃的进程数
+        count = len(self.action)
+        if self.cur_act >= count:
+            self.timer.stop()
+            return
 
-        path = os.path.join(self.dir, self.actions[self.cur_plan][3][act_id][2])
-        self.movie.setFileName(path)
-        # self.movie.setSpeed(self.movie.speed() -100)
+        self.lb_gist.setVisible(True)
+        self.lb_gist.setText('\n       '.join(self.actions[self.cur_act][:-1]))
+
+        path = os.path.join(self.data_dir, self.plans[self.cur_plan])
+        gif = path + '/%s' % self.actions[self.cur_act][-1]
+        # print(gif)
+        self.movie.stop()
+        self.movie.setFileName(gif)
+        # # self.movie.setSpeed(self.movie.speed() -100)
         self.lb_img.setMovie(self.movie)
         self.movie.start()
 
-        # print(path, tip, self.movie.speed())
-
-    # 动作更新
-    def _update_face(self, msg):
-        print(msg)
-        # 当前计划的介绍
-        self.lb_title.setText(self.plans[self.cur_plan][1])
-        self.lb_summary.setText(self.summaries[self.cur_plan][0])
-
-        self.lb_gist.setVisible(False)
-
-        file = os.path.join(self.dir, self.summaries[self.cur_plan][1][0])
-        self.lb_img.setPixmap(QtGui.QPixmap(file))
+        # self.engine.stop()
+        # threading.Timer(0, self._talking, ("动作播报",)).start()
+        self.cur_act += 1
 
     def slot_actions_triggered(self, action):
+        # self.engine.stop()
         order = action.text()
-        # print(type(action), order)
-        if order == '热身':
-            path = os.path.join(self.dir, '运动前动态拉伸动作.mp4')
-            print('动态拉伸', path)
+        # print(order)
+
+        if self.cur_plan < 0:
+            AnimWin('未选择哑铃运动方案')
+            return
+
+        if order == '热身运动':
+            path = os.path.join(r'E:\家庭哑铃计划', '运动前动态拉伸动作.mp4')
+            # print('动态拉伸', path)
             os.startfile(path)  # 利用系统调用默认程序打开本地文件
 
             # cap = cv2.VideoCapture(path)
@@ -586,58 +506,62 @@ class SportsPlan(QtWidgets.QFrame):
             # cap.release()
             # cv2.destroyAllWindows()
             return
+        elif order == '放松运动':
+            pass
+        elif order == '开始':
+            self.is_acting = bool(1 - self.is_acting)  # 取反
+            self.stage.start(self.is_acting)
+        elif order == '前图':
+            self.stage.prev()
+        elif order == '后图':
+            self.stage.next()
+        elif order == '轮播':
+            self.is_carousel = bool(1-self.is_carousel)  # 取反
+            self.stage.carousel(self.is_carousel)
+        elif order == '终止':
+            pass
 
-        # if True:
-        #     self.movie.stop()
-
-        # if self.cur_plan == 0:
-        #     path = os.path.join(self.dir, '0.jpg')
-        #     print(path)
-        #     self.lb_img.setPixmap(QtGui.QPixmap(path))
-        # else:
-        #     path = os.path.join(self.dir, f'{self.cur_plan}.gif')
-        #     print(path, self.cur_plan)
-        #     self.movie.setFileName(path)
-        #     # self.movie.setSpeed(self.movie.speed() -100)
-        #     self.lb_img.setMovie(self.movie)
-        #     self.movie.start()
-        # self.cur_plan += 1
-        # return
-
-        if self.cur_plan < 0:
-            AnimWin('请选择运动计划')
-            return
-
-        if order == '开始':
-            self._update_motion()
-
-    def slot_plan_selected(self, index):
-        self.lb_gist.setVisible(False)
-        self.cur_plan = index  # self.wl_plans.currentRow()
+    def slot_plan_selected(self, row):
+        # self.engine.stop()
+        # self.timer.stop()
+        self.cur_plan = row  # self.wl_plans.currentRow()
         # print(self.cur_plan)
 
-        # 第一个参数是一个整数或浮点数，代表多少秒后执行这个action任务
-        # 第二个参数priority是优先级，0 代表优先级最高，1 次之，2 次次之，
-        # 当两个任务是预定在同一个时刻执行时，根据优先级决定谁先执行。
-        # 第三个参数就是你要执行的任务，可以简单理解成你要执行任务的函数的函数名
-        # 第四个参数是你要传入这个定时执行函数名函数的参数，最好用括号包起来，
-        # 如果只传入一个 参数的时候用括号包起来，该参数后面一定要加一个逗号，如果不打逗号，会出现错误。
-        # 设置两个定时任务的调度
-        # self.schedule.enter(0, 0, self._update_face, ("界面更新",))
-        # self.schedule.enter(1, 2, self._talking, (msg_list,))  # 被调用触发的函数的参数tuple，只有一个参数就(xx,)
-        # self.schedule.run()  # 运行。注意sched模块不是循环的，一次调度被执行后就Over了，如果想再执行，请再次enter
-        # while True:
-        #     time.sleep(100)
+        plan = self.plans[self.cur_plan]
+        path = os.path.join(self.data_dir, plan)
+        # print(plan)
+        self.stage.clear()
+        self.stage.set_title(plan)
+        self.stage.data_serialize(path)
+        self.stage.flush()
 
-        if self.engine.isBusy():
-            # self.engine.endLoop()
-            self.engine.stop()
+    # 播放语音
+    def _talking(self, msg):
+        # print(msg)
+        # self.speaker.Speak(msg_list)
+        # for each in msg_list:
+        #     # print('dd', type(each), each)
+        #     self.speaker.Speak(each)  # speak() pause()暂停 resume() 继续
+        if msg == '简介播报':
+            self.engine.say(self.resume)  # 读的内容
+        else:
+            self.engine.say(self.notice[0])
+            self.engine.say('\n       '.join(self.actions[self.cur_act][:-1]))
 
-        msg_list = self.plans[self.cur_plan][:2]
+        self.engine.runAndWait()
+        # self.engine.endLoop()  # 朗读一次
+        self.engine.stop()
 
-        # 多线程执行定时任务
-        Timer(0, self._update_face, ("界面更新",)).start()
-        # Timer(1, self._talking, (msg_list,)).start()
+    def _play_music(self):
+        print('play')
+        # url = QtCore.QUrl.fromLocalFile(self.data_dir)
+        # content = QtMultimedia.QMediaContent(url)
+        # player = QtMultimedia.QMediaPlayer()
+        # player.setMedia(content)
+        # player.setVolume(29)
+        # player.play()
+        file = self.data_dir + '/%s' % "史诗般的勇气_没有唱诗班.mp3"
+        print(file)
 
 
 def main():

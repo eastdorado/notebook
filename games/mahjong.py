@@ -1209,38 +1209,8 @@ class MainWindow(QtWidgets.QWidget):
         self.resize(1200, height - height_title)
         # self.setGeometry(10, 0, 1200, height-title_height)
 
-        self.center()
-
-    def center(self):
-        # desktop.width() 多屏幕的累加宽度   desktop.screenGeometry() 单个屏幕的整个屏幕
-        # desktop.availableGeometry() 单屏幕的可用区域
-        # self.frameGeometry() 包括标题栏和边框的高度,但是要在显示之后调用才有效
-        # self.geometry() 不包括标题栏和边框的高度
-        # move(int x,int y) 包括标题栏的高度和边框的宽度
-        # setGeometry() resize() 不包括题栏的高度和边框
-
-        # self.move(self.width() * (-2), 0)  # 先将窗口放到屏幕外，可避免移动窗口时的闪烁现象。
-        # self.show()
-        desktop = QtWidgets.QApplication.desktop()
-
-        x = (desktop.availableGeometry().width() - self.frameSize().width()) // 2 + 1600
-        y = (desktop.availableGeometry().height() - self.frameSize().height()) // 2
-        self.move(x, y)
-
-        # print(x, y, self.x(), self.y(), self.frameGeometry(), self.frameSize())
-        # print(desktop.width(), desktop.height(), desktop.screenGeometry(), desktop.availableGeometry())
-
-        # qr = self.frameGeometry()
-        # # print(type(qr), qr)
-        # cp = QtWidgets.QDesktopWidget().availableGeometry().center() + QtCore.QPoint(1600, 0)
-        # qr.moveCenter(cp)
-        # self.move(qr.topLeft())
-
-        # screen = QtWidgets.QDesktopWidget().screenGeometry()
-        # size = self.geometry()
-        # print(size.height())
-        # self.move((screen.width() - size.width()) / 2,
-        #           (screen.height() - size.height()) / 2)
+        # self.center()
+        Utils.center(self)
 
     # def resizeEvent(self, event):
     #     palette = QtGui.QPalette()

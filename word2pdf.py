@@ -113,23 +113,26 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
 
     @staticmethod
     def fun_process(file_src_name, dir_src, dir_dst):
+        # print(dir_dst)
         # print('son_process')
         # print(file_src_name)
         file_dst_name = None
-        try:
-            file_src = os.path.join(dir_src, file_src_name)  # 构造完整路径
-            portion = os.path.splitext(file_src_name)  # 分离文件名与扩展名
-            # 如果文件是 word文档
-            if portion[1] == '.doc' or portion[1] == '.docx':
-                # 重新组合文件名和后缀名
-                file_dst_name = portion[0] + '.pdf'
-                file_dst = os.path.join(dir_dst, file_dst_name)  # 构造完整路径
-                if Utils.word2Pdf(file_src, file_dst) != 0:
-                    file_dst_name = None
-        except Exception as e:
-            print(e)
-        finally:
-            return file_dst_name
+
+        # file_src = os.path.join(dir_src, file_src_name)  # 构造完整路径
+        file_src = '%s/%s'%(dir_src, file_src_name)
+        portion = os.path.splitext(file_src_name)  # 分离文件名与扩展名
+
+        # 如果文件是 word文档
+        if portion[1] == '.doc' or portion[1] == '.docx':
+            # 重新组合文件名和后缀名
+            file_dst_name = portion[0] + '.pdf'
+            # file_dst = os.path.join(dir_dst, file_dst_name)  # 构造完整路径
+            file_dst = '%s/%s'%(dir_dst, file_dst_name)
+            print(file_src, file_dst)
+            if Utils.word2Pdf(file_src, file_dst) != 0:
+                file_dst_name = None
+        print(file_dst_name)
+        return file_dst_name
 
     def flushDir(self):
         dir_path = self.data_path['dir_src']
@@ -275,7 +278,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
             #     item.setTextColor(QtGui.QColor('blue'))
             # else:
             #     item.setForeground(QtGui.QColor('black'))
-                # item.setBackgroundColor(QtGui.QColor('white'))
+            # item.setBackgroundColor(QtGui.QColor('white'))
 
     def closeEvent(self, event):
         # 清理一些 自己需要关闭的东西
@@ -297,11 +300,16 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
 
 
 if __name__ == '__main__':
-    app = QtWidgets.QApplication(sys.argv)
-    win = MainWindow()
-    win.show()
-    sys.exit(app.exec_())
-
+    # app = QtWidgets.QApplication(sys.argv)
+    # # win = MainWindow()
+    # win.show()
+    # sys.exit(app.exec_())
+    ll = Utils.getFiles(r'C:\Users\big\Desktop\弘光2020年暑期数学作业', ['.docx'])
+    print(len(ll), ll)
+    for i in range(len(ll)):
+        file = ll[i]
+        filep, dd = os.path.splitext(file)
+        Utils.word2Pdf(file, f'{filep}.pdf')
     # Utils.word2Pdf(r'D:/下载/数理化讲义/第3讲第二章普通物理（一）.doc',
     #                r'E:\考证\岩土\新建文件夹\第3讲第二章普通物理（一）.pdf')
     # ll = [r'D:\下载\数理化讲义\第1讲高等数学考前宣讲.doc',
