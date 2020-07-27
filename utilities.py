@@ -181,13 +181,13 @@ class ImageConvert(object):
     # PIL格式转 QPixmap 格式
     @staticmethod
     def get_QPixmap_Image(img: Image):
-        print("PIL格式转 QPixmap 格式")
+        # print("PIL格式转 QPixmap 格式")
         return ImageQt.toqpixmap(img)
 
     # QPixmap格式转PIL格式
     @staticmethod
     def get_Image_QPixmap(img: QtGui.QPixmap):
-        print("QPixmap格式转PIL格式")
+        # print("QPixmap格式转PIL格式")
         return ImageQt.fromqpixmap(img)
 
     def __init__(self):
@@ -202,6 +202,53 @@ class ImageConvert(object):
 class Utils(object):
     def __init__(self):
         pass
+
+    # 显示图片中心或显示全部
+    @staticmethod
+    def img_center(w_win, h_win, img_file, save_file=None, flag=1):
+        """
+        以图片中心充满窗口
+        :param w_win:
+        :param h_win:
+        :param img_file:
+        :param save_file: 可以保存到文件中
+        :param flag: 0-图片全部显示，有空白；1-图片中心尽量全部显示，无空白
+        :return: 文件或 pix， 也可以换其他格式
+        """
+        img = Image.open(img_file)
+
+        h_img = img.size[1]  # 图片高度
+        w_img = img.size[0]  # 图片宽度
+
+        ratio_w = w_img / w_win
+        ratio_h = h_img / h_win
+
+        # 开始截取
+        region = None
+        new_img = None
+        if ratio_w < ratio_h:
+            if flag == 0:
+                img.thumbnail((w_win, h_win))  # 只能缩小自身,且按大值作为长宽统一比例
+                new_img = img  # .resize((int(w_img / ratio_h), h_win), Image.BILINEAR)  # 默认缩放NEARESET
+            elif flag == 1:
+                region = img.resize((w_win, int(h_img / ratio_w)), Image.NEAREST)
+                new_img = region.crop([
+                    0, (region.size[1] - h_win) // 2,  # 左上角
+                    w_win, (region.size[1] - h_win) // 2 + h_win])  # 右下角
+        else:
+            if flag == 0:
+                img.thumbnail((w_win, h_win))  # 只能缩小自身,且按大值作为长宽统一比例
+                new_img = img  # .resize((w_win, int(h_img / ratio_w)))  # 缩放
+            elif flag == 1:
+                region = img.resize((int(w_img / ratio_h), h_win))
+                new_img = region.crop([
+                    (region.size[0] - w_win) // 2, 0,  # 左上角
+                    (region.size[0] - w_win) // 2 + w_win, 0 + h_win])  # 右下角
+
+        if save_file:
+            new_img.save("test.jpg")  # 保存图片
+        else:
+            return ImageConvert.get_QPixmap_Image(new_img)
 
     # 为窗体、控件设置背景图片，可伸缩
     @staticmethod
@@ -226,15 +273,14 @@ class Utils(object):
         """
         label.resize(win.width(), win.height())
         if flag_show == 0:
-                label.setScaledContents(True)
-                label.setPixmap(QtGui.QPixmap(img_file))
+            label.setScaledContents(True)
+            label.setPixmap(QtGui.QPixmap(img_file))
         elif flag_show == 1:
-                pass
+            Utils.img_center(label.width(), label.height(),
+                             img_file, None, 1)
         elif flag_show == 2:
-                pass
-                # MainWin.show_center_img(win, label, img_file)
-                # label.setPixmap(MainWin.get_center_image(win.width(), win.height()), img_file)
-            # label.setStyleSheet('background-color: rgba(0,0,0,155);/**/')
+            Utils.img_center(label.width(), label.height(),
+                             img_file, None, 0)
 
     # 给窗体产生特效
     @staticmethod
