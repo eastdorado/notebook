@@ -11,22 +11,29 @@ import os
 import sys
 import re
 import psutil
-from PIL import Image, ImageStat, ImageEnhance, ImageQt
+
+import ctypes
+from ctypes.wintypes import HWND, DWORD
+
 import win32api
 import win32com
 import win32con
 import win32gui
 
-from win32com.client import constants, gencache, Dispatch
+from win32com.client import constants, gencache, Dispatch, DispatchEx
+from PyPDF4 import PdfFileReader, PdfFileWriter
+
 import docx
 import json
 import random
 import string
 import time
 import uuid
-from PIL import Image
+
+from PIL import Image, ImageStat, ImageEnhance, ImageQt, ImageFilter
 from PyQt5 import QtCore, QtGui, QtWidgets
 import functools
+
 import cgitb  # 相当管用
 
 cgitb.enable(format='text')  # 解决 pyqt5 异常只要进入事件循环,程序就崩溃,而没有任何提示
@@ -123,8 +130,8 @@ class MyJson(object):
         with open(file, 'r', errors='ignore')as f:
             data = json.load(f)  # data是字典等原型
             # data = f.read()  # data是字符串
+            # print(type(data), data, 'dg')
             # self.data = pickle.load(f)
-            # print(type(data), data)
             # self.data = json.loads(data)  # 把字符串变成字典等原型
             # print(type(self.data), self.data)
             return data
@@ -199,13 +206,249 @@ class ImageConvert(object):
     __repr__ = __str__
 
 
+class CustomBG(QtWidgets.QLabel):
+    """
+        label作为底图，应该是父窗体win中的第一个控件，否则覆盖前面控件，
+        label跟窗口一样大小，且不加入窗口布局。
+        在父窗口的 resize event 里调用 update
+
+        :param img_file: 底图文件
+        :param flag_show:
+            0-默认方式，图片适应窗口，任意伸缩
+            1-图片按比例显示全宽或全高，无空白，且显示图片中心
+            2-图片按比例全部显示在窗口里，会留空白
+            （后面的必须放在主窗体开始调用，窗口应固定大小 不能改变)
+            2-保持窗口宽度不变，根据图片调整窗口高度，保证图片全景显示
+            3-保持窗口高度不变，根据图片调整窗口宽度，保证图片全景显示
+            4-根据图片宽高按比例调整窗体宽高，保证图片全景显示，需系数
+        :param scale: 系数
+    """
+
+    def __init__(self, parent, img_file, radius=20, margin=0, flag_show=1):
+        super(CustomBG, self).__init__(parent)
+        self.parent = parent
+        self.img_file = img_file
+        self.flag_show = flag_show  # 图片显示方式
+        self.radius = radius  # 圆角半径
+        self.margin = margin  # 边框距离
+        self.pix = None
+
+        self.setMouseTracking(True)
+        # self.setAttribute(QtCore.Qt.WA_TransparentForMouseEvents, True)  # 设置鼠标穿透
+        # Utils.set_effect(self, 0, 10, QtWidgets.QGraphicsBlurEffect.QualityHint)
+        # Utils.set_effect(self, 2, 0.9)
+        # Utils.set_effect(self, 3, QtGui.QColor(0, 229, 0, 100), 5.0)
+        Utils.set_effect(self, 1, 20, 5, 5, QtGui.QColor(0, 0, 0, 200))
+
+        # self.setStyleSheet('border-radius:15px;     /*画出圆角*/'
+        #                    '/* background-color: skyblue;  */'
+        #                    'background-image:url(./res/background/bk5.jpg);  /* */')
+        # self.setAlignment(Qt.AlignCenter)
+
+    def update(self, is_max=False):
+        # self.setGeometry(0, 0, self.parent.width() - 2 * self.margin, self.parent.height() - 2 * self.margin)
+        if is_max:  # 窗口最大化了
+            self.resize(self.parent.width(), self.parent.height())
+        else:
+            self.resize(self.parent.width() - self.margin, self.parent.height() - self.margin)
+
+        if self.flag_show == 0:
+            self.setScaledContents(True)
+            self.pix = QtGui.QPixmap(self.img_file)
+        elif self.flag_show == 1:
+            self.pix = Utils.img_center(self.width(), self.height(), self.img_file, None, 1)
+        elif self.flag_show == 2:
+            self.pix = Utils.img_center(self.width(), self.height(), self.img_file, None, 0)
+
+        super(CustomBG, self).update()
+
+    def paintEvent(self, event):
+        # # 主窗体无边框时是加载不了样式的，仅在子控件上实现样式。
+        # # 要在主窗体本身实现样式，需要在paintEvent事件中加上如下代码，设置底图也是一样的
+        # opt = QStyleOption()
+        # opt.initFrom(self)
+        # p = QPainter(self)
+        # p.setRenderHint(QPainter.Antialiasing)  # 反锯齿
+        # self.style().drawPrimitive(QStyle.PE_Widget, opt, p, self)
+        # # super(Canvas, self).paintEvent(event)
+
+        # 不通过样式，直接设置圆角，通用，且不继承于子控件
+        painter = QtGui.QPainter(self)
+        painter.setRenderHint(QtGui.QPainter.Antialiasing)  # 反锯齿
+
+        # 显示全图充满
+        if self.pix:
+            painter.setBrush(QtGui.QBrush(self.pix))  # 设置底图的方式之一
+        # painter.setBrush(QBrush(Qt.blue))
+        painter.setPen(QtCore.Qt.transparent)
+
+        rect = self.rect()
+        rect.setWidth(rect.width() - 1)
+        rect.setHeight(rect.height() - 1)
+        painter.drawRoundedRect(rect, self.radius, self.radius)
+
+        # 也可用QPainterPath 绘制代替 painter.drawRoundedRect(rect, 15, 15)
+        # painterPath= QPainterPath()
+        # painterPath.addRoundedRect(rect, 15, 15)
+        # painter.drawPath(painterPath)
+
+        # 直接设置底图，与圆角的画刷设置不能同时
+        # pix = QPixmap('./res/images/background11.jpg')
+        # painter.drawPixmap(self.rect(), pix)
+
+        super(CustomBG, self).paintEvent(event)
+
+    def __str__(self):
+        return '可以作为窗体的背景，可以设置图片、底色、圆角、模糊化等特效'
+
+    __repr__ = __str__
+
+
+class FileButler(object):
+    def __init__(self, *args, **kwargs):
+        super(FileButler, self).__init__(*args, **kwargs)
+
+    def __str__(self):
+        return '文件大管家'
+
+    __repr__ = __str__
+
+    # 合并同一目录下的所有PDF文件
+    @staticmethod
+    def merge_pdf(pdf_dir, outfile):
+        if not pdf_dir:
+            return
+
+        output = PdfFileWriter()
+        outputPages = 0
+        pdf_files = Utils.files_in_dir(pdf_dir, ['.pdf'], True)
+
+        if pdf_files:
+            Utils.sort_nicely(pdf_files)
+
+            for each in pdf_files:
+                print("路径：%s" % each)
+
+                # 读取源PDF文件
+                input = PdfFileReader(open(each, "rb"))
+
+                # 获得源PDF文件中页面总数
+                pageCount = input.getNumPages()
+                outputPages += pageCount
+                print("页数：%d" % pageCount)
+
+                # 分别将page添加到输出output中
+                for iPage in range(pageCount):
+                    output.addPage(input.getPage(iPage))
+
+            print("合并后的总页数:%d." % outputPages)
+            # 写入到目标PDF文件
+            outputStream = open('/'.join([pdf_dir, outfile]), "wb")
+            output.write(outputStream)
+            outputStream.close()
+            print("PDF文件合并完成！")
+
+        else:
+            print("没有可以合并的PDF文件！")
+
+    # word 转 pdf
+    @staticmethod
+    def word2pdf(word_path, pdf_path):
+        """
+        word转pdf
+        :param word_path: word文件路径
+        :param pdf_path:  生成pdf文件路径
+        """
+        # w = Dispatch("Word.Application")
+        # try:
+        #     # w.Visible = Debug
+        #     doc = w.Documents.Open(input, ReadOnly=1)
+        #     doc.ExportAsFixedFormat(pdfPath, constants.wdExportFormatPDF,
+        #                             Item=constants.wdExportDocumentWithMarkup,
+        #                             CreateBookmarks=constants.wdExportCreateHeadingBookmarks)
+        #     return 0
+        # except:
+        #     return 1
+        # finally:
+        #     w.Quit(constants.wdDoNotSaveChanges)
+
+        # 打开word软件
+
+        # 必须把路径中的 / 换成\\，否则容易出错
+        word_path = word_path.replace('/', '\\')
+        pdf_path = pdf_path.replace('/', '\\')
+        name, ext = os.path.splitext(word_path)
+
+        if ext == '.doc':
+            name = f'{word_path}x'
+            # print(word_path, '\n', name)
+
+            FileButler.doc_docx(word_path, name)
+            word_path = name
+
+        word = gencache.EnsureDispatch('Word.Application')
+        # 非可视化运行
+        word.Visible = False
+        doc = word.Documents.Open(word_path, ReadOnly=1)
+
+        doc.ExportAsFixedFormat(pdf_path,
+                                constants.wdExportFormatPDF,
+                                Item=constants.wdExportDocumentWithMarkup,
+                                CreateBookmarks=constants.wdExportCreateHeadingBookmarks)
+        doc.Close()
+        word.Quit(constants.wdDoNotSaveChanges)
+
+    @staticmethod
+    def doc2docx(src_doc, dst_docx):
+        # print(src_doc)  # 路径要用\\,不要用/
+        word = Dispatch('Word.Application')
+        doc = word.Documents.Open(src_doc, ReadOnly=1)  # 目标路径下的文件
+        doc.SaveAs(dst_docx, 12, False, "", True, "", False, False, False, False)  # 转化后路径下的文件
+        doc.Close()
+        word.Quit()
+
+    @staticmethod
+    def doc_docx(src_doc, dst_docx):
+        # w = client.Dispatch('Word.Application')
+        # 或者使用下面的方法，使用启动独立的进程：
+        w = DispatchEx('Word.Application')
+        doc = w.Documents.Open(src_doc)
+        doc.SaveAs(dst_docx, 16)  # 必须有参数16，否则会出错. #参数16，表示将doc转成docx
+        doc.Close()
+        w.Quit()
+
+
 class Utils(object):
     def __init__(self):
         pass
 
+    @staticmethod
+    def call_dll(win):
+        # 调用 api
+        hWnd = HWND(int(win.winId()))  # 直接HWND(self.winId())会报错
+        gradientColor = DWORD(0x50F2F2F2)  # 设置和亚克力效果相叠加的背景颜色
+
+        dll_file = r'E:/Neworld/res/dll/acrylic.dll'
+        # ctypes.cdll.LoadLibrary(dll_file)
+
+        dll = ctypes.cdll.LoadLibrary(dll_file)
+        # dll = ctypes.windll.LoadLibrary(dll_file)
+        dll.setBlur(hWnd, gradientColor)
+
+        # # dll 是 __stdcall 格式的调用时
+        # dll = ctypes.windll.LoadLibrary('test.dll')
+        # dll = ctypes.WinDLL(dll_file)
+
+        # # dll 是 __cdecl 格式的调用时：
+        # dll = ctypes.cdll.LoadLibrary('test.dll')
+        # dll = ctypes.CDLL(dll_file)
+
+        print(type(dll))
+        # dll.setBlur(hWnd, gradientColor)
+
     # 显示图片中心或显示全部
     @staticmethod
-    def img_center(w_win, h_win, img_file, save_file=None, flag=1):
+    def img_center(w_win, h_win, img_file, save_file=None, flag=1) -> QtGui.QPixmap:
         """
         以图片中心充满窗口
         :param w_win:
@@ -245,6 +488,11 @@ class Utils(object):
                     (region.size[0] - w_win) // 2, 0,  # 左上角
                     (region.size[0] - w_win) // 2 + w_win, 0 + h_win])  # 右下角
 
+        # 2. 对图片进行模糊效果
+        # for i in range(5):
+        #     new_img = new_img.filter(ImageFilter.BLUR)
+        # print('heree')
+
         if save_file:
             new_img.save("test.jpg")  # 保存图片
         else:
@@ -252,7 +500,7 @@ class Utils(object):
 
     # 为窗体、控件设置背景图片，可伸缩
     @staticmethod
-    def setBg(win, label: QtWidgets.QLabel, img_file, flag_show=0, scale=1):
+    def setBg(win, label: QtWidgets.QLabel, img_file, flag_show=1, scale=1):
         """
             label作为底图，应该是父窗体win中的第一个控件，否则覆盖前面控件，
             因为label跟窗口一样大小，且不加入窗口布局。
@@ -271,16 +519,20 @@ class Utils(object):
             :param scale: 系数
             :return:
         """
+
+        # label.setAttribute(QtCore.Qt.WA_TransparentForMouseEvents, True)  # 设置鼠标穿透
         label.resize(win.width(), win.height())
+
+        pix = None
         if flag_show == 0:
             label.setScaledContents(True)
-            label.setPixmap(QtGui.QPixmap(img_file))
+            pix = QtGui.QPixmap(img_file)
         elif flag_show == 1:
-            Utils.img_center(label.width(), label.height(),
-                             img_file, None, 1)
+            pix = Utils.img_center(label.width(), label.height(), img_file, None, 1)
         elif flag_show == 2:
-            Utils.img_center(label.width(), label.height(),
-                             img_file, None, 0)
+            pix = Utils.img_center(label.width(), label.height(), img_file, None, 0)
+
+        label.setPixmap(pix)
 
     # 给窗体产生特效
     @staticmethod
@@ -290,6 +542,7 @@ class Utils(object):
         :param args: 需要特效的窗体、特效类型、特效参数等
         :return:
         """
+
         if not args or not isinstance(args[0], object):
             return
 
@@ -311,15 +564,21 @@ class Utils(object):
             effect.setColor(args[5])  # 阴影颜色
             # widget.setContentsMargins(50, 50, 50, 50) # 父窗口要留显示阴影的边距
 
-        elif args[1] == 2:  # 透明特效
-            # effect = QGraphicsOpacityEffect(self)  # 透明
-            # effect.setOpacity(0.5)  # 透明度
+        elif args[1] == 2:  # 透明特效,可以部分透明
+            effect = QtWidgets.QGraphicsOpacityEffect()  # 透明
+            effect.setOpacity(args[2])  # 透明度 0-1.0
             # 你的控件.setGraphicsEffect(op)
             # 你的控件.setAutoFillBackground(True)
-            pass
-        elif args[1] == 3:  # 颜色化
-            # effect = QGraphicsColorizeEffect(self)
-            pass
+
+        elif args[1] == 3:  # 着色效果
+            effect = QtWidgets.QGraphicsColorizeEffect()
+            effect.setColor(args[2])  # 设定颜色
+            effect.setStrength(args[3])  # 着色强度
+
+        elif args[1] == 4:  # 阴影 + 模糊
+            effect1 = QtWidgets.QGraphicsBlurEffect()
+            effect2 = QtWidgets.QGraphicsDropShadowEffect()
+
         else:
             return
 
@@ -752,7 +1011,7 @@ class Utils(object):
             print(f'is_image_file() : {e}')
 
     @staticmethod
-    def files_in_dir(dir_name, suffix_list=[], full_path=False):
+    def files_in_dir(dir_name, suffix_list: list = None, full_path=False):
         '''
         列出目录下指定类型的所有文件
         :param dir_name: 目录名称
@@ -773,7 +1032,8 @@ class Utils(object):
         list_files = []
         dir_files = os.listdir(dir_name)  # 列出文件夹下所有的目录与文件
         for each in dir_files:
-            path = os.path.join(dir_name, each)  # 构造完整路径
+            # path = os.path.join(dir_name, each)  # 构造完整路径
+            path = '/'.join([dir_name, each])
             # 判断路径是否是一个文件目录或者文件
             if os.path.isfile(path):
                 if not suffix_list:  # 后缀列表空，默认全部文件列出
@@ -851,50 +1111,6 @@ class Utils(object):
             l.sort(key=Utils.alphanum_key)
 
     # endregion
-
-    @staticmethod
-    def word2Pdf(wordPath, pdfPath):
-        """
-        word转pdf
-        :param wordPath: word文件路径
-        :param pdfPath:  生成pdf文件路径
-        """
-        # w = Dispatch("Word.Application")
-        # try:
-        #     # w.Visible = Debug
-        #     doc = w.Documents.Open(input, ReadOnly=1)
-        #     doc.ExportAsFixedFormat(pdfPath, constants.wdExportFormatPDF,
-        #                             Item=constants.wdExportDocumentWithMarkup,
-        #                             CreateBookmarks=constants.wdExportCreateHeadingBookmarks)
-        #     return 0
-        # except:
-        #     return 1
-        # finally:
-        #     w.Quit(constants.wdDoNotSaveChanges)
-
-        # 打开word软件
-        print(wordPath, pdfPath)
-        word = gencache.EnsureDispatch('Word.Application')
-        # 非可视化运行
-        word.Visible = False
-        doc = word.Documents.Open(wordPath, ReadOnly=1)
-
-        doc.ExportAsFixedFormat(pdfPath,
-                                constants.wdExportFormatPDF,
-                                Item=constants.wdExportDocumentWithMarkup,
-                                CreateBookmarks=constants.wdExportCreateHeadingBookmarks)
-        doc.Close()
-        word.Quit(constants.wdDoNotSaveChanges)
-
-        return 0
-
-    @staticmethod
-    def doc2docx(srcdoc_path, dstdocx_path):
-        word = Dispatch('Word.Application')
-        doc = word.Documents.Open(srcdoc_path, ReadOnly=1)  # 目标路径下的文件
-        doc.SaveAs(dstdocx_path, 12, False, "", True, "", False, False, False, False)  # 转化后路径下的文件
-        doc.Close()
-        word.Quit()
 
     @staticmethod
     def getDocPageNum(filePath):
