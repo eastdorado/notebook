@@ -14,7 +14,7 @@ from functools import partial
 from PyQt5 import QtCore, QtGui, QtWidgets
 from enum import IntEnum, unique
 from ui_mergeFiles import Ui_MainWindow
-from utilities import Utils, AnimWin, CustomBG, StyleSheet, FileButler
+from utilities import Utils, AnimWin, BackLabel, StyleSheet, FileButler
 
 # import cgitb  # 相当管用
 # cgitb.enable(format='text')  # 解决 pyqt5 异常只要进入事件循环,程序就崩溃,而没有任何提示
@@ -269,7 +269,7 @@ class CustomFrame(QtWidgets.QWidget):
         self.butler = FileButler()
         self.lb_bg = QtWidgets.QLabel()
 
-        self.lb_bg = CustomBG(self, 'res/background/bk2.jpg', Const.MARGIN, Const.MARGIN)
+        self.lb_bg = BackLabel(self, 'res/background/bk2.jpg', Const.MARGIN, Const.MARGIN)
         self.titleBar = TitleBar()
         self.canvas = QtWidgets.QStackedWidget()
 

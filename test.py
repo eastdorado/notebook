@@ -144,8 +144,15 @@ class Ui_Form(QWidget):
         # print(self.scroll_bar.value())
 
 
+import numpy as np
+
 if __name__ == "__main__":
-    app = QApplication(sys.argv)
-    ex = Ui_Form()
-    ex.show()
-    sys.exit(app.exec_())
+    # app = QApplication(sys.argv)
+    # ex = Ui_Form()
+    # ex.show()
+    # sys.exit(app.exec_())
+    a = [88, 99]
+    b, c = a
+    print(b, c, a)
+    b = 2 - 9 % 2
+    print(b, c, a)

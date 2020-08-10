@@ -206,7 +206,7 @@ class ImageConvert(object):
     __repr__ = __str__
 
 
-class CustomBG(QtWidgets.QLabel):
+class BackLabel(QtWidgets.QLabel):
     """
         label作为底图，应该是父窗体win中的第一个控件，否则覆盖前面控件，
         label跟窗口一样大小，且不加入窗口布局。
@@ -225,7 +225,7 @@ class CustomBG(QtWidgets.QLabel):
     """
 
     def __init__(self, parent, img_file, radius=20, margin=0, flag_show=1):
-        super(CustomBG, self).__init__(parent)
+        super(BackLabel, self).__init__(parent)
         self.parent = parent
         self.img_file = img_file
         self.flag_show = flag_show  # 图片显示方式
@@ -260,7 +260,7 @@ class CustomBG(QtWidgets.QLabel):
         elif self.flag_show == 2:
             self.pix = Utils.img_center(self.width(), self.height(), self.img_file, None, 0)
 
-        super(CustomBG, self).update()
+        super(BackLabel, self).update()
 
     def paintEvent(self, event):
         # # 主窗体无边框时是加载不了样式的，仅在子控件上实现样式。
@@ -296,7 +296,7 @@ class CustomBG(QtWidgets.QLabel):
         # pix = QPixmap('./res/images/background11.jpg')
         # painter.drawPixmap(self.rect(), pix)
 
-        super(CustomBG, self).paintEvent(event)
+        super(BackLabel, self).paintEvent(event)
 
     def __str__(self):
         return '可以作为窗体的背景，可以设置图片、底色、圆角、模糊化等特效'
@@ -458,6 +458,9 @@ class Utils(object):
         :param flag: 0-图片全部显示，有空白；1-图片中心尽量全部显示，无空白
         :return: 文件或 pix， 也可以换其他格式
         """
+        if not os.path.isfile(img_file):
+            return QtGui.QPixmap()
+
         img = Image.open(img_file)
 
         h_img = img.size[1]  # 图片高度
@@ -1747,7 +1750,7 @@ class EllipseButton(QtWidgets.QPushButton):
 
         color = 'blue' if color is None else color
         background_color = 'green' if background_color is None else background_color
-        border_color = 'gray' if border_color is None else border_color
+        border_color = 'black' if border_color is None else border_color
 
         qss = None
         if img:
@@ -1853,6 +1856,116 @@ class EllipseButton(QtWidgets.QPushButton):
     #     # painterPath= QPainterPath()
     #     # painterPath.addRoundedRect(rect, 15, 15)
     #     # painter.drawPath(painterPath)
+
+
+class CircleImage(QtWidgets.QWidget):
+    """绘制圆形图片"""
+
+    def __init__(self, parent=None):
+        super(CircleImage, self).__init__(parent)
+
+        self.parent = parent
+        self.img = None
+        self.size = None
+        self.mold = 0  # 类型
+        self.border_color = None
+        self.border_width = None
+
+        # self.resize(100, 100)
+        # 去除背景
+        self.setWindowFlags(self.windowFlags() | QtCore.Qt.FramelessWindowHint)
+        self.setAttribute(QtCore.Qt.WA_TranslucentBackground)
+        self.setMouseTracking(True)
+
+    def set_me(self, image, size=QtCore.QSize(100, 100), mold=0x00,
+               border_color=QtGui.QColor('#ff0000'), border_width=2):
+        """
+        设置绘制的图片
+        :param image:
+        :param size:
+        :param mold:类型 &0x0f= 0-显示图片中心 1-显示全图 2-无图
+                        &0xf0= 0-无边框 1-有边框 (有框无图:圆环)
+        :param border_color:
+        :param border_width:
+        :return:
+        """
+        self.img = image
+        self.size = size
+        self.mold = mold
+        self.border_width = border_width
+        self.border_color = border_color
+
+        self.resize(size)
+        # self.update()
+
+    def paintEvent(self, event: QtGui.QPaintEvent) -> None:
+        """重写绘制事件"""
+        super(CircleImage, self).paintEvent(event)
+
+        # 不通过样式，直接设置圆角，通用，且不继承于子控件
+        painter = QtGui.QPainter(self)
+        painter.setRenderHint(QtGui.QPainter.Antialiasing, True)  # 设置抗锯齿
+        rect = None
+
+        if self.mold & 0xf0 == 0:  # 无边框
+            rect = self.rect()
+            # print('dsf', rect, self.size)
+            painter.setPen(QtCore.Qt.transparent)
+            # pen = Qt.NoPen
+            # painter.setPen(pen)  # 设置取消描边边框
+        else:  # 1-有边框 (有框无图:圆环)
+            rect = QtCore.QRect(self.border_width, self.border_width,
+                         self.width() - 2 * self.border_width,
+                         self.height() - 2 * self.border_width)
+
+            pen = QtGui.QPen(self.border_color)  # 设置边框颜色
+            pen.setWidth(self.border_width)  # 设置边框宽度
+            painter.setPen(pen)  # 添加描边边框
+
+        flag = self.mold & 0x0f
+        if flag == 0:  # 0-显示图片中心
+            img_new = Utils.img_center(self.width(), self.height(), self.img)
+            print(img_new.size().width(), img_new.size().height())
+            painter.setBrush(QtGui.QBrush(img_new))  # 设置底图的方式之一
+        elif flag == 1:  # 1-显示全图
+            # painter.setBrush(QBrush(QPixmap.fromImage()))  # 设置底图的方式之一
+            img_new = Utils.img_center(self.width(), self.height(), self.img, 0)
+            painter.setBrush(QtGui.QBrush(QtGui.QPixmap(self.img)))  # 设置绘制内容
+
+        else:  # 2-无图
+            painter.setBrush(QtGui.QBrush(QtCore.Qt.NoBrush))  # qt.blue
+
+        # print(rect)
+        painter.drawRoundedRect(rect, self.width() // 2, self.height() // 2)
+
+        # # 主窗体无边框时是加载不了样式的，仅在子控件上实现样式。
+        # # 要在主窗体本身实现样式，需要在paintEvent事件中加上如下代码，设置底图也是一样的
+        # opt = QStyleOption()
+        # opt.initFrom(self)
+        # p = QPainter(self)
+        # p.setRenderHint(QPainter.Antialiasing)  # 反锯齿
+        # self.style().drawPrimitive(QStyle.PE_Widget, opt, p, self)
+        # # super(Canvas, self).paintEvent(event)
+
+        # 也可用QPainterPath 绘制代替 painter.drawRoundedRect(rect, 15, 15)
+        # painterPath= QPainterPath()
+        # painterPath.addRoundedRect(rect, 15, 15)
+        # painter.drawPath(painterPath)
+
+        # 直接设置底图，与圆角的画刷设置不能同时
+        # pix = QtGui.QPixmap('./res/images/white go-1.png')
+        # painter.drawPixmap(rect, pix)
+    # def enterEvent(self, a0: QtCore.QEvent):
+    #     print('enter', a0.pos())
+    #     return super().enterEvent(a0)
+    #
+    # def leaveEvent(self, a0: QtCore.QEvent):
+    #     print('leave', a0)
+    #     return super().enterEvent(a0)
+    #
+    # def mousePressEvent(self, a0: QtGui.QMouseEvent) -> None:
+    #     print('press', a0.pos())
+    #     return super(CircleImage, self).mousePressEvent(a0)
 
 
 class MainWindow(QtWidgets.QWidget):

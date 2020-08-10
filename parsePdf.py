@@ -701,25 +701,6 @@ def word2pic(path, zip_path, tmp_path, store_path):
             shutil.rmtree(os.path.join(tmp_path, i))
 
 
-def doc2docx(doc_name, docx_name):
-    '''
-    # doc转docx
-    :param doc_name: doc文档路径
-    :param docx_name: docx文档路径
-    :return:
-    '''
-    try:
-        # 首先将doc转换成docx
-        word = client.Dispatch("Word.Application")
-        doc = word.Documents.Open(doc_name)
-        # 使用参数16表示将doc转换成docx
-        doc.SaveAs(docx_name, 16)
-        doc.Close()
-        word.Quit()
-    except:
-        pass
-
-
 # 删除有水印标志的部分
 def removeWatermark(wm_text, inputFile, outputFile):
     from PyPDF4 import PdfFileReader, PdfFileWriter

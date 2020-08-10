@@ -45,7 +45,7 @@ class GoBoard(QtWidgets.QFrame):  # 棋盘
         self.parent = parent
         self.setMinimumSize(self.parent.height(), self.parent.height())
 
-        self.setMouseTracking(True)     # 跟踪鼠标移动
+        self.setMouseTracking(True)  # 跟踪鼠标移动
 
         self.board_size = 19  # 棋盘大小
         # self.unit = 40  # 单位长度
@@ -84,6 +84,13 @@ class GoBoard(QtWidgets.QFrame):  # 棋盘
         for i in range(self.board_size):
             for j in range(self.board_size):
                 lb = QtWidgets.QLabel(self)
+
+                # e2 = QtWidgets.QGraphicsDropShadowEffect()
+                # e2.setBlurRadius(20)  # 阴影半径，虚化程度，不能大于圆角半径
+                # e2.setOffset(5, 5)  # 阴影宽度
+                # e2.setColor(QtGui.QColor(0, 0, 0, 200))  # 阴影颜色
+                # lb.setGraphicsEffect(e2)
+
                 lb.setMouseTracking(True)  # 也能获取鼠标移动事件
                 lb.setVisible(False)
                 lb.setPixmap(QtGui.QPixmap("./res/images/goD.png"))
@@ -363,7 +370,8 @@ class GoBoard(QtWidgets.QFrame):  # 棋盘
 
         return 0
 
-    def solt_withdraw(self):
+    # 悔棋
+    def slot_withdraw(self):
         if self.number_playing > 0:
             self.number_playing -= 1
             row = self.route_playing[self.number_playing] // self.board_size
@@ -378,7 +386,7 @@ class GoBoard(QtWidgets.QFrame):  # 棋盘
             self.parent.info.setText(f'第{self.number_playing}手')
             print(self.number_playing, (row, col))
 
-    def solt_coordinated(self):
+    def slot_coordinated(self):
         self.coordinated = bool(1 - self.coordinated)  # 取反
         self.update()
 
@@ -399,14 +407,14 @@ class GoBoard(QtWidgets.QFrame):  # 棋盘
             for i in range(self.board_size):
                 rect = QtCore.QRect(0, self.margins + i * self.grid_size, self.margins, self.grid_size)
                 qp.drawText(rect, int(QtCore.Qt.AlignRight | QtCore.Qt.AlignVCenter), str(self.board_size - i))
-                rect = QtCore.QRect(self.margins+self.board_size*self.grid_size,
+                rect = QtCore.QRect(self.margins + self.board_size * self.grid_size,
                                     self.margins + i * self.grid_size, self.margins, self.grid_size)
                 qp.drawText(rect, int(QtCore.Qt.AlignLeft | QtCore.Qt.AlignVCenter), str(self.board_size - i))
 
                 rect = QtCore.QRect(self.margins + i * self.grid_size, 0, self.grid_size, self.margins)
                 qp.drawText(rect, int(QtCore.Qt.AlignBottom | QtCore.Qt.AlignHCenter), chr(ord('A') + i))
                 rect = QtCore.QRect(self.margins + i * self.grid_size,
-                                    self.margins+self.board_size*self.grid_size, self.grid_size, self.grid_size)
+                                    self.margins + self.board_size * self.grid_size, self.grid_size, self.grid_size)
                 qp.drawText(rect, int(QtCore.Qt.AlignTop | QtCore.Qt.AlignHCenter), chr(ord('A') + i))
 
         # 画棋盘线
@@ -416,9 +424,9 @@ class GoBoard(QtWidgets.QFrame):  # 棋盘
 
         for i in range(self.board_size):
             qp.drawLine(offset, offset + i * self.grid_size,
-                        offset + (self.board_size-1) * self.grid_size, offset + i * self.grid_size)
+                        offset + (self.board_size - 1) * self.grid_size, offset + i * self.grid_size)
             qp.drawLine(offset + i * self.grid_size, offset,
-                        offset + i * self.grid_size, offset + (self.board_size-1) * self.grid_size)
+                        offset + i * self.grid_size, offset + (self.board_size - 1) * self.grid_size)
         # 画星位
         radius = 3
         pen = QtGui.QPen(QtGui.QColor(20, 20, 20), 1, QtCore.Qt.SolidLine)
@@ -552,11 +560,11 @@ class GoBoard(QtWidgets.QFrame):  # 棋盘
             return
 
         if self.prev_stone:
-            if self.prev_stone == (row, col):   # 同一个棋子上移动就退出
+            if self.prev_stone == (row, col):  # 同一个棋子上移动就退出
                 return
             # print('mouseMoveEvent')
             stone = self.go_board[self.prev_stone[0]][self.prev_stone[1]]
-            if stone.state == 0:    # 空子
+            if stone.state == 0:  # 空子
                 stone.pic.setVisible(False)
         self.prev_stone = (row, col)
 
@@ -591,8 +599,8 @@ class MainWindow(QtWidgets.QWidget):
         hl_control_panel = QtWidgets.QHBoxLayout()
         pb_withdraw = QtWidgets.QPushButton("悔棋")
         pb_manual = QtWidgets.QPushButton("坐标")
-        pb_withdraw.clicked.connect(self.chess.solt_withdraw)
-        pb_manual.clicked.connect(self.chess.solt_coordinated)
+        pb_withdraw.clicked.connect(self.chess.slot_withdraw)
+        pb_manual.clicked.connect(self.chess.slot_coordinated)
         hl_control_panel.addWidget(pb_withdraw)
         hl_control_panel.addWidget(pb_manual)
         vl_right.addLayout(hl_control_panel)
@@ -621,7 +629,7 @@ class MainWindow(QtWidgets.QWidget):
         # self.chess.resizeEvent(event)
 
         palette = QtGui.QPalette()
-        pix = QtGui.QPixmap('res/images/background.jpg')
+        pix = QtGui.QPixmap('res/background/background.jpg')
         pix = pix.scaled(self.width(), self.height())
         palette.setBrush(QtGui.QPalette.Background, QtGui.QBrush(pix))
         self.setPalette(palette)
@@ -629,9 +637,10 @@ class MainWindow(QtWidgets.QWidget):
 
 if __name__ == '__main__':
     # 字体大小自适应分辨率
-    v_compare = QtCore.QVersionNumber(5, 6, 0)
+    v_compare = QtCore.QVersionNumber(5, 26, 0)
     v_current, _ = QtCore.QVersionNumber.fromString(QtCore.QT_VERSION_STR)  # 获取当前Qt版本
     if QtCore.QVersionNumber.compare(v_current, v_compare) >= 0:
+        print(v_current.toString(), _)
         QtWidgets.QApplication.setAttribute(QtCore.Qt.AA_EnableHighDpiScaling)  # Qt从5.6.0开始，支持High-DPI
         app = QtWidgets.QApplication(sys.argv)
     else:
