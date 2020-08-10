@@ -1,22 +1,36 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-"""
-Created on 2017年12月17日
-@author: Irony."[讽刺]
-@site: https://pyqt5.com , https://github.com/892768447
-@email: 892768447@qq.com
-@file: WorldMap
-@description:
-"""
-import json
+from PyQt5.QtWidgets import QWidget, QLabel, QPushButton, QHBoxLayout, QVBoxLayout
+from PyQt5.QtCore import Qt, QPoint
+from PyQt5.QtGui import QFont, QCursor
+from PyQt5 import QtWidgets, QtGui, QtCore
 import math
 
-from PyQt5.QtCore import Qt, QPointF, QRectF
-from PyQt5.QtGui import QColor, QPainter, QPolygonF, QPen, QBrush
-from PyQt5.QtOpenGL import QGLFormat
-from PyQt5.QtWidgets import QGraphicsView, QGraphicsScene, QGraphicsPolygonItem
+qss = """/**********Title**********/
+    QTitleLabel{
+            background-color: Gainsboro;
+            font: 100 10pt;
+    }
 
+    /**********Button**********/
+    QTitleButton{
+            background-color: rgba(255, 255, 255, 0);
+            color: black;
+            border: 0px;
+            font: 100 10pt;
+    }
+    QTitleButton#MinMaxButton:hover{
+            background-color: #D0D0D1;
+            border: 0px;
+            font: 100 10pt;
+    }
+    QTitleButton#CloseButton:hover{
+            background-color: #D32424;
+            color: white;
+            border: 0px;
+            font: 100 10pt;
+    }
 
 __Author__ = "By: Irony.\"[讽刺]\nQQ: 892768447\nEmail: 892768447@qq.com"
 __Copyright__ = "Copyright (c) 2017 Irony.\"[讽刺]"
@@ -30,137 +44,208 @@ class GraphicsView(QGraphicsView):
     # 边框颜色
     borderColor = QColor(58, 58, 90)
 
+
+class QUnFrameWindow(QWidget):
+    """
+    无边框窗口类
+    """
+
     def __init__(self, *args, **kwargs):
-        super(GraphicsView, self).__init__(*args, **kwargs)
+        super(QUnFrameWindow, self).__init__(None, Qt.FramelessWindowHint)  # 设置为顶级窗口，无边框
+        # super(QUnFrameWindow, self).__init__(*args, **kwargs)
+
+        # self.setWindowFlags(Qt.FramelessWindowHint)  # 隐藏边框
+        # self.setAttribute(Qt.WA_TranslucentBackground, True)
+
+        self._padding = 5  # 设置边界宽度为5
+        self.initTitleLabel()  # 安放标题栏标签
+        self.setWindowTitle = self._setTitleText(self.setWindowTitle)  # 用装饰器将设置WindowTitle名字函数共享到标题栏标签上
+        self.setWindowTitle("自定义")
+        self.initLayout()  # 设置框架布局
+        self.setMinimumWidth(250)
+        self.setMouseTracking(True)  # 设置widget鼠标跟踪
+        self.initDrag()  # 设置鼠标跟踪判断默认值
         self.resize(800, 600)
-        # 设置背景颜色
-        self.setBackgroundBrush(self.backgroundColor)
-        '''
-        #参考 http://doc.qt.io/qt-5/qgraphicsview.html#CacheModeFlag-enum
-        CacheNone                    不使用缓存
-        CacheBackground              缓存背景
-        '''
-        self.setCacheMode(self.CacheBackground)
-        '''
-        #参考 http://doc.qt.io/qt-5/qgraphicsview.html#DragMode-enum
-        NoDrag                       什么都没发生; 鼠标事件被忽略。
-        ScrollHandDrag               光标变成指针，拖动鼠标将滚动滚动条。 该模式可以在交互式和非交互式模式下工作。
-        RubberBandDrag               拖动鼠标将设置橡皮筋几何形状，并选择橡皮筋所覆盖的所有项目。 对于非交互式视图，此模式被禁用。
-        '''
-        self.setDragMode(self.ScrollHandDrag)
-        '''
-        #参考 http://doc.qt.io/qt-5/qgraphicsview.html#OptimizationFlag-enum
-        DontClipPainter              已过时
-        DontSavePainterState         渲染时，QGraphicsView在渲染背景或前景时以及渲染每个项目时保护painter状态（请参阅QPainter.save()）。 这允许你离开painter处于改变状态（即你可以调用QPainter.setPen()或QPainter.setBrush()，而不需要在绘制之后恢复状态）。 但是，如果项目一致地恢复状态，则应启用此标志以防止QGraphicsView执行相同的操作。
-        DontAdjustForAntialiasing    禁用QGraphicsView的抗锯齿自动调整曝光区域。 在QGraphicsItem.boundingRect()的边界上渲染反锯齿线的项目可能会导致渲染部分线外。 为了防止渲染失真，QGraphicsView在所有方向上将所有曝光区域扩展2个像素。 如果启用此标志，QGraphicsView将不再执行这些调整，最大限度地减少需要重绘的区域，从而提高性能。 一个常见的副作用是，使用抗锯齿功能进行绘制的项目可能会在移动时在画面上留下绘画痕迹。
-        IndirectPainting             从Qt 4.6开始，恢复调用QGraphicsView.drawItems()和QGraphicsScene.drawItems()的旧绘画算法。 仅用于与旧代码的兼容性。
-        '''
-        self.setOptimizationFlag(self.DontSavePainterState)
-        '''
-        #参考 http://doc.qt.io/qt-5/qpainter.html#RenderHint-enum
-        Antialiasing                 抗锯齿
-        TextAntialiasing             文本抗锯齿
-        SmoothPixmapTransform        平滑像素变换算法
-        HighQualityAntialiasing      请改用Antialiasing
-        NonCosmeticDefaultPen        已过时
-        Qt4CompatiblePainting        从Qt4移植到Qt5可能有用
-        '''
-        self.setRenderHints(QPainter.Antialiasing | QPainter.TextAntialiasing |
-                            QPainter.SmoothPixmapTransform)
-        if QGLFormat.hasOpenGL():
-            self.setRenderHint(QPainter.HighQualityAntialiasing)
-        '''
-        #当视图被调整大小时，视图如何定位场景。使用这个属性来决定当视口控件的大小改变时，如何在视口中定位场景。 缺省行为NoAnchor在调整大小的过程中不改变场景的位置; 视图的左上角将显示为在调整大小时被锚定。请注意，只有场景的一部分可见（即有滚动条时），此属性的效果才明显。 否则，如果整个场景适合视图，QGraphicsScene使用视图对齐将视景中的场景定位。 
-        #参考 http://doc.qt.io/qt-5/qgraphicsview.html#ViewportAnchor-enum
-        NoAnchor                     视图保持场景的位置不变
-        AnchorViewCenter             视图中心被用作锚点。
-        AnchorUnderMouse             鼠标当前位置被用作锚点
-        '''
-        self.setResizeAnchor(self.AnchorUnderMouse)
-        '''
-        Rubber选择模式
-        #参考 http://doc.qt.io/qt-5/qt.html#ItemSelectionMode-enum
-        ContainsItemShape            输出列表仅包含形状完全包含在选择区域内的项目。 不包括与区域轮廓相交的项目。
-        IntersectsItemShape          默认，输出列表包含其形状完全包含在选择区域内的项目以及与区域轮廓相交的项目。
-        ContainsItemBoundingRect     输出列表仅包含边界矩形完全包含在选择区域内的项目。 不包括与区域轮廓相交的项目。
-        IntersectsItemBoundingRect   输出列表包含边界矩形完全包含在选择区域内的项目以及与区域轮廓相交的项目。 这种方法通常用于确定需要重绘的区域。
-        '''
-        self.setRubberBandSelectionMode(Qt.IntersectsItemShape)
-        '''
-        #在转换过程中如何定位视图。QGraphicsView使用这个属性决定当变换矩阵改变时如何在视口中定位场景，并且视图的坐标系被变换。 默认行为AnchorViewCenter确保在视图中心的场景点在变换过程中保持不变（例如，在旋转时，场景将围绕视图的中心旋转）。请注意，只有场景的一部分可见（即有滚动条时），此属性的效果才明显。 否则，如果整个场景适合视图，QGraphicsScene使用视图对齐将视景中的场景定位。
-        #参考 http://doc.qt.io/qt-5/qgraphicsview.html#ViewportAnchor-enum
-        NoAnchor                     视图保持场景的位置不变
-        AnchorViewCenter             视图中心被用作锚点。
-        AnchorUnderMouse             鼠标当前位置被用作锚点
-        '''
-        self.setTransformationAnchor(self.AnchorUnderMouse)
-#         if QGLFormat.hasOpenGL():  # 如果开启了OpenGL则使用OpenGL Widget
-#             self.setViewport(QGLWidget(QGLFormat(QGL.SampleBuffers)))
-        '''
-        #参考 http://doc.qt.io/qt-5/qgraphicsview.html#ViewportUpdateMode-enum
-        FullViewportUpdate           当场景的任何可见部分改变或重新显示时，QGraphicsView将更新整个视口。 当QGraphicsView花费更多的时间来计算绘制的内容（比如重复更新很多小项目）时，这种方法是最快的。 这是不支持部分更新（如QGLWidget）的视口以及需要禁用滚动优化的视口的首选更新模式。
-        MinimalViewportUpdate        QGraphicsView将确定需要重绘的最小视口区域，通过避免重绘未改变的区域来最小化绘图时间。 这是QGraphicsView的默认模式。 虽然这种方法提供了一般的最佳性能，但如果场景中有很多小的可见变化，QGraphicsView最终可能花费更多的时间来寻找最小化的方法。
-        SmartViewportUpdate          QGraphicsView将尝试通过分析需要重绘的区域来找到最佳的更新模式。
-        BoundingRectViewportUpdate   视口中所有更改的边界矩形将被重绘。 这种模式的优点是，QGraphicsView只搜索一个区域的变化，最大限度地减少了花在确定需要重绘的时间。 缺点是还没有改变的地方也需要重新绘制。
-        NoViewportUpdate             当场景改变时，QGraphicsView将永远不会更新它的视口。 预计用户将控制所有更新。 此模式禁用QGraphicsView中的所有（可能较慢）项目可见性测试，适用于要求固定帧速率或视口以其他方式在外部进行更新的场景。
-        '''
-        self.setViewportUpdateMode(self.SmartViewportUpdate)
-        # 设置场景(根据地图的经纬度,并让原点显示在屏幕中间)
-        self._scene = QGraphicsScene(-180, -90, 360, 180, self)
-        self.setScene(self._scene)
+        self.setStyleSheet(qss)
 
-        # 初始化地图
-        self.initMap()
+    def initDrag(self):
+        # 设置鼠标跟踪判断扳机默认值
+        self._move_drag = False
+        self._corner_drag = False
+        self._bottom_drag = False
+        self._right_drag = False
 
-    def wheelEvent(self, event):
-        # 滑轮事件
-        if event.modifiers() & Qt.ControlModifier:
-            self.scaleView(math.pow(2.0, -event.angleDelta().y() / 240.0))
-            return event.accept()
-        super(GraphicsView, self).wheelEvent(event)
+    def initTitleLabel(self):
+        # 安放标题栏标签
+        self._TitleLabel = QTitleLabel(self)
+        self._TitleLabel.setMouseTracking(True)  # 设置标题栏标签鼠标跟踪（如不设，则标题栏内在widget上层，无法实现跟踪）
+        self._TitleLabel.setIndent(10)  # 设置标题栏文本缩进
+        self._TitleLabel.move(0, 0)  # 标题栏安放到左上角
 
-    def scaleView(self, scaleFactor):
-        factor = self.transform().scale(
-            scaleFactor, scaleFactor).mapRect(QRectF(0, 0, 1, 1)).width()
-        if factor < 0.07 or factor > 100:
-            return
-        self.scale(scaleFactor, scaleFactor)
+    def initLayout(self):
+        # 设置框架布局
+        self._MainLayout = QHBoxLayout()
+        self._MainLayout.setSpacing(0)
+        self._MainLayout.addWidget(QLabel(), Qt.AlignLeft)  # 顶一个QLabel在竖放框架第一行，以免正常内容挤占到标题范围里
+        self._MainLayout.addStretch()
+        self.setLayout(self._MainLayout)
 
-    def initMap(self):
-        features = json.load(
-            open("Data/world.json", encoding="utf8")).get("features")
-        for feature in features:
-            geometry = feature.get("geometry")
-            if not geometry:
-                continue
-            _type = geometry.get("type")
-            coordinates = geometry.get("coordinates")
-            for coordinate in coordinates:
-                if _type == "Polygon":
-                    polygon = QPolygonF(
-                        [QPointF(latitude, -longitude) for latitude, longitude in coordinate])
-                    item = QGraphicsPolygonItem(polygon)
-                    item.setPen(QPen(self.borderColor, 0))
-                    item.setBrush(QBrush(self.backgroundColor))
-                    item.setPos(0, 0)
-                    self._scene.addItem(item)
-                elif _type == "MultiPolygon":
-                    for _coordinate in coordinate:
-                        polygon = QPolygonF(
-                            [QPointF(latitude, -longitude) for latitude, longitude in _coordinate])
-                        item = QGraphicsPolygonItem(polygon)
-                        item.setPen(QPen(self.borderColor, 0))
-                        item.setBrush(QBrush(self.backgroundColor))
-                        item.setPos(0, 0)
-                        self._scene.addItem(item)
+    def addLayout(self, QLayout):
+        # 给widget定义一个addLayout函数，以实现往竖放框架的正确内容区内嵌套Layout框架
+        self._MainLayout.addLayout(QLayout)
+
+    def _setTitleText(self, func):
+        # 设置标题栏标签的装饰器函数
+        def wrapper(*args):
+            self._TitleLabel.setText(*args)
+            return func(*args)
+
+        return wrapper
+
+    def setTitleAlignment(self, alignment):
+        # 给widget定义一个setTitleAlignment函数，以实现标题栏标签的对齐方式设定
+        self._TitleLabel.setAlignment(alignment | Qt.AlignVCenter)
+
+    def setCloseButton(self, bool):
+        # 给widget定义一个setCloseButton函数，为True时设置一个关闭按钮
+        if bool == True:
+            self._CloseButton = QTitleButton(b'\xef\x81\xb2'.decode("utf-8"), self)
+            self._CloseButton.setObjectName("CloseButton")  # 设置按钮的ObjectName以在qss样式表内定义不同的按钮样式
+            self._CloseButton.setToolTip("关闭窗口")
+            self._CloseButton.setMouseTracking(True)  # 设置按钮鼠标跟踪（如不设，则按钮在widget上层，无法实现跟踪）
+            self._CloseButton.setFixedHeight(self._TitleLabel.height())  # 设置按钮高度为标题栏高度
+            self._CloseButton.clicked.connect(self.close)  # 按钮信号连接到关闭窗口的槽函数
+
+    def setMinMaxButtons(self, bool):
+        # 给widget定义一个setMinMaxButtons函数，为True时设置一组最小化最大化按钮
+        if bool == True:
+            self._MinimumButton = QTitleButton(b'\xef\x80\xb0'.decode("utf-8"), self)
+            self._MinimumButton.setObjectName("MinMaxButton")  # 设置按钮的ObjectName以在qss样式表内定义不同的按钮样式
+            self._MinimumButton.setToolTip("最小化")
+            self._MinimumButton.setMouseTracking(True)  # 设置按钮鼠标跟踪（如不设，则按钮在widget上层，无法实现跟踪）
+            self._MinimumButton.setFixedHeight(self._TitleLabel.height())  # 设置按钮高度为标题栏高度
+            self._MinimumButton.clicked.connect(self.showMinimized)  # 按钮信号连接到最小化窗口的槽函数
+            self._MaximumButton = QTitleButton(b'\xef\x80\xb1'.decode("utf-8"), self)
+            self._MaximumButton.setObjectName("MinMaxButton")  # 设置按钮的ObjectName以在qss样式表内定义不同的按钮样式
+            self._MaximumButton.setToolTip("最大化")
+            self._MaximumButton.setMouseTracking(True)  # 设置按钮鼠标跟踪（如不设，则按钮在widget上层，无法实现跟踪）
+            self._MaximumButton.setFixedHeight(self._TitleLabel.height())  # 设置按钮高度为标题栏高度
+            self._MaximumButton.clicked.connect(self._changeNormalButton)  # 按钮信号连接切换到恢复窗口大小按钮函数
+
+    def _changeNormalButton(self):
+        # 切换到恢复窗口大小按钮
+        try:
+            self.showMaximized()  # 先实现窗口最大化
+            self._MaximumButton.setText(b'\xef\x80\xb2'.decode("utf-8"))  # 更改按钮文本
+            self._MaximumButton.setToolTip("恢复")  # 更改按钮提示
+            self._MaximumButton.disconnect()  # 断开原本的信号槽连接
+            self._MaximumButton.clicked.connect(self._changeMaxButton)  # 重新连接信号和槽
+        except:
+            pass
+
+    def _changeMaxButton(self):
+        # 切换到最大化按钮
+        try:
+            self.showNormal()
+            self._MaximumButton.setText(b'\xef\x80\xb1'.decode("utf-8"))
+            self._MaximumButton.setToolTip("最大化")
+            self._MaximumButton.disconnect()
+            self._MaximumButton.clicked.connect(self._changeNormalButton)
+        except:
+            pass
+
+    def resizeEvent(self, QResizeEvent):
+        # 自定义窗口调整大小事件
+        self._TitleLabel.setFixedWidth(self.width())  # 将标题标签始终设为窗口宽度
+        # 分别移动三个按钮到正确的位置
+        try:
+            self._CloseButton.move(self.width() - self._CloseButton.width(), 0)
+        except:
+            pass
+        try:
+            self._MinimumButton.move(self.width() - (self._CloseButton.width() + 1) * 3 + 1, 0)
+        except:
+            pass
+        try:
+            self._MaximumButton.move(self.width() - (self._CloseButton.width() + 1) * 2 + 1, 0)
+        except:
+            pass
+        # 重新调整边界范围以备实现鼠标拖放缩放窗口大小，采用三个列表生成式生成三个列表
+        self._right_rect = [QPoint(x, y) for x in range(self.width() - self._padding, self.width() + 1)
+                            for y in range(1, self.height() - self._padding)]
+        self._bottom_rect = [QPoint(x, y) for x in range(1, self.width() - self._padding)
+                             for y in range(self.height() - self._padding, self.height() + 1)]
+        self._corner_rect = [QPoint(x, y) for x in range(self.width() - self._padding, self.width() + 1)
+                             for y in range(self.height() - self._padding, self.height() + 1)]
+        print('too long',len(self._right_rect))
+
+    def mousePressEvent(self, event):
+        # 重写鼠标点击的事件
+        if (event.button() == Qt.LeftButton) and (event.pos() in self._corner_rect):
+            # 鼠标左键点击右下角边界区域
+            self._corner_drag = True
+            event.accept()
+        elif (event.button() == Qt.LeftButton) and (event.pos() in self._right_rect):
+            # 鼠标左键点击右侧边界区域
+            self._right_drag = True
+            event.accept()
+        elif (event.button() == Qt.LeftButton) and (event.pos() in self._bottom_rect):
+            # 鼠标左键点击下侧边界区域
+            self._bottom_drag = True
+            event.accept()
+        elif (event.button() == Qt.LeftButton) and (event.y() < self._TitleLabel.height()):
+            # 鼠标左键点击标题栏区域
+            self._move_drag = True
+            self.move_DragPosition = event.globalPos() - self.pos()
+            event.accept()
+
+    def mouseMoveEvent(self, QMouseEvent):
+        # 判断鼠标位置切换鼠标手势
+        if QMouseEvent.pos() in self._corner_rect:
+            self.setCursor(Qt.SizeFDiagCursor)
+        elif QMouseEvent.pos() in self._bottom_rect:
+            self.setCursor(Qt.SizeVerCursor)
+        elif QMouseEvent.pos() in self._right_rect:
+            self.setCursor(Qt.SizeHorCursor)
+        else:
+            self.setCursor(Qt.ArrowCursor)
+
+        # 当鼠标左键点击不放及满足点击区域的要求后，分别实现不同的窗口调整
+        # 没有定义左方和上方相关的5个方向，主要是因为实现起来不难，但是效果很差，拖放的时候窗口闪烁，再研究研究是否有更好的实现
+        if Qt.LeftButton and self._right_drag:
+            # 右侧调整窗口宽度
+            self.resize(QMouseEvent.pos().x(), self.height())
+            QMouseEvent.accept()
+        elif Qt.LeftButton and self._bottom_drag:
+            # 下侧调整窗口高度
+            self.resize(self.width(), QMouseEvent.pos().y())
+            QMouseEvent.accept()
+        elif Qt.LeftButton and self._corner_drag:
+            # 右下角同时调整高度和宽度
+            self.resize(QMouseEvent.pos().x(), QMouseEvent.pos().y())
+            QMouseEvent.accept()
+        elif Qt.LeftButton and self._move_drag:
+            # 标题栏拖放窗口位置
+            self.move(QMouseEvent.globalPos() - self.move_DragPosition)
+            QMouseEvent.accept()
+
+    def mouseReleaseEvent(self, QMouseEvent):
+        # 鼠标释放后，各扳机复位
+        self._move_drag = False
+        self._corner_drag = False
+        self._bottom_drag = False
+        self._right_drag = False
 
 
 if __name__ == "__main__":
-    import sys
     from PyQt5.QtWidgets import QApplication
+    import sys
+
     app = QApplication(sys.argv)
-    print("OpenGL Status:", QGLFormat.hasOpenGL())
-    view = GraphicsView()
-    view.setWindowTitle("世界地图")
-    view.show()
+
+    app.setStyleSheet(qss)
+    window = QUnFrameWindow()
+    window.setCloseButton(True)
+    window.setMinMaxButtons(True)
+    window.show()
     sys.exit(app.exec_())

@@ -197,6 +197,36 @@ class ImageConvert(object):
         # print("QPixmap格式转PIL格式")
         return ImageQt.fromqpixmap(img)
 
+    # jpg格式:是有损图片压缩类型,可用最少的磁盘空间得到较好的图像质量
+    # png格式:不是压缩性,能保存透明等图
+    @staticmethod
+    def png_jpg(file_png, file_jpg, scale=1.0):
+        img = Image.open(file_png)
+        width = int(img.size[0] * scale)
+        height = int(img.size[1] * scale)
+        # f_type = img.format
+        # print(type(f_type), f_type)
+        img = img.resize((width, height), Image.ANTIALIAS)
+        # 第二个参数：
+        # Image.NEAREST ：低质量
+        # Image.BILINEAR：双线性
+        # Image.BICUBIC ：三次样条插值
+        # Image.ANTIALIAS：高质量
+
+        try:
+            if len(img.split()) == 4:
+                # prevent IOError: cannot write mode RGBA as BMP
+                r, g, b, a = img.split()
+                img = Image.merge("RGB", (r, g, b))
+                img.convert('RGB').save(file_jpg, quality=100)
+                # os.remove(file_png)
+            else:
+                img.convert('RGB').save(file_jpg, quality=100)
+                # os.remove(PngPath)
+
+        except Exception as e:
+            print("PNG转换JPG 错误", e)
+
     def __init__(self):
         pass
 

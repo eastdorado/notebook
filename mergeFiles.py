@@ -14,7 +14,7 @@ from functools import partial
 from PyQt5 import QtCore, QtGui, QtWidgets
 from enum import IntEnum, unique
 from ui_mergeFiles import Ui_MainWindow
-from utilities import Utils, AnimWin, BackLabel, StyleSheet, FileButler
+from utilities import Utils, AnimWin, CustomBG, StyleSheet, FileButler
 
 # import cgitb  # 相当管用
 # cgitb.enable(format='text')  # 解决 pyqt5 异常只要进入事件循环,程序就崩溃,而没有任何提示
@@ -35,6 +35,7 @@ class TitleBar(QtWidgets.QWidget):
         /*background-color: skyblue;   */
         /*background-color: rgba(0,0,0,50);   半透明*/
         background: rgba(0, 0, 0, 50);  /*半透明*/
+        border-top-left-radius:15;
         border-top-right-radius:15;
         /*background-image:url(./res/background/bk5.jpg);*/
         background-repeat: no-repeat;       /*背景不要重复*/
@@ -72,8 +73,8 @@ class TitleBar(QtWidgets.QWidget):
     """
 
     # region 信号声明区
-    sign_pb_prev = QtCore.pyqtSignal()  # 前一个
-    sign_pb_next = QtCore.pyqtSignal()  # 后一个
+    # sign_pb_prev = QtCore.pyqtSignal()  # 前一个
+    # sign_pb_next = QtCore.pyqtSignal()  # 后一个
     sign_win_minimize = QtCore.pyqtSignal()  # 窗口最小化信号
     sign_win_maximize = QtCore.pyqtSignal()  # 窗口最大化信号
     sign_win_resume = QtCore.pyqtSignal()  # 窗口恢复信号
@@ -122,19 +123,20 @@ class TitleBar(QtWidgets.QWidget):
         # endregion
 
         # region 自定义按钮
-        layout.addStretch()
-        pb_prev = QtWidgets.QPushButton(QtGui.QIcon('./res/images/src2.gif'), '', self)
-        pb_prev.setToolTip('打开文件夹')
-        pb_prev.setStyleSheet('color:white;font-size:24px;font-weight:bold;font-family:Roman times;')
-        pb_next = QtWidgets.QPushButton('打开文件')
-        pb_next.setStyleSheet('color:white;font-size:24px;font-weight:bold;font-family:Roman times;')
-        pb_prev.clicked.connect(self.sign_pb_prev.emit)
-        pb_next.clicked.connect(self.sign_pb_next.emit)
-        layout.addWidget(pb_prev)
-        layout.addWidget(pb_next)
-        layout.addStretch()
-        # 中间伸缩条
-        # layout.addSpacerItem(QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum))
+        # layout.addStretch()
+        # pb_prev = QtWidgets.QPushButton(QtGui.QIcon('./res/images/src2.gif'), '转换', self)
+        # pb_prev.setToolTip('word批量转pdf，并合并pdf')
+        # # pb_prev.setToolButtonStyle(QtCore.Qt.ToolButtonStyle.toolButtonStyle)
+        # pb_prev.setStyleSheet('color:white;font-size:24px;font-weight:bold;font-family:Roman times;')
+        # pb_next = QtWidgets.QPushButton('打开文件')
+        # pb_next.setStyleSheet('color:white;font-size:24px;font-weight:bold;font-family:Roman times;')
+        # pb_prev.clicked.connect(self.sign_pb_prev.emit)
+        # pb_next.clicked.connect(self.sign_pb_next.emit)
+        # layout.addWidget(pb_prev)
+        # layout.addWidget(pb_next)
+        # layout.addStretch()
+        # # 中间伸缩条
+        # # layout.addSpacerItem(QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum))
         # endregion
 
         # region 标准按钮
@@ -256,9 +258,25 @@ class Const(IntEnum):
     MARGIN = 15  # 四周边距
 
 
-# 定制窗体，自定义工具栏
-class CustomFrame(QtWidgets.QWidget):
+class CustomMainWindow(QtWidgets.QMainWindow):
+    def __init__(self, *args, **kwargs):
+        super(CustomMainWindow, self).__init__(*args, **kwargs)
 
+        # w = QtWinExtras.QtWin()
+        if QtWinExtras.QtWin.isCompositionEnabled():  # 返回DWM组合状态
+            QtWinExtras.QtWin.extendFrameIntoClientArea(self, -1, -1, -1, -1)  # 玻璃效果
+            self.setAttribute(QtCore.Qt.WA_TranslucentBackground, True)  # 半透明背景
+            self.setAttribute(QtCore.Qt.WA_NoSystemBackground, False)  # 禁用无背景
+            self.setStyleSheet("background: transparent;")
+        else:
+            ...
+            # QtWin:: resetExtendedFrame(this)
+            # setAttribute(Qt::WA_TranslucentBackground, false)
+            # setStyleSheet(QString("MusicPlayer { background: %1; }").arg(QtWin::realColorizationColor().name()))
+
+
+# 定制窗体，自定义工具栏
+class CustomFrame(QtWidgets.QFrame):
     def __init__(self, *args, **kwargs):
         super(CustomFrame, self).__init__(*args, **kwargs)
         self.is_max = False  # 窗口最大化标志
@@ -269,14 +287,15 @@ class CustomFrame(QtWidgets.QWidget):
         self.butler = FileButler()
         self.lb_bg = QtWidgets.QLabel()
 
-        self.lb_bg = BackLabel(self, 'res/background/bk2.jpg', Const.MARGIN, Const.MARGIN)
-        self.titleBar = TitleBar()
+        self.lb_bg = CustomBG(self, 'res/background/bk2.jpg', Const.MARGIN, Const.MARGIN)
+        self.titleBar = TitleBar(self)
+        self.toolbar = QtWidgets.QToolBar()  # QtWidgets.QToolBar('gjlfd ')
         self.canvas = QtWidgets.QStackedWidget()
 
         self._init_main()
 
-    def sign_title_clicked(self, name):
-        if name == '打开文件夹':
+    def slot_toolbar_clicked(self, name):
+        if name == 'doc转换':
             wg = self.canvas.currentWidget()
 
             path = QtWidgets.QFileDialog.getExistingDirectory(
@@ -307,8 +326,20 @@ class CustomFrame(QtWidgets.QWidget):
                 # print(path)
                 self.butler.merge_pdf(path, '合并.pdf')
 
-        elif name == '打开文件':
-            ...
+        elif name == '缩图':
+            file_list, _ = QtWidgets.QFileDialog.getOpenFileNames(
+                self, '多文件选取', '',
+                'img Files(*.png *.jpg *.jpeg *.gif *.bmp *.tiff);;All Files(*.*)',
+                None,
+                QtWidgets.QFileDialog.DontUseNativeDialog)
+            print(file_list)
+
+            scale = 1.0
+            for each in file_list:
+                file_in, ext = os.path.splitext(each)
+                file_jpg = f'{file_in}.jpg'
+                print(file_in, file_jpg, ext)
+                ImageConvert.png_jpg(each, file_jpg, scale)
 
     def _init_canvas(self):
         ...
@@ -357,28 +388,61 @@ class CustomFrame(QtWidgets.QWidget):
         # self.mdi.cascadeSubWindows()  # 当点击菜单栏中的Cascade时，堆叠子窗口
         # self.mdi.tileSubWindows()  # 当点击菜单栏中的Tiled时，平铺子窗口
 
+    def _init_toolbar(self):
+        self.setToolTip('toolbar')
+        self.toolbar.setStyleSheet('QToolBar#toolbar{background: transparent;     /*全透明*/'
+                                   '/*background-color: skyblue;   */'
+                                   '/*background-color: rgba(0,0,0,50);   半透明*/'
+                                   '/*background: rgba(255, 0, 0, 150);  半透明*/'
+                                   'height: 25px;}'
+                                   'QToolButton{background: rgba(0, 200, 200, 50);'
+                                   'color: black;'
+                                   'font-size:22px;'
+                                   'font-weight:bold;'
+                                   'font-family:verdana,arial,Roman times;}')
+
+        tb = QtWidgets.QToolButton()
+        tb.setText('转换')
+        tb.setToolTip('把多个doc批量转入一个pdf')
+        tb.clicked.connect(partial(self.slot_toolbar_clicked, 'doc转换'))
+        self.toolbar.addWidget(tb)
+
+        tb = QtWidgets.QToolButton()
+        tb.setText('缩图')
+        tb.setToolTip('把图片的分辨率缩小')
+        tb.clicked.connect(partial(self.slot_toolbar_clicked, '缩图'))
+        self.toolbar.addWidget(tb)
+
+        # self.setCentralWidget(self.lb_bg)
+
     def _init_main(self):
         self.resize(1200, 800)
         self.setWindowFlags(QtCore.Qt.FramelessWindowHint | QtCore.Qt.WindowSystemMenuHint)  # 设置无边框窗口
         self.setAttribute(QtCore.Qt.WA_TranslucentBackground)  # 设置窗口背景透明
         # self.setAttribute(Qt.WA_StyledBackground, True)  # 子QWdiget背景透明
         self.setMouseTracking(True)  # 跟踪鼠标移动事件的必备
+
         layout = QtWidgets.QVBoxLayout(self)
-        layout.setContentsMargins(0, 0, Const.MARGIN, Const.MARGIN)  # 给阴影留下位置
+        layout.setContentsMargins(0, 0, Const.MARGIN, Const.MARGIN)  # 给阴影留下位置，不过左边和上边就没有拉伸的功能，被遮蔽了
         # layout.setContentsMargins(0, 0, 0, 0)  # 给阴影留下位置
         layout.setSpacing(0)
         layout.addWidget(self.titleBar)
+        # self.titleBar.setVisible(False)
+        layout.addWidget(self.toolbar)
         # layout.addStretch()
         layout.addWidget(self.canvas)
+        # pb = QtWidgets.QPushButton('dgskgls')
+        # pb.setToolTip('测试一下')
+        # layout.addWidget(pb)
 
         Utils.center_win(self)
         self.titleBar.setTitle('文件管家')
-
+        self._init_toolbar()
         self._init_canvas()
 
         # 信号槽
-        self.titleBar.sign_pb_prev.connect(partial(self.sign_title_clicked, '打开文件夹'))
-        self.titleBar.sign_pb_next.connect(partial(self.sign_title_clicked, '打开文件'))
+        # self.titleBar.sign_pb_prev.connect(partial(self.sign_title_clicked, '打开文件夹'))
+        # self.titleBar.sign_pb_next.connect(partial(self.sign_title_clicked, '打开文件'))
         self.titleBar.sign_win_minimize.connect(self.sign_showMinimized)
         self.titleBar.sign_win_maximize.connect(self.sign_showMaximized)
         self.titleBar.sign_win_resume.connect(self.sign_showNormal)
@@ -772,6 +836,7 @@ if __name__ == '__main__':
     g_style = StyleSheet()  # 包围窗体，定义在前
     # win = MainWindow()
     win = CustomFrame()
+    # win = CustomMainWindow()
     win.show()
     g_style.set(app)  # 包围窗体，设置在后
     sys.exit(app.exec_())

@@ -28,7 +28,7 @@ import fitz
 import zipfile
 import shutil
 import glob
-from PIL import Image
+from PIL import Image, PngImagePlugin
 from multiprocessing import cpu_count
 from multiprocessing import Pool, Manager
 import cv2 as cv
@@ -701,6 +701,25 @@ def word2pic(path, zip_path, tmp_path, store_path):
             shutil.rmtree(os.path.join(tmp_path, i))
 
 
+def doc2docx(doc_name, docx_name):
+    '''
+    # doc转docx
+    :param doc_name: doc文档路径
+    :param docx_name: docx文档路径
+    :return:
+    '''
+    try:
+        # 首先将doc转换成docx
+        word = client.Dispatch("Word.Application")
+        doc = word.Documents.Open(doc_name)
+        # 使用参数16表示将doc转换成docx
+        doc.SaveAs(docx_name, 16)
+        doc.Close()
+        word.Quit()
+    except:
+        pass
+
+
 # 删除有水印标志的部分
 def removeWatermark(wm_text, inputFile, outputFile):
     from PyPDF4 import PdfFileReader, PdfFileWriter
@@ -1028,6 +1047,58 @@ def pdf_halve_pages(pdf_file_src, pdf_file_dst):
         print(result)
 
 
+# 定义图像拼接函数
+def add_img(f1, f2, task_img):
+    img1 = Image.open(f1)
+    img2 = Image.open(f2)
+
+    # width, height = max(img1.size[0], img2.size[0]), img1.size[1]+img2.size[1]
+    width, height = img1.size[0]+img2.size[0]+10, max(img1.size[1], img2.size[1])
+    print(img1.size, img2.size, width, height)
+
+    # 创建空白图片
+    target = Image.new('RGB', (width, height), (255, 255, 255))
+
+    # 创建header Image对象，paste拼接到空白图片指定位置target.paste(img_h, (0, 0))
+    # img_h = img_header(os.path.join(tasktheme_img_path, task_img))
+    # 图片合成paste 参数中img_h表示Image对象，(0, 0)表示x,y轴位置 单位像素 target的左上角为原点 y轴向下
+    target.paste(img1, (0, 0))
+    # target.paste(img2, (0, img1.size[1]))
+    target.paste(img2, (img1.size[0]+10, 0))
+
+    target.save(task_img)
+    # for each in files:
+    #     # img = PngImagePlugin.PngImageFile()
+    #     print(img.size)
+    # to_image = Image.new('RGB', (IMAGE_COLUMN * IMAGE_SIZE, IMAGE_ROW * IMAGE_SIZE))  # 创建一个新图
+    # # 循环遍历，把每张图片按顺序粘贴到对应位置上
+    # for y in range(1, IMAGE_ROW + 1):
+    #     for x in range(1, IMAGE_COLUMN + 1):
+    #         from_image = Image.open(IMAGES_PATH + image_names[IMAGE_COLUMN * (y - 1) + x - 1]).resize(
+    #             (IMAGE_SIZE, IMAGE_SIZE), Image.ANTIALIAS)
+    #         to_image.paste(from_image, ((x - 1) * IMAGE_SIZE, (y - 1) * IMAGE_SIZE))
+    # return to_image.save(IMAGE_SAVE_PATH)  # 保存新图
+
+
+# 清洗图片，去灰底
+def clean_img(img_file):
+    img_array = np.array(Image.open(img_file))
+    arr1 = img_array[:]
+    print(arr1.shape)
+    print(img_array[2, 2])
+    for x in range(1, arr1.shape[0]):
+        for y in range(1, arr1.shape[1]):
+            a = img_array[x, y][0] if img_array[x, y][0] < 150 else 255
+            # b = img_array[x, y][1] if img_array[x, y][1] < 150 else 255
+            # c = img_array[x, y][2] if img_array[x, y][2] < 150 else 255
+            arr1[x, y] = (a, a, a)
+            # arr1[x, y] = (b, b, b)
+            # arr1[x, y] = (c, c, c)
+
+    image_arr = Image.fromarray(arr1)
+    image_arr.save(r'C:\Users\big\Desktop\tt.jpg')
+
+
 def main():
     # print('cpu逻辑个数：', cpu_count())
     # print('cpu物理个数：', psutil.cpu_count(logical=False))
@@ -1042,7 +1113,13 @@ def main():
     #                       r'E:\考证\岩土\岩土 基础 历年真题\new.pdf')
     # pdf_delete_water_mark(r'E:\考证\岩土\岩土 基础 历年真题\09-17 基础 真题.pdf',
     #                       r'E:\考证\岩土\岩土 基础 历年真题\new.pdf')
-    pdf_halve_pages(r'C:\Users\big\Desktop\机器学习实战.pdf', r'C:\Users\big\Desktop\new.pdf')
+    # pdf_halve_pages(r'C:\Users\big\Desktop\机器学习实战.pdf', r'C:\Users\big\Desktop\new.pdf')
+    # clean_img(r'C:\Users\big\Desktop\仲裁.jpg')
+    add_img(r'C:\Users\big\Desktop\建造师工资水平1.png',
+            r'C:\Users\big\Desktop\建造师工资水平2.png',
+            r'C:\Users\big\Desktop\last.png')
+    # add_img(r'C:\Users\big\Desktop\last.png', r'C:\Users\big\Desktop\证据2.png'
+    #         , r'C:\Users\big\Desktop\last.png')
     # 创建保存图片的文件夹
     # if os.path.exists(pic_path):
     #     print("文件夹已存在，不必重新创建！")
