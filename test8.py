@@ -434,24 +434,26 @@ def ddd(img):
     # yy 91 294  xx 30 233
     # 29 275     96 345
     # 34 254    101 321
-    # region = im.crop((10, 9, 357, 356))
-    # region.save("./black2.png")
+    # region = im.crop((0, 1000, 2000, 2000))
+    # region.save("./white2.png")
 
-    hmax, hmin = 0, w
+    hmax, hmin = 0, h
 
     for j in range(h):
         for i in range(w):
             point = im.getpixel((i, j))
             # im.putpixel((i, j), point)
-            if point[0] < 100:
+            # print(point)
+            if point[0] < 250:
                 im.putpixel((i, j), (point[0]+150, point[1]+150, point[2]+150, 255))
 
-                hmin = i if hmin > i else hmin
-                hmax = i if hmax < i else hmax
+                hmin = j if hmin > j else hmin
+                hmax = j if hmax < j else hmax
                 # x = i
                 # y = i
-                print(point)
+
             else:
+                # print(point)
                 ...
                 # print(x)
 
@@ -460,7 +462,7 @@ def ddd(img):
         # print(x, y, im.getpixel((w//2, 93)), im.getpixel((w//2, 94)))
         # print(x, y, im.getpixel((88, h // 2)), im.getpixel((89, h // 2)))
     print(hmin, hmax)
-    im.save(r'./tmp.png')#x::89 292  yy 91 294
+    # im.save(r'./tmp.png')#x::89 292  yy 91 294
     #     yy 91 294  xx 30 233
 
 
@@ -480,5 +482,6 @@ if __name__ == "__main__":
 
     # sys.exit(app.exec_())
 
-    ddd(r'E:\Neworld\res\images\goD.png')
+    # ddd(r'E:\Neworld\res\images\timg.jpg')
+    ddd(r'E:\Neworld\res\background\goW.png')
     # print(round(2.5*100))
