@@ -11,10 +11,10 @@ import os
 import sys
 import copy
 from functools import partial
-from PyQt5 import QtCore, QtGui, QtWidgets
+from PyQt5 import QtCore, QtGui, QtWidgets, QtWinExtras
 from enum import IntEnum, unique
 from ui_mergeFiles import Ui_MainWindow
-from utilities import Utils, AnimWin, CustomBG, StyleSheet, FileButler
+from utilities import Utils, AnimWin, BackLabel, StyleSheet, FileButler, ImageConvert
 
 # import cgitb  # 相当管用
 # cgitb.enable(format='text')  # 解决 pyqt5 异常只要进入事件循环,程序就崩溃,而没有任何提示
@@ -287,7 +287,7 @@ class CustomFrame(QtWidgets.QFrame):
         self.butler = FileButler()
         self.lb_bg = QtWidgets.QLabel()
 
-        self.lb_bg = CustomBG(self, 'res/background/bk2.jpg', Const.MARGIN, Const.MARGIN)
+        self.lb_bg = BackLabel(self, 'res/background/bk2.jpg', Const.MARGIN, Const.MARGIN)
         self.titleBar = TitleBar(self)
         self.toolbar = QtWidgets.QToolBar()  # QtWidgets.QToolBar('gjlfd ')
         self.canvas = QtWidgets.QStackedWidget()
@@ -302,13 +302,14 @@ class CustomFrame(QtWidgets.QFrame):
                 self, "选取源文件夹", r'C:\Users\chw\Desktop\8月英语作业\2018 中考词组汇总\8A',
                 QtWidgets.QFileDialog.ShowDirsOnly)  # 起始路径
             # path = r'C:\Users\chw\Desktop\8月英语作业\2018 中考词组汇总\8A'
-            # print(path)
+            print(path)
             # return
             if path:
                 self.src_path = path
                 self.src_files = Utils.files_in_dir(path, ['.doc', '.docx'])
-                # print(type(wg), self.src_files)
+
                 Utils.sort_nicely(self.src_files)
+                print(self.src_files)
 
                 for each in self.src_files:
                     item = QtWidgets.QListWidgetItem(QtGui.QIcon(), each, wg)
