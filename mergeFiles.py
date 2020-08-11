@@ -298,10 +298,10 @@ class CustomFrame(QtWidgets.QFrame):
         if name == 'doc转换':
             wg = self.canvas.currentWidget()
 
-            path = QtWidgets.QFileDialog.getExistingDirectory(
-                self, "选取源文件夹", r'C:\Users\chw\Desktop\8月英语作业\2018 中考词组汇总\8A',
-                QtWidgets.QFileDialog.ShowDirsOnly)  # 起始路径
-            # path = r'C:\Users\chw\Desktop\8月英语作业\2018 中考词组汇总\8A'
+            # path = QtWidgets.QFileDialog.getExistingDirectory(
+            #     self, "选取源文件夹", r'F:\重要\法律与工程经济讲义',
+            #     QtWidgets.QFileDialog.ShowDirsOnly)  # 起始路径
+            path = r'F:\重要\法律与工程经济讲义'
             print(path)
             # return
             if path:
@@ -320,11 +320,11 @@ class CustomFrame(QtWidgets.QFrame):
                     name, _ = os.path.splitext(each)
                     doc = f'{path}\\{each}'
                     pdf = f'{path}\\{name}.pdf'
-                    # print(doc)
+                    print(doc, pdf)
 
                     self.butler.word2pdf(doc, pdf)
-
-                # print(path)
+                #
+                # # print(path)
                 self.butler.merge_pdf(path, '合并.pdf')
 
         elif name == '缩图':
