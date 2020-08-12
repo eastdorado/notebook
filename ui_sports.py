@@ -16,7 +16,7 @@ class Ui_Dialog(object):
         Dialog.setObjectName("Dialog")
         Dialog.resize(318, 74)
         font = QtGui.QFont()
-        font.setFamily("妤蜂綋")
+        font.setFamily("楷体")
         font.setPointSize(11)
         font.setBold(False)
         font.setWeight(50)
@@ -52,7 +52,7 @@ class Ui_Dialog(object):
 
     def retranslateUi(self, Dialog):
         _translate = QtCore.QCoreApplication.translate
-        Dialog.setWindowTitle(_translate("Dialog", "宸ュ叿"))
-        self.pushButton.setText(_translate("Dialog", "瑙嗛"))
-        self.pushButton_2.setText(_translate("Dialog", "鏂囨"))
-        self.pushButton_3.setText(_translate("Dialog", "缃戦〉"))
+        Dialog.setWindowTitle(_translate("Dialog", "工具"))
+        self.pushButton.setText(_translate("Dialog", "视频"))
+        self.pushButton_2.setText(_translate("Dialog", "文案"))
+        self.pushButton_3.setText(_translate("Dialog", "网页"))

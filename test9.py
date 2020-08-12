@@ -39,7 +39,7 @@ class Stone(QtWidgets.QWidget):  # 棋子
         offset = 5
         e.setBlurRadius(15)  # 阴影半径，虚化程度，不能大于圆角半径
         e.setOffset(offset, offset)  # 阴影宽度
-        color = QtGui.QColor(80, 80, 80, 250) if self.lot % 2 else QtGui.QColor(50, 50, 50, 200)
+        color = QtGui.QColor(80, 80, 80, 250) if self.lot % 2 else QtGui.QColor(20, 20, 20, 250)
         e.setColor(color)  # 阴影颜色
         self.setGraphicsEffect(e)
 
@@ -48,7 +48,7 @@ class Stone(QtWidgets.QWidget):  # 棋子
         return self.kill_list
 
     def update_me(self, size, is_show_lot, is_cur_lot=True, kill_list=None):
-        self._pic = './res/images/goB.png' if self.lot % 2 else './res/images/white go1.png'  # goW3.png'
+        self._pic = './res/images/goB.png' if self.lot % 2 else './res/images/goW3.png'  # white go1.png'
         # size = 500
         self._size = size
         self.is_show_lot = is_show_lot
@@ -118,11 +118,12 @@ class Stone(QtWidgets.QWidget):  # 棋子
             # 然后画图。
             # pen = QtGui.QPen(QtGui.QColor(255, 122, 110, 255))  # 设置颜色
             pen = QtGui.QPen(QtCore.Qt.red)  # 设置颜色
-            pen.setWidth(4)  # 设置边框宽度
+            pen.setWidth(3)  # 设置边框宽度
             painter.setPen(pen)  # 添加描边边框
             painter.setBrush(QtCore.Qt.NoBrush)
             # print(rect)
-            rt = QtCore.QRectF(rect.width() / 4, rect.height() / 4, rect.width() / 2, rect.height() / 2)
+            off = 6
+            rt = QtCore.QRectF(rect.width() / 2-off, rect.height() / 2-off, 2*off, 2*off)
             painter.drawEllipse(rt)
 
 
@@ -135,11 +136,11 @@ class GoBoard(QtWidgets.QFrame):
         super(GoBoard, self).__init__(parent)
         self.parent = parent
 
-        self.board_lines = 4  # 棋盘规格
+        self.board_lines = 19  # 棋盘规格
         self.board_map = np.zeros((self.board_lines, self.board_lines, 2), dtype=int)
         # state(0:空  1:黑子 2:白子 3:劫 4:禁着点), stone_lot
         # print(self.board_map)
-        self.side = 60  # 边空大小，显示坐标
+        self.side = 40  # 边空大小，显示坐标
         self.grid = 0  # 棋格大小
         self.stone_size = [0, 0]  # 棋子大小, 棋子大小的一半
 
