@@ -15,6 +15,7 @@ from PyQt5 import QtCore, QtGui, QtWidgets, QtWinExtras
 from enum import IntEnum, unique
 from ui_mergeFiles import Ui_MainWindow
 from utilities import Utils, AnimWin, BackLabel, StyleSheet, FileButler, ImageConvert
+from ui_watermark import Ui_Dialog
 
 # import cgitb  # 相当管用
 # cgitb.enable(format='text')  # 解决 pyqt5 异常只要进入事件循环,程序就崩溃,而没有任何提示
@@ -275,6 +276,33 @@ class CustomMainWindow(QtWidgets.QMainWindow):
             # setStyleSheet(QString("MusicPlayer { background: %1; }").arg(QtWin::realColorizationColor().name()))
 
 
+class ImgWatermark(QtWidgets.QDialog, Ui_Dialog):
+    def __init__(self, parent=None):
+        super(ImgWatermark, self).__init__(parent)
+        self.setupUi(self)
+
+        Dialog = self
+        self.le_file_src.editingFinished.connect(partial(Dialog.slot_text_edited, self.le_file_src))
+        self.le_file_dst.editingFinished.connect(partial(Dialog.slot_text_edited, self.le_file_dst))
+        self.le_watermark.editingFinished.connect(partial(Dialog.slot_text_edited, self.le_watermark))
+        self.tb_open_file.clicked.connect(partial(Dialog.slot_btn_clicked, self.tb_open_file))
+        self.tb_save_file.clicked.connect(partial(Dialog.slot_btn_clicked, self.tb_save_file))
+        self.pb_color_dlg.clicked.connect(partial(Dialog.slot_btn_clicked, self.pb_color_dlg))
+        self.pb_font_dlg.clicked.connect(partial(Dialog.slot_btn_clicked, self.pb_font_dlg))
+        self.pb_add_watermard.clicked.connect(partial(Dialog.slot_btn_clicked, self.pb_add_watermard))
+
+    def slot_text_edited(self, obj):
+        ...
+
+    def slot_btn_clicked(self, obj):
+        # obj = QtWidgets.QPushButton().text
+        print(obj.text())
+
+    def slot_font_selected(self, font):
+        self.lb_water.setFont(font)
+        print(font)
+
+
 # 定制窗体，自定义工具栏
 class CustomFrame(QtWidgets.QFrame):
     def __init__(self, *args, **kwargs):
@@ -285,12 +313,11 @@ class CustomFrame(QtWidgets.QFrame):
         self.src_path = None
         self.src_files = None
         self.butler = FileButler()
-        self.lb_bg = QtWidgets.QLabel()
-
         self.lb_bg = BackLabel(self, 'res/background/bk2.jpg', Const.MARGIN, Const.MARGIN)
         self.titleBar = TitleBar(self)
         self.toolbar = QtWidgets.QToolBar()  # QtWidgets.QToolBar('gjlfd ')
         self.canvas = QtWidgets.QStackedWidget()
+        self.child_win = ImgWatermark()
 
         self._init_main()
 
@@ -310,7 +337,8 @@ class CustomFrame(QtWidgets.QFrame):
 
                 Utils.sort_nicely(self.src_files)
                 print(self.src_files)
-
+                if not self.src_files:
+                    return
                 for each in self.src_files:
                     item = QtWidgets.QListWidgetItem(QtGui.QIcon(), each, wg)
                     #     item.setToolTip(self.data[i])
@@ -341,6 +369,10 @@ class CustomFrame(QtWidgets.QFrame):
                 file_jpg = f'{file_in}.jpg'
                 print(file_in, file_jpg, ext)
                 ImageConvert.png_jpg(each, file_jpg, scale)
+
+        elif name == '水印':
+            # self.child_win.show()  # -----  modeless dialog
+            self.child_win.exec()  # ------ modal  dialog
 
     def _init_canvas(self):
         ...
@@ -414,7 +446,11 @@ class CustomFrame(QtWidgets.QFrame):
         tb.clicked.connect(partial(self.slot_toolbar_clicked, '缩图'))
         self.toolbar.addWidget(tb)
 
-        # self.setCentralWidget(self.lb_bg)
+        tb = QtWidgets.QToolButton()
+        tb.setText('水印')
+        tb.setToolTip('给图片设置水印')
+        tb.clicked.connect(partial(self.slot_toolbar_clicked, '水印'))
+        self.toolbar.addWidget(tb)
 
     def _init_main(self):
         self.resize(1200, 800)
