@@ -425,7 +425,7 @@ class FileButler(object):
                                 constants.wdExportFormatPDF,
                                 Item=constants.wdExportDocumentWithMarkup,
                                 CreateBookmarks=constants.wdExportCreateHeadingBookmarks)
-        doc.Close()
+        # doc.Close() # 每次都要弹窗保存框
         word.Quit(constants.wdDoNotSaveChanges)
 
     @staticmethod
