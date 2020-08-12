@@ -25,31 +25,32 @@ from enum import IntEnum, unique
 import numpy as np
 import piexif
 from utilities import Utils, EllipseButton, StyleSheet, MyJson
+import cv2
 
+# import cgitb  # ï¿½àµ±ï¿½ï¿½ï¿½ï¿½
 
-# import cgitb  # Ïàµ±¹ÜÓÃ
-
-# cgitb.enable(format='text')  # ½â¾ö pyqt5 Òì³£Ö»Òª½øÈëÊÂ¼þÑ­»·,³ÌÐò¾Í±ÀÀ£,¶øÃ»ÓÐÈÎºÎÌáÊ¾
+# cgitb.enable(format='text')  # ï¿½ï¿½ï¿½ pyqt5 ï¿½ì³£Ö»Òªï¿½ï¿½ï¿½ï¿½ï¿½Â¼ï¿½Ñ­ï¿½ï¿½,ï¿½ï¿½ï¿½ï¿½Í±ï¿½ï¿½ï¿½,ï¿½ï¿½Ã»ï¿½ï¿½ï¿½Îºï¿½ï¿½ï¿½Ê¾
 
 
 # sys.setrecursionlimit(10000)
+
 
 class VideoDisplay(QWidget):
     def __init__(self, *args, **kwargs):
         super(VideoDisplay, self).__init__(*args, **kwargs)
         self.parent = args[0]
 
-        # Ä¬ÈÏÊÓÆµÔ´ÎªÏà»ú
+        # Ä¬ï¿½ï¿½ï¿½ï¿½ÆµÔ´Îªï¿½ï¿½ï¿½
         self.ui.radioButtonCam.setChecked(True)
         self.isCamera = True
 
-        # ÐÅºÅ²ÛÉèÖÃ
+        # ï¿½ÅºÅ²ï¿½ï¿½ï¿½ï¿½ï¿½
         ui.Open.clicked.connect(self.Open)
         ui.Close.clicked.connect(self.Close)
         ui.radioButtonCam.clicked.connect(self.radioButtonCam)
         ui.radioButtonFile.clicked.connect(self.radioButtonFile)
 
-        # ´´½¨Ò»¸ö¹Ø±ÕÊÂ¼þ²¢ÉèÎªÎ´´¥·¢
+        # ï¿½ï¿½ï¿½ï¿½Ò»ï¿½ï¿½ï¿½Ø±ï¿½ï¿½Â¼ï¿½ï¿½ï¿½ï¿½ï¿½ÎªÎ´ï¿½ï¿½ï¿½ï¿½
         self.stopEvent = threading.Event()
         self.stopEvent.clear()
 
@@ -65,16 +66,16 @@ class VideoDisplay(QWidget):
             self.cap = cv2.VideoCapture(self.fileName)
             self.frameRate = self.cap.get(cv2.CAP_PROP_FPS)
         else:
-            # ÏÂÃæÁ½ÖÖrtsp¸ñÊ½¶¼ÊÇÖ§³ÖµÄ
+            # ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½rtspï¿½ï¿½Ê½ï¿½ï¿½ï¿½ï¿½Ö§ï¿½Öµï¿½
             # cap = cv2.VideoCapture("rtsp://admin:Supcon1304@172.20.1.126/main/Channels/1")
             self.cap = cv2.VideoCapture("rtsp://admin:Supcon1304@172.20.1.126:554/h264/ch1/main/av_stream")
 
-        # ´´½¨ÊÓÆµÏÔÊ¾Ïß³Ì
+        # ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Æµï¿½ï¿½Ê¾ï¿½ß³ï¿½
         th = threading.Thread(target=self.Display)
         th.start()
 
     def Close(self):
-        # ¹Ø±ÕÊÂ¼þÉèÎª´¥·¢£¬¹Ø±ÕÊÓÆµ²¥·Å
+        # ï¿½Ø±ï¿½ï¿½Â¼ï¿½ï¿½ï¿½Îªï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ø±ï¿½ï¿½ï¿½Æµï¿½ï¿½ï¿½ï¿½
         self.stopEvent.set()
 
     def Display(self):
@@ -93,9 +94,9 @@ class VideoDisplay(QWidget):
             else:
                 cv2.waitKey(int(1000 / self.frameRate))
 
-            # ÅÐ¶Ï¹Ø±ÕÊÂ¼þÊÇ·ñÒÑ´¥·¢
+            # ï¿½Ð¶Ï¹Ø±ï¿½ï¿½Â¼ï¿½ï¿½Ç·ï¿½ï¿½Ñ´ï¿½ï¿½ï¿½
             if True == self.stopEvent.is_set():
-                # ¹Ø±ÕÊÂ¼þÖÃÎªÎ´´¥·¢£¬Çå¿ÕÏÔÊ¾label
+                # ï¿½Ø±ï¿½ï¿½Â¼ï¿½ï¿½ï¿½ÎªÎ´ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ê¾label
                 self.stopEvent.clear()
                 self.ui.DispalyLabel.clear()
                 self.ui.Close.setEnabled(False)
@@ -109,7 +110,7 @@ class ItemDelegate(QtWidgets.QStyledItemDelegate):
         super(ItemDelegate, self).paint(painter, option, index)
 
 
-# Ô²ÐÎÍ¼Æ¬°´Å¥
+# Ô²ï¿½ï¿½Í¼Æ¬ï¿½ï¿½Å¥
 class RoundButton(QPushButton):
     def __init__(self, img_src, img_hovered, img_pressed, parent=None):
         super(RoundButton, self).__init__(parent)
@@ -202,14 +203,14 @@ class RoundButton(QPushButton):
 
 
 class MyQLabel(QLabel):
-    clicked = pyqtSignal()  # ×Ô¶¨Òåµ¥»÷ÐÅºÅ
-    DoubleClicked = pyqtSignal()  # ×Ô¶¨ÒåË«»÷ÐÅºÅ
+    clicked = pyqtSignal()  # ï¿½Ô¶ï¿½ï¿½åµ¥ï¿½ï¿½ï¿½Åºï¿½
+    DoubleClicked = pyqtSignal()  # ï¿½Ô¶ï¿½ï¿½ï¿½Ë«ï¿½ï¿½ï¿½Åºï¿½
 
     def __init__(self, *args, **kwargs):
         super(MyQLabel, self).__init__(*args, **kwargs)
         # self.setFixedSize(200, 200)
-        self.setMouseTracking(True)  # Êó±êÒÆ¶¯¸ú×Ù
-        # self.setScaledContents(True)  # Í¼Æ¬×ÔÊÊÓ¦QLabel´óÐ¡
+        self.setMouseTracking(True)  # ï¿½ï¿½ï¿½ï¿½Æ¶ï¿½ï¿½ï¿½ï¿½ï¿½
+        # self.setScaledContents(True)  # Í¼Æ¬ï¿½ï¿½ï¿½ï¿½Ó¦QLabelï¿½ï¿½Ð¡
 
         self.img = None
 
@@ -237,21 +238,21 @@ class MyQLabel(QLabel):
             img_new = pix.scaledToWidth(height) if is_w else pix.scaledToHeight(width)
             new_img = './tmp.jpg'
             img_new.save(new_img)
-            # self.setAutoFillBackground(True)  # /WidgetÔö¼Ó±³¾°Í¼Æ¬Ê±£¬Õâ¾äÒ»¶¨Òª¡£
+            # self.setAutoFillBackground(True)  # /Widgetï¿½ï¿½ï¿½Ó±ï¿½ï¿½ï¿½Í¼Æ¬Ê±ï¿½ï¿½ï¿½ï¿½ï¿½Ò»ï¿½ï¿½Òªï¿½ï¿½
             # wide = min(width, height)
             # pix = QtGui.QPixmap(img).scaled(wide, wide, QtCore.Qt.IgnoreAspectRatio, QtCore.Qt.SmoothTransformation)
             # self.setIcon(QtGui.QIcon(QtGui.QPixmap.fromImage(img_new)))
             # self.setIconSize(QtCore.QSize(wide, wide))
-            # self.setFlat(True)  # ¾ÍÊÇÕâ¾äÄÜ¹»ÊµÏÖ°´Å¥Í¸Ã÷£¬ÓÃpngÍ¼Æ¬Ê±ºÜÓÐÓÃ
-            # border = 0  # Ïû³ý±ß¿ò£¬È¡Ïûµã»÷Ð§¹û
+            # self.setFlat(True)  # ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ü¹ï¿½Êµï¿½Ö°ï¿½Å¥Í¸ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½pngÍ¼Æ¬Ê±ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+            # border = 0  # ï¿½ï¿½ï¿½ï¿½ï¿½ß¿ï¿½È¡ï¿½ï¿½ï¿½ï¿½ï¿½Ð§ï¿½ï¿½
 
             qss = '''
                 color: %s;
                 background-color: %s;
-                background: transparent;     /*È«Í¸Ã÷*/
+                background: transparent;     /*È«Í¸ï¿½ï¿½*/
                 background-image:url(%s);
-                background-position: center center;      /*Í¼Æ¬µÄÎ»ÖÃ£¬¾ÓÖÐ£¬¿¿×ó¶ÔÆë*/
-                background-repeat: no-repeat;       /*±³¾°²»ÒªÖØ¸´*/
+                background-position: center center;      /*Í¼Æ¬ï¿½ï¿½Î»ï¿½Ã£ï¿½ï¿½ï¿½ï¿½Ð£ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½*/
+                background-repeat: no-repeat;       /*ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Òªï¿½Ø¸ï¿½*/
 
                 border-style:none;
                 border:%dpx solid %s; 
@@ -325,7 +326,7 @@ class MyQLabel(QLabel):
         painter.setRenderHint(QPainter.SmoothPixmapTransform)
         painter.fillRect(0, 0, size.width(), size.height(), Qt.white)
         painter.setBrush(QColor(0, 0, 0))
-        painter.drawRoundedRect(0, 0, size.width(), size.height(), 99, 99);
+        painter.drawRoundedRect(0, 0, size.width(), size.height(), 99, 99)
         image = QPixmap(pix_src.scaled(size))
         image.setMask(mask)
 
@@ -334,7 +335,7 @@ class MyQLabel(QLabel):
     def set_img(self, img_file):
         self.img = img_file
 
-    # °ÑÍ¼Æ¬°´±ÈÀýÈ«²¿ÏÔÊ¾³öÀ´£¬²»ÕÚ±Î£¬ÇÒ¾ÓÖÐ£¬×î´ó»¯
+    # ï¿½ï¿½Í¼Æ¬ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½È«ï¿½ï¿½ï¿½ï¿½Ê¾ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ú±Î£ï¿½ï¿½Ò¾ï¿½ï¿½Ð£ï¿½ï¿½ï¿½ï¿½
     def show_center_img(self):
         if not self.img:
             return
@@ -355,15 +356,15 @@ class MyQLabel(QLabel):
         self.setAlignment(Qt.AlignCenter)
 
     # def show_circle_img(self, img_file, scale=1.0):
-    #     assert img_file, "²ÎÊý´íÎó"
+    #     assert img_file, "ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½"
     #
-    #     #     # ÏÔÊ¾Ô²ÐÎÍ¼±ê
+    #     #     # ï¿½ï¿½Ê¾Ô²ï¿½ï¿½Í¼ï¿½ï¿½
     #     #     label.setStyleSheet('min-width:  100px;max-width:  100px;'
     #     #                     'min-height: 100px;max-height: 100px;'
     #     #                     'border-radius: 50px;border-width: 0 0 0 0;'
     #     #                     'border-image: url(./res/images/water.png) 0 0 0 0 stretch')
     #
-    #     # ÉèÖÃÍÖÔ²µÄ³¤Öá¡¢¶ÌÖá
+    #     # ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ô²ï¿½Ä³ï¿½ï¿½á¡¢ï¿½ï¿½ï¿½ï¿½
     #     sw = self.width()
     #     sh = self.height()
     #
@@ -375,25 +376,25 @@ class MyQLabel(QLabel):
     #     painter.setRenderHints(QPainter.Antialiasing | QPainter.SmoothPixmapTransform)
     #
     #     path = QtGui.QPainterPath()
-    #     path.addEllipse(0, 0, sw, sh)  # »æÖÆÍÖÔ²
+    #     path.addEllipse(0, 0, sw, sh)  # ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ô²
     #     painter.setClipPath(path)
     #
     #     painter.drawPixmap(0, 0, sw, sh, pix)
     #     # self.setPixmap(img_file)
 
-    # ÖØÐ´Êó±êµ¥»÷ÊÂ¼þ
+    # ï¿½ï¿½Ð´ï¿½ï¿½êµ¥ï¿½ï¿½ï¿½Â¼ï¿½
     def resizeEvent(self, a0: QtGui.QResizeEvent) -> None:
         super(MyQLabel, self).resizeEvent(a0)
         self.show_center_img()
 
-    def mousePressEvent(self, QMouseEvent):  # µ¥»÷
+    def mousePressEvent(self, QMouseEvent):  # ï¿½ï¿½ï¿½ï¿½
         self.clicked.emit()
 
-    # ÖØÐ´Êó±êË«»÷ÊÂ¼þ
-    def mouseDoubleClickEvent(self, QMouseEvent):  # Ë«»÷
+    # ï¿½ï¿½Ð´ï¿½ï¿½ï¿½Ë«ï¿½ï¿½ï¿½Â¼ï¿½
+    def mouseDoubleClickEvent(self, QMouseEvent):  # Ë«ï¿½ï¿½
         self.DoubleClicked.emit()
 
-    # ÔÚwidgetËÄÖÜ»­ÒõÓ°
+    # ï¿½ï¿½widgetï¿½ï¿½ï¿½Ü»ï¿½ï¿½ï¿½Ó°
     # def paintEvent(self, event):
     #     m = 9
     #     path = QtGui.QPainterPath()
@@ -421,55 +422,55 @@ class MyQLabel(QLabel):
 
 class TitleBar(QWidget):
     StyleSheet = """
-    /*±êÌâÀ¸*/
+    /*ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½*/
     TitleBar {
-        /*background: transparent;     È«Í¸Ã÷*/
+        /*background: transparent;     È«Í¸ï¿½ï¿½*/
         /*background-color: skyblue;   */
-        /*background-color:rgba(0,0,0,0.1)      °ëÍ¸Ã÷*/
+        /*background-color:rgba(0,0,0,0.1)      ï¿½ï¿½Í¸ï¿½ï¿½*/
         border-top-right-radius:15;
         /*background-image:url(./res/background/bk5.jpg);*/
-        background-repeat: no-repeat;       /*±³¾°²»ÒªÖØ¸´*/
-        background-position: center center;      /*Í¼Æ¬µÄÎ»ÖÃ£¬¾ÓÖÐ£¬¿¿×ó¶ÔÆë*/
+        background-repeat: no-repeat;       /*ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Òªï¿½Ø¸ï¿½*/
+        background-position: center center;      /*Í¼Æ¬ï¿½ï¿½Î»ï¿½Ã£ï¿½ï¿½ï¿½ï¿½Ð£ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½*/
     }
-    /*×îÐ¡»¯×î´ó»¯¹Ø±Õ°´Å¥Í¨ÓÃÄ¬ÈÏ±³¾°*/
+    /*ï¿½ï¿½Ð¡ï¿½ï¿½ï¿½ï¿½ó»¯¹Ø±Õ°ï¿½Å¥Í¨ï¿½ï¿½Ä¬ï¿½Ï±ï¿½ï¿½ï¿½*/
     #buttonMinimum,#buttonMaximum,#buttonClose {
         /*background-color: skyblue;*/
-        /*background:rgba(0,0,0,0.3)      °ëÍ¸Ã÷*/
-        border:none;    /*È«Í¸Ã÷*/
+        /*background:rgba(0,0,0,0.3)      ï¿½ï¿½Í¸ï¿½ï¿½*/
+        border:none;    /*È«Í¸ï¿½ï¿½*/
         color:red
     }
-    /*ÐüÍ£*/
+    /*ï¿½ï¿½Í£*/
     #buttonMinimum:hover,#buttonMaximum:hover {
         /*background-color: green;*/
-        /*color: red;·ÅÔÚÏÂÃæµÄÇ°Ãæ²ÅÓÐÐ§¹û*/
-        background:rgba(0,0,0,0.2)     /*°ëÍ¸Ã÷*/
+        /*color: red;ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ç°ï¿½ï¿½ï¿½ï¿½ï¿½Ð§ï¿½ï¿½*/
+        background:rgba(0,0,0,0.2)     /*ï¿½ï¿½Í¸ï¿½ï¿½*/
     }
-    /*Êó±ê°´ÏÂ²»·Å*/
+    /*ï¿½ï¿½ê°´ï¿½Â²ï¿½ï¿½ï¿½*/
     #buttonMinimum:pressed,#buttonMaximum:pressed {
         /*background-color: Firebrick;*/
-        /*color: blue;·ÅÔÚÏÂÃæµÄÇ°Ãæ²ÅÓÐÐ§¹û*/
-        background:rgba(0,0,0,0.4)      /*°ëÍ¸Ã÷*/
+        /*color: blue;ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ç°ï¿½ï¿½ï¿½ï¿½ï¿½Ð§ï¿½ï¿½*/
+        background:rgba(0,0,0,0.4)      /*ï¿½ï¿½Í¸ï¿½ï¿½*/
     }
     #buttonClose:hover {
         color: red;
         /*background-color: gray;*/
-        /*background:rgba(0,0,0,0.4)      °ëÍ¸Ã÷*/
+        /*background:rgba(0,0,0,0.4)      ï¿½ï¿½Í¸ï¿½ï¿½*/
     }
     #buttonClose:pressed {
         color: red;
         /*background-color: Firebrick;*/
-        /*background:rgba(0,0,0,0.4)      °ëÍ¸Ã÷*/
+        /*background:rgba(0,0,0,0.4)      ï¿½ï¿½Í¸ï¿½ï¿½*/
     }
     """
 
-    # region ÐÅºÅÉùÃ÷Çø
-    sign_pb_prev = pyqtSignal()  # Ç°Ò»¸ö
-    sign_pb_next = pyqtSignal()  # ºóÒ»¸ö
-    sign_win_minimize = pyqtSignal()  # ´°¿Ú×îÐ¡»¯ÐÅºÅ
-    sign_win_maximize = pyqtSignal()  # ´°¿Ú×î´ó»¯ÐÅºÅ
-    sign_win_resume = pyqtSignal()  # ´°¿Ú»Ö¸´ÐÅºÅ
-    sign_win_close = pyqtSignal()  # ´°¿Ú¹Ø±ÕÐÅºÅ
-    sign_win_move = pyqtSignal(QPoint)  # ´°¿ÚÒÆ¶¯
+    # region ï¿½Åºï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+    sign_pb_prev = pyqtSignal()  # Ç°Ò»ï¿½ï¿½
+    sign_pb_next = pyqtSignal()  # ï¿½ï¿½Ò»ï¿½ï¿½
+    sign_win_minimize = pyqtSignal()  # ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ð¡ï¿½ï¿½ï¿½Åºï¿½
+    sign_win_maximize = pyqtSignal()  # ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Åºï¿½
+    sign_win_resume = pyqtSignal()  # ï¿½ï¿½ï¿½Ú»Ö¸ï¿½ï¿½Åºï¿½
+    sign_win_close = pyqtSignal()  # ï¿½ï¿½ï¿½Ú¹Ø±ï¿½ï¿½Åºï¿½
+    sign_win_move = pyqtSignal(QPoint)  # ï¿½ï¿½ï¿½ï¿½ï¿½Æ¶ï¿½
 
     # endregion
 
@@ -479,23 +480,23 @@ class TitleBar(QWidget):
         self.setStyleSheet(TitleBar.StyleSheet)
 
         self.setMouseTracking(True)
-        # ´°ÌåÍ¸Ã÷£¬¿Ø¼þ²»Í¸Ã÷
+        # ï¿½ï¿½ï¿½ï¿½Í¸ï¿½ï¿½ï¿½ï¿½ï¿½Ø¼ï¿½ï¿½ï¿½Í¸ï¿½ï¿½
         # self.setWindowFlags(Qt.FramelessWindowHint | Qt.Tool)
         # self.setAttribute(Qt.WA_TranslucentBackground)
-        self.setAttribute(Qt.WA_StyledBackground, True)  # Ö§³ÖqssÉèÖÃ±³¾°
+        self.setAttribute(Qt.WA_StyledBackground, True)  # Ö§ï¿½ï¿½qssï¿½ï¿½ï¿½Ã±ï¿½ï¿½ï¿½
         self.mPos = None
-        self.iconSize = 20  # Í¼±êµÄÄ¬ÈÏ´óÐ¡
-        # ÉèÖÃÄ¬ÈÏ±³¾°ÑÕÉ«,·ñÔòÓÉÓÚÊÜµ½¸¸´°¿ÚµÄÓ°Ïìµ¼ÖÂÍ¸Ã÷
+        self.iconSize = 20  # Í¼ï¿½ï¿½ï¿½Ä¬ï¿½Ï´ï¿½Ð¡
+        # ï¿½ï¿½ï¿½ï¿½Ä¬ï¿½Ï±ï¿½ï¿½ï¿½ï¿½ï¿½É«,ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Üµï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Úµï¿½Ó°ï¿½ìµ¼ï¿½ï¿½Í¸ï¿½ï¿½
         self.setAutoFillBackground(True)
         palette = self.palette()
         palette.setColor(palette.Window, QColor(240, 240, 240))
         self.setPalette(palette)
 
-        # ²¼¾Ö
+        # ï¿½ï¿½ï¿½ï¿½
         layout = QHBoxLayout(self)
         layout.setContentsMargins(0, 0, 0, 0)
 
-        # ´°¿Ú×óÍ¼±ê
+        # ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Í¼ï¿½ï¿½
         self.lb_icon = QLabel(self)
         self.lb_icon.setPixmap(QtGui.QPixmap('./res/images/star.png'))
         # self.lb_icon.setScaledContents(True)
@@ -503,27 +504,27 @@ class TitleBar(QWidget):
         # self.lb_icon.setStyleSheet('background: transparent; ')
         layout.addWidget(self.lb_icon)
 
-        # pb_prev = QPushButton('Ç°Ò»¸ö', self, clicked=self.sign_pb_prev.emit)
+        # pb_prev = QPushButton('Ç°Ò»ï¿½ï¿½', self, clicked=self.sign_pb_prev.emit)
         # pb_prev.setStyleSheet('color:red')
-        # ´°¿Ú±êÌâ
+        # ï¿½ï¿½ï¿½Ú±ï¿½ï¿½ï¿½
         layout.addStretch()
-        self.lb_title = QLabel(self.tr('ÔË¶¯´ïÈË'), self)
+        self.lb_title = QLabel(self.tr('ï¿½Ë¶ï¿½ï¿½ï¿½ï¿½ï¿½'), self)
         self.lb_title.setMargin(2)
         self.lb_title.setStyleSheet(
             'color: red;font-size:24px;font-weight:bold;font-family:Roman times;')
-        # pb_next = QPushButton('ºóÒ»¸ö')
+        # pb_next = QPushButton('ï¿½ï¿½Ò»ï¿½ï¿½')
         # layout.addWidget(pb_prev)
         layout.addWidget(self.lb_title)
         # layout.addWidget(pb_next)
         # layout.addStretch()
-        # ÖÐ¼äÉìËõÌõ
+        # ï¿½Ð¼ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
         layout.addSpacerItem(QSpacerItem(40, 20, QSizePolicy.Expanding, QSizePolicy.Minimum))
 
-        # ÀûÓÃWebdings×ÖÌåÀ´ÏÔÊ¾Í¼±ê
+        # ï¿½ï¿½ï¿½ï¿½Webdingsï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ê¾Í¼ï¿½ï¿½
         font = self.font() or QFont()
         font.setFamily('Webdings')
 
-        # ×îÐ¡»¯°´Å¥
+        # ï¿½ï¿½Ð¡ï¿½ï¿½ï¿½ï¿½Å¥
         self.min_button = QPushButton(
             '0', self, clicked=self.sign_win_minimize.emit, font=font, objectName='buttonMinimum')
         # self.min_button.setAutoFillBackground(False)
@@ -532,31 +533,31 @@ class TitleBar(QWidget):
         # self.min_button.setDefault(False)
         # self.min_button.setFlat(False)
         layout.addWidget(self.min_button)
-        # ×î´ó»¯/»¹Ô­°´Å¥
+        # ï¿½ï¿½ï¿½/ï¿½ï¿½Ô­ï¿½ï¿½Å¥
         self.buttonMaximum = QPushButton(
             '1', self, clicked=self.showMaximized, font=font, objectName='buttonMaximum')
         layout.addWidget(self.buttonMaximum)
-        # ¹Ø±Õ°´Å¥
+        # ï¿½Ø±Õ°ï¿½Å¥
         self.buttonClose = QPushButton(
             'r', self, clicked=self.sign_win_close.emit, font=font, objectName='buttonClose')
         layout.addWidget(self.buttonClose)
-        # ³õÊ¼¸ß¶È
+        # ï¿½ï¿½Ê¼ï¿½ß¶ï¿½
         self.setHeight()
 
     def showMaximized(self):
         if self.buttonMaximum.text() == '1':
-            # ×î´ó»¯
+            # ï¿½ï¿½ï¿½
             self.buttonMaximum.setText('2')
             self.sign_win_maximize.emit()
-        else:  # »¹Ô­
+        else:  # ï¿½ï¿½Ô­
             self.buttonMaximum.setText('1')
             self.sign_win_resume.emit()
 
     def setHeight(self, height=38):
-        """ÉèÖÃ±êÌâÀ¸¸ß¶È"""
+        """ï¿½ï¿½ï¿½Ã±ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ß¶ï¿½"""
         self.setMinimumHeight(height)
         self.setMaximumHeight(height)
-        # ÉèÖÃÓÒ±ß°´Å¥µÄ´óÐ¡
+        # ï¿½ï¿½ï¿½ï¿½ï¿½Ò±ß°ï¿½Å¥ï¿½Ä´ï¿½Ð¡
         self.min_button.setMinimumSize(height, height)
         self.min_button.setMaximumSize(height, height)
         self.buttonMaximum.setMinimumSize(height, height)
@@ -565,15 +566,15 @@ class TitleBar(QWidget):
         self.buttonClose.setMaximumSize(height, height)
 
     def setTitle(self, title):
-        """ÉèÖÃ±êÌâ"""
+        """ï¿½ï¿½ï¿½Ã±ï¿½ï¿½ï¿½"""
         self.titleLabel.setText(title)
 
     def setIcon(self, icon):
-        """ÉèÖÃÍ¼±ê"""
+        """ï¿½ï¿½ï¿½ï¿½Í¼ï¿½ï¿½"""
         self.iconLabel.setPixmap(icon.pixmap(self.iconSize, self.iconSize))
 
     def setIconSize(self, size):
-        """ÉèÖÃÍ¼±ê´óÐ¡"""
+        """ï¿½ï¿½ï¿½ï¿½Í¼ï¿½ï¿½ï¿½Ð¡"""
         self.iconSize = size
 
     def mouseDoubleClickEvent(self, event):
@@ -581,27 +582,27 @@ class TitleBar(QWidget):
         self.showMaximized()
 
     def mousePressEvent(self, event):
-        """Êó±êµã»÷ÊÂ¼þ"""
+        """ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Â¼ï¿½"""
         if event.button() == Qt.LeftButton:
-            self.mPos = event.pos()  # widget´°¿Ú×óÉÏ½ÇÏà¶ÔÓÚµçÄÔÆÁÄ»µÄ×óÉÏ½ÇµÄ£¨x=0,y=0£©Æ«ÒÆÎ»ÖÃ
+            self.mPos = event.pos()  # widgetï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ï½ï¿½ï¿½ï¿½ï¿½ï¿½Úµï¿½ï¿½ï¿½ï¿½ï¿½Ä»ï¿½ï¿½ï¿½ï¿½ï¿½Ï½ÇµÄ£ï¿½x=0,y=0ï¿½ï¿½Æ«ï¿½ï¿½Î»ï¿½ï¿½
             # pos = QtGui.QMouseEvent()
-            # self.mPos = event.globalPos()  # Êó±êÆ«ÀëµçÄÔÆÁÄ»×óÉÏ½Ç£¨x=0,y=0£©µÄÎ»ÖÃ
+            # self.mPos = event.globalPos()  # ï¿½ï¿½ï¿½Æ«ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ä»ï¿½ï¿½ï¿½Ï½Ç£ï¿½x=0,y=0ï¿½ï¿½ï¿½ï¿½Î»ï¿½ï¿½
         event.accept()
 
     def mouseReleaseEvent(self, event):
-        """Êó±êµ¯ÆðÊÂ¼þ"""
+        """ï¿½ï¿½êµ¯ï¿½ï¿½ï¿½Â¼ï¿½"""
         self.mPos = None
         event.accept()
 
     def mouseMoveEvent(self, event):
         if event.buttons() == Qt.LeftButton and self.mPos:
-            # ÐèÒªÔÚÖ÷´°ÌåÒþ²Øºó¼õÈ¥±³¾°´°ÌåµÄmargins
+            # ï¿½ï¿½Òªï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Øºï¿½ï¿½È¥ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½margins
             self.sign_win_move.emit(self.mapToGlobal(event.pos() - self.mPos - QPoint(15, 15)))
             # self.sign_win_move.emit(event.globalPos() - self.mPos)
         event.accept()
 
     def enterEvent(self, event):
-        self.setCursor(QCursor(Qt.PointingHandCursor))  # ¸ü¸ÄÊó±êÍ¼±ê
+        self.setCursor(QCursor(Qt.PointingHandCursor))  # ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Í¼ï¿½ï¿½
         super(TitleBar, self).enterEvent(event)
         event.accept()
 
@@ -613,23 +614,23 @@ class TitleBar(QWidget):
         event.accept()
 
 
-@unique  # @unique ×°ÊÎÆ÷¿ÉÒÔ°ïÖúÎÒÃÇ¼ì²é±£Ö¤valueÃ»ÓÐÖØ¸´Öµ
+@unique  # @unique ×°ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ô°ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ç¼ï¿½é±£Ö¤valueÃ»ï¿½ï¿½ï¿½Ø¸ï¿½Öµ
 class Const(IntEnum):
-    # ¼Ì³ÐÓÚEnumµÄÃ¶¾ÙÀàÖÐµÄKey²»ÄÜÏàÍ¬£¬Value¿ÉÒÔÏà£¬
-    # ÒªValueÒ²²»ÄÜÏàÍ¬£¬ÄÇÃ´ÔÚµ¼ÈëEnumµÄÍ¬Ê±£¬ÐèÒªµ¼Èëuniqueº¯Êý
-    # Ã¶¾ÙÏî¿ÉÒÔÓÃÀ´±È½Ï£¬Ê¹ÓÃ==£¬»òÕßis¡£Ã¶¾ÙÀà²»ÄÜÓÃÀ´ÊµÀý»¯¶ÔÏó,ÔÚÀàÍâ²¿²»ÄÜÐÞ¸ÄValueÖµ
+    # ï¿½Ì³ï¿½ï¿½ï¿½Enumï¿½ï¿½Ã¶ï¿½ï¿½ï¿½ï¿½ï¿½Ðµï¿½Keyï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Í¬ï¿½ï¿½Valueï¿½ï¿½ï¿½ï¿½ï¿½à£¬
+    # ÒªValueÒ²ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Í¬ï¿½ï¿½ï¿½ï¿½Ã´ï¿½Úµï¿½ï¿½ï¿½Enumï¿½ï¿½Í¬Ê±ï¿½ï¿½ï¿½ï¿½Òªï¿½ï¿½ï¿½ï¿½uniqueï¿½ï¿½ï¿½ï¿½
+    # Ã¶ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½È½Ï£ï¿½Ê¹ï¿½ï¿½==ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½isï¿½ï¿½Ã¶ï¿½ï¿½ï¿½à²»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Êµï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½,ï¿½ï¿½ï¿½ï¿½ï¿½â²¿ï¿½ï¿½ï¿½ï¿½ï¿½Þ¸ï¿½ValueÖµ
     CENTER = '0'
     TOP = 1
     BOTTOM = '2'
     LEFT = 3
     RIGHT = 4
-    TL_CORNER = 5  # ×óÉÏ½Ç
-    TR_CORNER = 6  # ÓÒÉÏ½Ç
+    TL_CORNER = 5  # ï¿½ï¿½ï¿½Ï½ï¿½
+    TR_CORNER = 6  # ï¿½ï¿½ï¿½Ï½ï¿½
     BL_CORNER = 7
     BR_CORNER = 8
 
-    PADDING = 20  # Êó±ê¸ú×Ù±ß¿òµÄ±ß¾à£¬>=margin
-    MARGIN = 15  # ËÄÖÜ±ß¾à
+    PADDING = 20  # ï¿½ï¿½ï¿½ï¿½ï¿½Ù±ß¿ï¿½Ä±ß¾à£¬>=margin
+    MARGIN = 15  # ï¿½ï¿½ï¿½Ü±ß¾ï¿½
 
 
 class ChildMenu(QWidget):
@@ -637,11 +638,11 @@ class ChildMenu(QWidget):
         super(ChildMenu, self).__init__()
         self.parent = None
         self.menu_data = [
-            [(QIcon(), 'ÔË¶¯×ÊÔ´'), (QIcon(), 'ÎÄ°¸'), (QIcon(), 'ÊÓÆµ'), (QIcon(), 'ÍøÒ³')],
-            [(QIcon(), '¶ÍÁ¶²¿Î»'), (QIcon(), 'ÊÖ±Û'), (QIcon(), '¼ç±³'), (QIcon(), 'Ñü¸¹'), (QIcon(), 'ÍÈ²¿')],
-            [(QIcon(), '¸öÐÔ¹æ»®'), (QIcon(), 'Õ¼Î»')],
-            [(QIcon(), 'Êý¾ÝÖ¸Êý'), (QIcon(), 'Õ¼Î»')],
-            [(QIcon(), 'ÉèÖÃ'), (QIcon(), 'Õ¼Î»')]
+            [(QIcon(), 'ï¿½Ë¶ï¿½ï¿½ï¿½Ô´'), (QIcon(), 'ï¿½Ä°ï¿½'), (QIcon(), 'ï¿½ï¿½Æµ'), (QIcon(), 'ï¿½ï¿½Ò³')],
+            [(QIcon(), 'ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Î»'), (QIcon(), 'ï¿½Ö±ï¿½'), (QIcon(), 'ï¿½ç±³'), (QIcon(), 'ï¿½ï¿½ï¿½ï¿½'), (QIcon(), 'ï¿½È²ï¿½')],
+            [(QIcon(), 'ï¿½ï¿½ï¿½Ô¹æ»®'), (QIcon(), 'Õ¼Î»')],
+            [(QIcon(), 'ï¿½ï¿½ï¿½ï¿½Ö¸ï¿½ï¿½'), (QIcon(), 'Õ¼Î»')],
+            [(QIcon(), 'ï¿½ï¿½ï¿½ï¿½'), (QIcon(), 'Õ¼Î»')]
         ]
         self.button_width = 40
         self.button_spacing = 10
@@ -650,17 +651,17 @@ class ChildMenu(QWidget):
         # self.setFixedHeight(self.parent.parent.menu_height)
         # self.resize(800, 60)
         self.stacked_menu = QStackedWidget()
-        # self.raise_()  # ·ÇÖ÷´°¿ÚÖÐ´°¿ÚÖÃ¶¥
+        # self.raise_()  # ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ð´ï¿½ï¿½ï¿½ï¿½Ã¶ï¿½
 
         # self.setMouseTracking(True)
         # self.stacked_menu.setMouseTracking(True)
 
-        self.setWindowFlags(Qt.FramelessWindowHint | Qt.WindowSystemMenuHint)  # ÉèÖÃÎÞ±ß¿ò´°¿Ú
-        # self.setWindowModality(Qt.ApplicationModal)# ´°¿ÚÖÃ¶¥
-        # self.setWindowFlags(Qt.WindowStaysOnTopHint | Qt.Tool |  # ´°Ìå×ÜÔÚ×îÇ°¶Ë
+        self.setWindowFlags(Qt.FramelessWindowHint | Qt.WindowSystemMenuHint)  # ï¿½ï¿½ï¿½ï¿½ï¿½Þ±ß¿ò´°¿ï¿½
+        # self.setWindowModality(Qt.ApplicationModal)# ï¿½ï¿½ï¿½ï¿½ï¿½Ã¶ï¿½
+        # self.setWindowFlags(Qt.WindowStaysOnTopHint | Qt.Tool |  # ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ç°ï¿½ï¿½
         #                     Qt.MSWindowsFixedSizeDialogHint |
         #                     Qt.WindowCloseButtonHint)
-        self.setAttribute(Qt.WA_TranslucentBackground)  # ÉèÖÃ´°¿Ú±³¾°Í¸Ã÷
+        self.setAttribute(Qt.WA_TranslucentBackground)  # ï¿½ï¿½ï¿½Ã´ï¿½ï¿½Ú±ï¿½ï¿½ï¿½Í¸ï¿½ï¿½
 
         self.setObjectName('child')
         self.setStyleSheet('QWidget#child {'
@@ -668,7 +669,7 @@ class ChildMenu(QWidget):
                            'border-top-right-radius:10;'
                            'border-bottom-right-radius:10;}')
         self.stacked_menu.setObjectName('stack')
-        self.stacked_menu.setStyleSheet('#stack {background: transparent;     /*È«Í¸Ã÷*/'
+        self.stacked_menu.setStyleSheet('#stack {background: transparent;     /*È«Í¸ï¿½ï¿½*/'
                                         '/*background: rgb(52, 252, 152);*/'
                                         'border-top-right-radius:10;'
                                         'border-bottom-right-radius:10;}')
@@ -716,14 +717,14 @@ class ChildMenu(QWidget):
     def slot_pb_clicked(self):
         self.setWindowModality(Qt.WindowModal)
         self.hide()
-        sender = self.sender()  # »ñÈ¡·¢ËÍ¿Ø¼þ
+        sender = self.sender()  # ï¿½ï¿½È¡ï¿½ï¿½ï¿½Í¿Ø¼ï¿½
         self.parent.parent.submenu_clicked(sender.text())
 
     def select_stack(self, stack_index):
         self.stack_index = stack_index
         self.stacked_menu.setCurrentIndex(stack_index)
 
-        # °Ñ±ðµÄ¿Ø¼þ¶¼Òþ²Ø£¬¿´¿´ÄÜ¸Ä±ä´óÐ¡²»
+        # ï¿½Ñ±ï¿½Ä¿Ø¼ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ø£ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ü¸Ä±ï¿½ï¿½Ð¡ï¿½ï¿½
         # print(self.stacked_menu.size())
         # for each in
         # for children in self.findChildren(QWidget):
@@ -750,7 +751,7 @@ class ChildMenu(QWidget):
     def leaveEvent(self, e: QEvent):
         # here the code for mouse leave
         self.setWindowModality(Qt.WindowModal)
-        pos = self.mapFromGlobal(QCursor.pos())  # »ñµÃÊó±êÏà¶ÔÎ»ÖÃ
+        pos = self.mapFromGlobal(QCursor.pos())  # ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Î»ï¿½ï¿½
         # pos = e.pos()
         # print(type(pos), pos)
         if pos.x() <= self.parent.width():  # parent.left_width:
@@ -771,12 +772,12 @@ class MyQListWidget(QListWidget):
     def __init__(self, *args, **kwargs):
         super(MyQListWidget, self).__init__(*args, **kwargs)
         self.parent = args[0]
-        assert isinstance(self.parent, Canvas), 'ÁÐ±íµÄ¸¸´°Ìå²»ÕýÈ·'
+        assert isinstance(self.parent, Canvas), 'ï¿½Ð±ï¿½Ä¸ï¿½ï¿½ï¿½ï¿½å²»ï¿½ï¿½È·'
         self.child = self.parent.sub_menu
-        assert isinstance(self.child, ChildMenu), 'ÁÐ±íµÄ×Ó²Ëµ¥´°Ìå²»ÕýÈ·'
+        assert isinstance(self.child, ChildMenu), 'ï¿½Ð±ï¿½ï¿½ï¿½Ó²Ëµï¿½ï¿½ï¿½ï¿½å²»ï¿½ï¿½È·'
 
-        self.cur_row = -1  # »»ÐÐ±êÖ¾
-        self.is_done = False  # ¶¯»­Íê³É
+        self.cur_row = -1  # ï¿½ï¿½ï¿½Ð±ï¿½Ö¾
+        self.is_done = False  # ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
         self._animation = None
 
         self.initAnimation(self.child)
@@ -791,11 +792,11 @@ class MyQListWidget(QListWidget):
         # index = self.indexAt(e.pos())  #
         # row1 = index.row()
         item = self.itemAt(e.pos())
-        # size = self.sizeHint()  # ³ß´ç
+        # size = self.sizeHint()  # ï¿½ß´ï¿½
         # size = item.sizeHint()
         row = self.row(item)
         # row1 = e.pos().y() // size.height()
-        if row != self.cur_row:  # »»ÐÐÁË£¬»»ÐÂ²Ëµ¥
+        if row != self.cur_row:  # ï¿½ï¿½ï¿½ï¿½ï¿½Ë£ï¿½ï¿½ï¿½ï¿½Â²Ëµï¿½
             # print(item.text(), row, self.child)
 
             self.cur_row = row
@@ -811,7 +812,7 @@ class MyQListWidget(QListWidget):
 
             # print('fe', self.pos(), e.pos())
             # print(self.mapToGlobal(self.pos()),e.globalPos())
-            # ÕâÀïÐèÒª¼õ·¨£¬ÓÉÉÏÃæÊµÑéµÃ³ö
+            # ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Òªï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Êµï¿½ï¿½Ã³ï¿½
             y += (self.mapToGlobal(self.pos()) - self.pos()).y()
             x += self.mapToGlobal(self.pos()).x()
 
@@ -822,10 +823,10 @@ class MyQListWidget(QListWidget):
             # self._animation.setStartValue(QRect(x, y, 0, ch))
             # self._animation.setEndValue(QRect(x, y, cw, ch))
             # self._animation.start()
-            # ²ÎÊý QAbstractAnimation.KeepWhenStopped  Í£Ö¹Ê±²»»áÉ¾³ý¶¯»­
-            #     QAbstractAnimation.DeleteWhenStopped   Í£Ö¹Ê±¶¯»­½«×Ô¶¯É¾³ý
+            # ï¿½ï¿½ï¿½ï¿½ QAbstractAnimation.KeepWhenStopped  Í£Ö¹Ê±ï¿½ï¿½ï¿½ï¿½É¾ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+            #     QAbstractAnimation.DeleteWhenStopped   Í£Ö¹Ê±ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ô¶ï¿½É¾ï¿½ï¿½
 
-            self.child.show()  # frameGeometry±ØÐëÏÔÊ¾ºóÓÃ
+            self.child.show()  # frameGeometryï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ê¾ï¿½ï¿½ï¿½ï¿½
 
         # e.ignore()
 
@@ -835,12 +836,12 @@ class MyQListWidget(QListWidget):
         self.setCursor(Qt.ArrowCursor)
         self.cur_row = -1
         self.is_done = False
-        pos = self.mapFromGlobal(QCursor.pos())  # »ñµÃÊó±êÏà¶ÔÎ»ÖÃ
+        pos = self.mapFromGlobal(QCursor.pos())  # ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Î»ï¿½ï¿½
         # pos = e.pos()
         # print(type(pos), pos)
         if pos.x() >= self.parent.left_width:
-            # self.child.grabMouse()  # µÃµ½ÕýÔÚ²¶»ñÊó±êÊÂ¼þµÄ´°¿Ú
-            # ÉèÖÃÊó±ê´©Í¸
+            # self.child.grabMouse()  # ï¿½Ãµï¿½ï¿½ï¿½ï¿½Ú²ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Â¼ï¿½ï¿½Ä´ï¿½ï¿½ï¿½
+            # ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ê´©Í¸
             # self.parent.setAttribute(Qt.WA_TransparentForMouseEvents, True)
             # self.child.setWindowModality(Qt.ApplicationModal)
             pass
@@ -849,15 +850,15 @@ class MyQListWidget(QListWidget):
 
         e.accept()
 
-    #     # # »ñÈ¡itemÀïbutton
+    #     # # ï¿½ï¿½È¡itemï¿½ï¿½button
     #     # button = self.sender()
-    #     # # »ñÈ¡°´Å¥Ïà¶ÔÓÚlistwwdgetµÄ×ø±ê
-    #     # # listwidget Ïà¶ÔÓÚ´°ÌåµÄ×ø±ê ¼õÈ¥ button Ïà¶ÔÓÚ´°ÌåµÄ×ø±ê
+    #     # # ï¿½ï¿½È¡ï¿½ï¿½Å¥ï¿½ï¿½ï¿½ï¿½ï¿½listwwdgetï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+    #     # # listwidget ï¿½ï¿½ï¿½ï¿½Ú´ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½È¥ button ï¿½ï¿½ï¿½ï¿½Ú´ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
     #     # buttonpos = button.mapToGlobal(QPoint(0, 0)) - self.listwidget.mapToGlobal(QPoint(0, 0))
-    #     # # »ñÈ¡µ½¶ÔÏó
+    #     # # ï¿½ï¿½È¡ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
     #     # item = self.listwidget.indexAt(buttonpos)
     #     # print(item)
-    #     # # »ñÈ¡Î»ÖÃ
+    #     # # ï¿½ï¿½È¡Î»ï¿½ï¿½
     #     # print(item.row())
     #
     def enterEvent(self, e: QEvent):
@@ -879,9 +880,9 @@ class MyQListWidget(QListWidget):
 
     # # def hoverEnterEvent(self, event):
     # #     print('Enter')
-    # #     # accept()        # ±íÊ¾ÊÂ¼þÒÑ´¦Àí£¬²»ÐèÒªÏò¸¸´°¿Ú´«²¥
-    # #     # buttons()  # ·µ»ØÄÄ¸öÊó±ê°´¼ü±»°´×¡ÁË¡£
-    # #     # ignore()        # ±íÊ¾ÊÂ¼þÎ´´¦Àí£¬¼ÌÐøÏò¸¸´°¿Ú´«²¥
+    # #     # accept()        # ï¿½ï¿½Ê¾ï¿½Â¼ï¿½ï¿½Ñ´ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Òªï¿½ò¸¸´ï¿½ï¿½Ú´ï¿½ï¿½ï¿½
+    # #     # buttons()  # ï¿½ï¿½ï¿½ï¿½ï¿½Ä¸ï¿½ï¿½ï¿½ê°´ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½×¡ï¿½Ë¡ï¿½
+    # #     # ignore()        # ï¿½ï¿½Ê¾ï¿½Â¼ï¿½Î´ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ò¸¸´ï¿½ï¿½Ú´ï¿½ï¿½ï¿½
     #
     # # def hoverLeaveEvent(self, event):
     # #     print('Leave')
@@ -889,16 +890,16 @@ class MyQListWidget(QListWidget):
     # # def hoverMoveEvent(self, event):
     # #     print('Moving')
     #
-    # """ÖØÐ´Êó±êÊÂ¼þ£¬ÊµÏÖ´°¿ÚÍÏ¶¯¡£"""
+    # """ï¿½ï¿½Ð´ï¿½ï¿½ï¿½ï¿½Â¼ï¿½ï¿½ï¿½Êµï¿½Ö´ï¿½ï¿½ï¿½ï¿½Ï¶ï¿½ï¿½ï¿½"""
 
-    # item.setText(name)  # ÉèÖÃ
-    # item_name = item.text()  # »ñÈ¡
-    # item.setData(Qt.UserRole, name)  # ÉèÖÃ
-    # item_name = item.data(Qt.UserRole)  # »ñÈ¡
+    # item.setText(name)  # ï¿½ï¿½ï¿½ï¿½
+    # item_name = item.text()  # ï¿½ï¿½È¡
+    # item.setData(Qt.UserRole, name)  # ï¿½ï¿½ï¿½ï¿½
+    # item_name = item.data(Qt.UserRole)  # ï¿½ï¿½È¡
     #
     # try:
     #     if event.buttons() and Qt.LeftButton:
-    #         self.parent.move(event.globalPos() - self.parent.m_DragPosition)  # move½«´°¿ÚÒÆ¶¯µ½Ö¸¶¨Î»ÖÃ
+    #         self.parent.move(event.globalPos() - self.parent.m_DragPosition)  # moveï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Æ¶ï¿½ï¿½ï¿½Ö¸ï¿½ï¿½Î»ï¿½ï¿½
     #         event.accept()
     # except AttributeError:
     #     pass
@@ -909,11 +910,11 @@ class MyQListWidget(QListWidget):
     #         self.m_drag = False
     #         self.unsetCursor()
 
-    # ²Ëµ¥¶¯»­ÏÔÊ¾
+    # ï¿½Ëµï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ê¾
 
     # def contextMenuEvent(self, event):
     #     pos = event.globalPos()
-    #     print('ÓÒ¼ü²Ëµ¥')
+    #     print('ï¿½Ò¼ï¿½ï¿½Ëµï¿½')
     #     size = self._contextMenu.sizeHint()
     #     x, y, w, h = pos.x(), pos.y(), size.width(), size.height()
     #     self._animation.stop()
@@ -926,57 +927,57 @@ class MyQListWidget(QListWidget):
 
     # def initMenu(self):
     #     self._contextMenu = QMenu(self)
-    #     self._contextMenu.addAction('²Ëµ¥1', self.hello)
-    #     self._contextMenu.addAction('²Ëµ¥2', self.hello)
-    #     self._contextMenu.addAction('²Ëµ¥3', self.hello)
-    #     self._contextMenu.addAction('²Ëµ¥4', self.hello)
-    #     self._contextMenu.addAction('²Ëµ¥5', self.hello)
-    #     self._contextMenu.addAction('²Ëµ¥6', self.hello)
+    #     self._contextMenu.addAction('ï¿½Ëµï¿½1', self.hello)
+    #     self._contextMenu.addAction('ï¿½Ëµï¿½2', self.hello)
+    #     self._contextMenu.addAction('ï¿½Ëµï¿½3', self.hello)
+    #     self._contextMenu.addAction('ï¿½Ëµï¿½4', self.hello)
+    #     self._contextMenu.addAction('ï¿½Ëµï¿½5', self.hello)
+    #     self._contextMenu.addAction('ï¿½Ëµï¿½6', self.hello)
 
     def initAnimation(self, control):
-        # °´Å¥¶¯»­
+        # ï¿½ï¿½Å¥ï¿½ï¿½ï¿½ï¿½
         self._animation = QPropertyAnimation(control, b'geometry', self)
         self._animation.setEasingCurve(QEasingCurve.Linear)
         self._animation.setDuration(300)
-        # easingCurve ÐÞ¸Ä¸Ã±äÁ¿¿ÉÒÔÊµÏÖ²»Í¬µÄÐ§¹û
-        # s = self._animation.loopCount()  # ·µ»Ø¶¯»­×ÜÑ­»·´ÎÊý
+        # easingCurve ï¿½Þ¸Ä¸Ã±ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Êµï¿½Ö²ï¿½Í¬ï¿½ï¿½Ð§ï¿½ï¿½
+        # s = self._animation.loopCount()  # ï¿½ï¿½ï¿½Ø¶ï¿½ï¿½ï¿½ï¿½ï¿½Ñ­ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
         # print(s)
 
 
-# ¶¯×÷Ä»²¼/»­²¼
+# ï¿½ï¿½ï¿½ï¿½Ä»ï¿½ï¿½/ï¿½ï¿½ï¿½ï¿½
 class Curtain(QWidget):
     def __init__(self, parent):
         super(Curtain, self).__init__(parent)
         self.parent = parent
-        # self.setAttribute(Qt.WA_TranslucentBackground)  # ÉèÖÃ´°¿Ú±³¾°Í¸Ã÷
+        # self.setAttribute(Qt.WA_TranslucentBackground)  # ï¿½ï¿½ï¿½Ã´ï¿½ï¿½Ú±ï¿½ï¿½ï¿½Í¸ï¿½ï¿½
         self.use_palette()
 
         self.data_dir = None
-        self.is_carousel = False  # ÂÖ²¥Õ¹Ê¾»¹ÊÇµ¥·ùÍ¼Õ¹Ê¾
-        self.is_acting = False  # ¶¯×÷Í¼»¹ÊÇ·âÃæÍ¼
-        self.title = ''  # ±êÌâ
-        self.resume = ''  # ¼ò½é
-        self.notice = []  # Ã¿ÌìËùÓÐ¶ÍÁ¶¶¯×÷µÄ×ÜÌåÒªÇó£¬ÒÔ¼°×éÊý£¬´ÎÊý£¬ÐÝÏ¢Ê±¼ä
-        self.action = []  # Ã¿ÌìµÄËùÓÐ¶ÍÁ¶¶¯×÷£¬Ãû³Æ¡¢ÒªÁì¡¢¶¯Í¼Ê¾·¶
-        self.cur_act = 0  # µ±Ç°¶¯×÷
-        self.cover = []  # ·âÃæÍ¼
+        self.is_carousel = False  # ï¿½Ö²ï¿½Õ¹Ê¾ï¿½ï¿½ï¿½Çµï¿½ï¿½ï¿½Í¼Õ¹Ê¾
+        self.is_acting = False  # ï¿½ï¿½ï¿½ï¿½Í¼ï¿½ï¿½ï¿½Ç·ï¿½ï¿½ï¿½Í¼
+        self.title = ''  # ï¿½ï¿½ï¿½ï¿½
+        self.resume = ''  # ï¿½ï¿½ï¿½
+        self.notice = []  # Ã¿ï¿½ï¿½ï¿½ï¿½ï¿½Ð¶ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Òªï¿½ï¿½ï¿½Ô¼ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ï¢Ê±ï¿½ï¿½
+        self.action = []  # Ã¿ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ð¶ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Æ¡ï¿½Òªï¿½ì¡¢ï¿½ï¿½Í¼Ê¾ï¿½ï¿½
+        self.cur_act = 0  # ï¿½ï¿½Ç°ï¿½ï¿½ï¿½ï¿½
+        self.cover = []  # ï¿½ï¿½ï¿½ï¿½Í¼
         self.cur_cov = 0
 
-        self.stay = 60  # ¶¯×÷Ö®¼äÍ£ÁôµÄÃëÊý
-        # self.engine = pyttsx3.init()  # ³õÊ¼»¯ÓïÒô¿â
-        self.timer = QTimer(self)  # ³õÊ¼»¯Ò»¸ö¶¨Ê±Æ÷
+        self.stay = 60  # ï¿½ï¿½ï¿½ï¿½Ö®ï¿½ï¿½Í£ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+        # self.engine = pyttsx3.init()  # ï¿½ï¿½Ê¼ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+        self.timer = QTimer(self)  # ï¿½ï¿½Ê¼ï¿½ï¿½Ò»ï¿½ï¿½ï¿½ï¿½Ê±ï¿½ï¿½
 
-        self.pb_style = QPushButton('ÏÔÊ¾·âÃæ')
+        self.pb_style = QPushButton('ï¿½ï¿½Ê¾ï¿½ï¿½ï¿½ï¿½')
         self.pb_prev = QPushButton("Ç°Í¼")
-        self.pb_next = QPushButton("ºóÍ¼")
-        self.pb_model = QPushButton('·­¿´')
+        self.pb_next = QPushButton("ï¿½ï¿½Í¼")
+        self.pb_model = QPushButton('ï¿½ï¿½ï¿½ï¿½')
 
-        self.lb_title = QLabel()  # Ã¿¸ö¶ÍÁ¶¼Æ»®µÄ±êÌâ
-        self.lb_resume = QLabel()  # Ã¿¸ö¶ÍÁ¶¼Æ»®µÄ±êÌâ¼°ÒâÒå
-        self.lb_notice = QLabel()  # µ±ÈÕÌáÊ¾
-        self.lb_gist = QLabel()  # ¶ÍÁ¶²½Öè
-        self.lb_img = QLabel()  # ¶ÍÁ¶¶¯Í¼
-        self.movie = QMovie()  # ¶ÍÁ¶¶¯Í¼
+        self.lb_title = QLabel()  # Ã¿ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Æ»ï¿½ï¿½Ä±ï¿½ï¿½ï¿½
+        self.lb_resume = QLabel()  # Ã¿ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Æ»ï¿½ï¿½Ä±ï¿½ï¿½â¼°ï¿½ï¿½ï¿½ï¿½
+        self.lb_notice = QLabel()  # ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ê¾
+        self.lb_gist = QLabel()  # ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+        self.lb_img = QLabel()  # ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Í¼
+        self.movie = QMovie()  # ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Í¼
 
         self.init_ui()
         # self.clear()
@@ -986,14 +987,14 @@ class Curtain(QWidget):
         Utils.center_win(self)
 
     def init_ui(self):
-        # font = QtGui.QFont('Î¢ÈíÑÅºÚ', 15)
+        # font = QtGui.QFont('Î¢ï¿½ï¿½ï¿½Åºï¿½', 15)
         # self.setFont(font)
-        self.timer.timeout.connect(self._motion)  # Ã¿´Î¼ÆÊ±µ½Ê±¼äÊ±·¢³öÐÅºÅ
+        self.timer.timeout.connect(self._motion)  # Ã¿ï¿½Î¼ï¿½Ê±ï¿½ï¿½Ê±ï¿½ï¿½Ê±ï¿½ï¿½ï¿½ï¿½ï¿½Åºï¿½
 
-        # region ×Ô¶¨Òå¹¤¾ßÀ¸
+        # region ï¿½Ô¶ï¿½ï¿½å¹¤ï¿½ï¿½ï¿½ï¿½
         toolbar = QFrame()
         toolbar.setObjectName('w')
-        toolbar.setAttribute(Qt.WA_TranslucentBackground)  # ÉèÖÃ´°¿Ú±³¾°Í¸Ã÷
+        toolbar.setAttribute(Qt.WA_TranslucentBackground)  # ï¿½ï¿½ï¿½Ã´ï¿½ï¿½Ú±ï¿½ï¿½ï¿½Í¸ï¿½ï¿½
         toolbar.setFrameStyle(QFrame.NoFrame | QFrame.Raised)  # Box
         # ./res/background/bk5.jpg
         Utils.bg_trans('./tmp.png', 200, 100, (255, 255, 255, 100))
@@ -1001,7 +1002,7 @@ class Curtain(QWidget):
             "background-image:url(./tmp.png); /*  */"
             "/*background-color: cyan;   */"
             "/*color:red;  */"
-            "font-size:24px;font-weight:bold;font-family:Î¢ÈíÑÅºÚ;")
+            "font-size:24px;font-weight:bold;font-family:Î¢ï¿½ï¿½ï¿½Åºï¿½;")
 
         lh = QHBoxLayout(toolbar)
 
@@ -1026,54 +1027,54 @@ class Curtain(QWidget):
         lh.addWidget(self.pb_model)
         # endregion
 
-        # region ¹¤×÷Çø
+        # region ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
         self.lb_title.setFrameStyle(QFrame.Panel | QFrame.Sunken)
         self.lb_title.setAlignment(Qt.AlignCenter)
         self.lb_title.setStyleSheet(
             "background:white;color:rgba(255,0,0,255);"
-            "font-size:26px;font-weight:bold;font-family:Î¢ÈíÑÅºÚ;")
+            "font-size:26px;font-weight:bold;font-family:Î¢ï¿½ï¿½ï¿½Åºï¿½;")
 
         self.lb_resume.setFrameStyle(QFrame.Panel | QFrame.Sunken)
         self.lb_resume.setWordWrap(True)
         self.lb_resume.setStyleSheet(
             "background:white;color:rgba(0,255,0,255);"
-            "font-size:24px;font-weight:bold;font-family:Î¢ÈíÑÅºÚ;")
+            "font-size:24px;font-weight:bold;font-family:Î¢ï¿½ï¿½ï¿½Åºï¿½;")
 
         self.lb_notice.setAlignment(Qt.AlignCenter)
         self.lb_notice.setWordWrap(True)
         self.lb_notice.setStyleSheet(
             "background:white;color:blue;"
-            "font-size:24px;font-weight:bold;font-family:Î¢ÈíÑÅºÚ;")
+            "font-size:24px;font-weight:bold;font-family:Î¢ï¿½ï¿½ï¿½Åºï¿½;")
 
         self.lb_gist.setVisible(False)
         self.lb_gist.setWordWrap(True)
         # self.lb_gist.setMinimumWidth(100)
         self.lb_gist.setStyleSheet(
             "background:white;color:green;border: 2px solid gray;"
-            "font-size:24px;font-weight:bold;font-family:Î¢ÈíÑÅºÚ;")
+            "font-size:24px;font-weight:bold;font-family:Î¢ï¿½ï¿½ï¿½Åºï¿½;")
 
         self.lb_img.setMinimumSize(400, 400)
         self.lb_img.setMaximumSize(800, 800)
         self.lb_img.setAlignment(Qt.AlignCenter)
-        self.lb_img.setStyleSheet("background: transparent;     /*È«Í¸Ã÷*/;"
+        self.lb_img.setStyleSheet("background: transparent;     /*È«Í¸ï¿½ï¿½*/;"
                                   "border: 0px solid green")
         # self.lb_img.setScaledContents(True)
 
-        self.movie.setScaledSize(self.lb_img.size())  # ÉèÖÃGIFÎ»ÖÃÒÔ¼°´óÐ¡ºÍ labelÒ»ÖÂ
+        self.movie.setScaledSize(self.lb_img.size())  # ï¿½ï¿½ï¿½ï¿½GIFÎ»ï¿½ï¿½ï¿½Ô¼ï¿½ï¿½ï¿½Ð¡ï¿½ï¿½ labelÒ»ï¿½ï¿½
         # speed = self.movie.speed()
         # print(speed)
         # self.movie.setSpeed(100)
         # self.movie.setSpeed(self.movie.speed() -100)
-        # self.engine.setProperty('rate', self.engine.getProperty('rate') - 50)  # ÉèÖÃÓïËÙ
-        # self.engine.setProperty('volume', self.engine.getProperty('volume') + 5)  # ÉèÖÃÒôÁ¿
+        # self.engine.setProperty('rate', self.engine.getProperty('rate') - 50)  # ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+        # self.engine.setProperty('volume', self.engine.getProperty('volume') + 5)  # ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 
-        # voices = self.engine.getProperty('voices')  # Ñ¡ÔñÓïÒô
+        # voices = self.engine.getProperty('voices')  # Ñ¡ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
         # # for voice in voices:
         # #     print(voice.id, voice.languages)
         # self.engine.setProperty("voice", voices[0].id)
         # endregion
 
-        # region ×Ü²¼¾Ö
+        # region ï¿½Ü²ï¿½ï¿½ï¿½
         lv_main = QVBoxLayout(self)
         lv_main.setContentsMargins(10, 0, 10, 0)
         lv_main.addWidget(toolbar)
@@ -1091,23 +1092,23 @@ class Curtain(QWidget):
         self.title = title
         self.lb_title.setText(title)
 
-    # ³õÊ¼»¯Êý¾Ý
+    # ï¿½ï¿½Ê¼ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
     def data_serialize(self, data_dir):
         # data = [
-        #     "       ´ó²¿·ÖµÄ³õÑ§Õß¶¼»áÑ¡ÕâÑÆÁåÕâ¸öÆ÷ÐµÀ´¶ÍÁ¶ÉíÌåµ«È´²»ÖªµÀÑÆÁåµÄ¸÷¸ö²¿Î»µÄ¶ÍÁ¶·½·¨£¬"
-        #     "½ñÌìÐ¡±àÒ²¸ø´ó¼ÒÕûÀíÁË15¸öÑÆÁå¶¯×÷£¬Õâ´ó´ó¸£Àû¿ÉÒªÄÃÎÈÀ²¡£",
-        #     "Ã¿¸ö¶¯×÷ÎªÒ»×é£¬Ã¿×é1-2·ÖÖÓ£¬×é¼äÐÝÏ¢30s£¬¼ÇµÃÁ·Ï°!",
+        #     "       ï¿½ó²¿·ÖµÄ³ï¿½Ñ§ï¿½ß¶ï¿½ï¿½ï¿½Ñ¡ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ðµï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½åµ«È´ï¿½ï¿½Öªï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ä¸ï¿½ï¿½ï¿½ï¿½ï¿½Î»ï¿½Ä¶ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½"
+        #     "ï¿½ï¿½ï¿½ï¿½Ð¡ï¿½ï¿½Ò²ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½15ï¿½ï¿½ï¿½ï¿½ï¿½å¶¯ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Òªï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½",
+        #     "Ã¿ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ÎªÒ»ï¿½é£¬Ã¿ï¿½ï¿½1-2ï¿½ï¿½ï¿½Ó£ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ï¢30sï¿½ï¿½ï¿½Çµï¿½ï¿½ï¿½Ï°!",
         #     1,
         #     50,
         #     30,
         #     [
-        #         "¶¯×÷Ò»:Ë«ÊÖÑÆÁåÍä¾Ù",
-        #         "¶¯×÷·½·¨: Ë«ÊÖ¸÷ÎÕÒ»ÑÆÁå;ÕÆÐÄÏòÇ° ½«ÑÆÁåÏòÉÏÍä¾Ù ÉÏÍä¾ÙÖÁ¶¥·å×´Ì¬,ÊÕ½ôëÅ¶þÍ·¼¡£¬ÉÔÍ£ È»ºó¿ØÖÆ»¹Ô­ µ½³õÊ¼×´Ì¬£¬ÖØ¸´ÒÔÉÏ¶¯×÷¡£",
+        #         "ï¿½ï¿½ï¿½ï¿½Ò»:Ë«ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½",
+        #         "ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½: Ë«ï¿½Ö¸ï¿½ï¿½ï¿½Ò»ï¿½ï¿½ï¿½ï¿½;ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ç° ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½×´Ì¬,ï¿½Õ½ï¿½ï¿½Å¶ï¿½Í·ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Í£ È»ï¿½ï¿½ï¿½ï¿½Æ»ï¿½Ô­ ï¿½ï¿½ï¿½ï¿½Ê¼×´Ì¬ï¿½ï¿½ï¿½Ø¸ï¿½ï¿½ï¿½ï¿½Ï¶ï¿½ï¿½ï¿½ï¿½ï¿½",
         #         "1.gif"
         #     ],
         #     [
-        #         "¶¯×÷¶þ:ÑÆÁå½»ÌæÍä¾Ù",
-        #         "¶¯×÷·½·¨: Ë«ÊÖ³ÖÑÆÁå´¹ÓÚÌå²à£¬ÕÆÐÄÏà¶Ô£¬Á½Öâ¿¿ÉíÌåÁ½²à ÒÔÖâ¹Ø½ÚÎªÖ§µã£¬ÏòÉÏÍä¾Ù Í¬Ê±Ç°±ÛÍâÐýÕÆÐÄ³¯ÉÏ£¬¾ÙÖÁ×î¸ßµãÊÕ½ôëÅ¶þÍ·¼¡£¬ÉÔÍ£ È»ºó¿ØÖÆ»¹Ô­ µ½³õÊ¼×´Ì¬£¬ÖØ¸´ÒÔÉÏ¶¯×÷¡£",
+        #         "ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½:ï¿½ï¿½ï¿½å½»ï¿½ï¿½ï¿½ï¿½ï¿½",
+        #         "ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½: Ë«ï¿½Ö³ï¿½ï¿½ï¿½ï¿½å´¹ï¿½ï¿½ï¿½ï¿½à£¬ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ô£ï¿½ï¿½ï¿½ï¿½â¿¿ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½Ø½ï¿½ÎªÖ§ï¿½ã£¬ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ Í¬Ê±Ç°ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ä³ï¿½ï¿½Ï£ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ßµï¿½ï¿½Õ½ï¿½ï¿½Å¶ï¿½Í·ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Í£ È»ï¿½ï¿½ï¿½ï¿½Æ»ï¿½Ô­ ï¿½ï¿½ï¿½ï¿½Ê¼×´Ì¬ï¿½ï¿½ï¿½Ø¸ï¿½ï¿½ï¿½ï¿½Ï¶ï¿½ï¿½ï¿½ï¿½ï¿½",
         #         "2.gif"
         #     ]
         # ]
@@ -1126,36 +1127,36 @@ class Curtain(QWidget):
             # print(data)
 
         if self.cover or files:
-            # ×Ó¿Ø¼þÊ§Ð§µÄÉèÖÃ
+            # ï¿½Ó¿Ø¼ï¿½Ê§Ð§ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
             self.pb_style.setEnabled(True)
             self.pb_model.setEnabled(True)
             self.pb_next.setEnabled(True)
             self.pb_prev.setEnabled(True)
 
-    # ³õÊ¼»¯Êý¾ÝÇ°µÄÇåÀí
+    # ï¿½ï¿½Ê¼ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ç°ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
     def clear(self):
         self.data_dir = None
-        self.is_carousel = False  # ÂÖ²¥»¹ÊÇ¾²Ì¬Õ¹Ê¾
-        self.is_acting = False  # ¿ªÊ¼¶ÍÁ¶»¹ÊÇÕ¹Ê¾·âÃæ
-        self.title = ''  # ±êÌâ
-        self.resume = ''  # ¼ò½é
-        self.notice.clear()  # Ã¿ÌìËùÓÐ¶ÍÁ¶¶¯×÷µÄ×ÜÌåÒªÇó£¬ÒÔ¼°×éÊý£¬´ÎÊý£¬ÐÝÏ¢Ê±¼ä
-        self.action.clear()  # Ã¿ÌìµÄËùÓÐ¶ÍÁ¶¶¯×÷£¬Ãû³Æ¡¢ÒªÁì¡¢¶¯Í¼Ê¾·¶
-        self.cur_act = 0  # µ±Ç°¶¯×÷
-        self.cover.clear()  # ·âÃæÍ¼
+        self.is_carousel = False  # ï¿½Ö²ï¿½ï¿½ï¿½ï¿½Ç¾ï¿½Ì¬Õ¹Ê¾
+        self.is_acting = False  # ï¿½ï¿½Ê¼ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Õ¹Ê¾ï¿½ï¿½ï¿½ï¿½
+        self.title = ''  # ï¿½ï¿½ï¿½ï¿½
+        self.resume = ''  # ï¿½ï¿½ï¿½
+        self.notice.clear()  # Ã¿ï¿½ï¿½ï¿½ï¿½ï¿½Ð¶ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Òªï¿½ï¿½ï¿½Ô¼ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ï¢Ê±ï¿½ï¿½
+        self.action.clear()  # Ã¿ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ð¶ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Æ¡ï¿½Òªï¿½ì¡¢ï¿½ï¿½Í¼Ê¾ï¿½ï¿½
+        self.cur_act = 0  # ï¿½ï¿½Ç°ï¿½ï¿½ï¿½ï¿½
+        self.cover.clear()  # ï¿½ï¿½ï¿½ï¿½Í¼
         self.cur_cov = 0
         self.timer.stop()
 
         self.lb_title.clear()
-        self.lb_resume.clear()  # Ã¿¸ö¶ÍÁ¶¼Æ»®µÄ±êÌâ¼°ÒâÒå
-        self.lb_notice.clear()  # µ±ÈÕÌáÊ¾
-        self.lb_gist.clear()  # ¶ÍÁ¶²½Öè
-        self.lb_img.clear()  # ¶ÍÁ¶¶¯Í¼
-        self.movie.stop()  # ¶ÍÁ¶¶¯Í¼
+        self.lb_resume.clear()  # Ã¿ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Æ»ï¿½ï¿½Ä±ï¿½ï¿½â¼°ï¿½ï¿½ï¿½ï¿½
+        self.lb_notice.clear()  # ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ê¾
+        self.lb_gist.clear()  # ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+        self.lb_img.clear()  # ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Í¼
+        self.movie.stop()  # ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Í¼
 
-        # ×Ó¿Ø¼þÊ§Ð§µÄÉèÖÃ
-        self.pb_style.setText("ÏÔÊ¾·âÃæ")
-        self.pb_model.setText("·­¿´")
+        # ï¿½Ó¿Ø¼ï¿½Ê§Ð§ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+        self.pb_style.setText("ï¿½ï¿½Ê¾ï¿½ï¿½ï¿½ï¿½")
+        self.pb_model.setText("ï¿½ï¿½ï¿½ï¿½")
         self.pb_style.setEnabled(False)
         self.pb_prev.setEnabled(False)
         self.pb_next.setEnabled(False)
@@ -1167,22 +1168,22 @@ class Curtain(QWidget):
         # sender = self.toolbar.sender()
         name = pb.text()
         print(name)
-        if name in ['ÏÔÊ¾·âÃæ', 'ÏÔÊ¾¶¯×÷']:
-            self.is_acting = bool(1 - self.is_acting)  # È¡·´
-            pb.setText('ÏÔÊ¾¶¯×÷') if self.is_acting else pb.setText('ÏÔÊ¾·âÃæ')
+        if name in ['ï¿½ï¿½Ê¾ï¿½ï¿½ï¿½ï¿½', 'ï¿½ï¿½Ê¾ï¿½ï¿½ï¿½ï¿½']:
+            self.is_acting = bool(1 - self.is_acting)  # È¡ï¿½ï¿½
+            pb.setText('ï¿½ï¿½Ê¾ï¿½ï¿½ï¿½ï¿½') if self.is_acting else pb.setText('ï¿½ï¿½Ê¾ï¿½ï¿½ï¿½ï¿½')
             self.start(self.is_acting)
         elif name == 'Ç°Í¼':
             self.prev()
-        elif name == 'ºóÍ¼':
+        elif name == 'ï¿½ï¿½Í¼':
             self.next()
-        elif name in ['ÂÖ²¥', '·­¿´']:
-            self.is_carousel = bool(1 - self.is_carousel)  # È¡·´
+        elif name in ['ï¿½Ö²ï¿½', 'ï¿½ï¿½ï¿½ï¿½']:
+            self.is_carousel = bool(1 - self.is_carousel)  # È¡ï¿½ï¿½
             if self.is_carousel:
-                pb.setText('ÂÖ²¥')
+                pb.setText('ï¿½Ö²ï¿½')
             else:
-                pb.setText('·­¿´')
+                pb.setText('ï¿½ï¿½ï¿½ï¿½')
 
-            # ×Ó¿Ø¼þÊ§Ð§µÄÉèÖÃ
+            # ï¿½Ó¿Ø¼ï¿½Ê§Ð§ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
             self.pb_prev.setEnabled(bool(1 - self.is_carousel))
             self.pb_next.setEnabled(bool(1 - self.is_carousel))
 
@@ -1193,17 +1194,17 @@ class Curtain(QWidget):
             self.cur_act = index
             self.show_me()
 
-    # ÉèÖÃÕ¹Ê¾¶¯Í¼»¹ÊÇ·âÃæÍ¼
+    # ï¿½ï¿½ï¿½ï¿½Õ¹Ê¾ï¿½ï¿½Í¼ï¿½ï¿½ï¿½Ç·ï¿½ï¿½ï¿½Í¼
     def start(self, flag: bool = True):
         self.is_acting = flag
         self.flush()
 
-    # ÉèÖÃÂÖ²¥×Ô¶¯Õ¹Ê¾»¹ÊÇµ¥·ùÍ¼ÈË¹¤Õ¹Ê¾£¬°üÀ¨¶¯Í¼»òÕß·âÃæ
+    # ï¿½ï¿½ï¿½ï¿½ï¿½Ö²ï¿½ï¿½Ô¶ï¿½Õ¹Ê¾ï¿½ï¿½ï¿½Çµï¿½ï¿½ï¿½Í¼ï¿½Ë¹ï¿½Õ¹Ê¾ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Í¼ï¿½ï¿½ï¿½ß·ï¿½ï¿½ï¿½
     def carousel(self, flag: bool = True):
         self.is_carousel = flag
         self.flush()
 
-    # ÈË¹¤Õ¹Ê¾Ê±µÄÇ°Í¼
+    # ï¿½Ë¹ï¿½Õ¹Ê¾Ê±ï¿½ï¿½Ç°Í¼
     def prev(self):
         if not self.is_carousel:
             if self.is_acting:
@@ -1215,7 +1216,7 @@ class Curtain(QWidget):
 
             self.flush()
 
-    # ÈË¹¤Õ¹Ê¾Ê±µÄºóÍ¼
+    # ï¿½Ë¹ï¿½Õ¹Ê¾Ê±ï¿½Äºï¿½Í¼
     def next(self):
         if not self.is_carousel:
             if self.is_acting:
@@ -1227,12 +1228,12 @@ class Curtain(QWidget):
 
             self.flush()
 
-    # Ë¢ÐÂ½çÃæÊý¾Ý
+    # Ë¢ï¿½Â½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
     def flush(self):
         self.lb_title.setText(self.title)
         self.lb_resume.setText(self.resume)
         if self.notice:
-            self.lb_notice.setText(self.notice[0] + f'   ¹²{len(self.action)}¸ö¶¯×÷£¡')
+            self.lb_notice.setText(self.notice[0] + f'   ï¿½ï¿½{len(self.action)}ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½')
 
         if self.is_carousel:
             self._carousel()
@@ -1240,9 +1241,9 @@ class Curtain(QWidget):
             self.timer.stop()
             self._alone()
 
-    # µ¥Í¼Õ¹Ê¾
+    # ï¿½ï¿½Í¼Õ¹Ê¾
     def _alone(self):
-        if not self.is_acting:  # ÏÔÊ¾·âÃæ
+        if not self.is_acting:  # ï¿½ï¿½Ê¾ï¿½ï¿½ï¿½ï¿½
             self.lb_gist.setVisible(False)
             if not self.cover:
                 return
@@ -1252,7 +1253,7 @@ class Curtain(QWidget):
             # self.lb_img.clear()
             # self.lb_img.set_img(self.cover[self.cur_cov])
             # self.lb_img.show_center_img()
-        else:  # ÏÔÊ¾¶¯×÷
+        else:  # ï¿½ï¿½Ê¾ï¿½ï¿½ï¿½ï¿½
             self.lb_gist.setVisible(True)
             if not self.action:
                 return
@@ -1267,13 +1268,13 @@ class Curtain(QWidget):
             self.movie.setFileName(gif)
             self.movie.start()
 
-    # ÂÖ²¥Í¼Õ¹Ê¾
+    # ï¿½Ö²ï¿½Í¼Õ¹Ê¾
     def _carousel(self):
         period = 0
         if self.is_acting:
             if self.notice and len(self.notice) == 4:
-                group, times, rest = self.notice[1:]  # ×éÊý£¬´ÎÊý£¬ÐÝÏ¢Ê±¼ä£¬Ã¿¸ö´Î2Ãë
-                period = group * (times * 2 + rest) * 1000  # ÖÜÆÚ
+                group, times, rest = self.notice[1:]  # ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ï¢Ê±ï¿½ä£¬Ã¿ï¿½ï¿½ï¿½ï¿½2ï¿½ï¿½
+                period = group * (times * 2 + rest) * 1000  # ï¿½ï¿½ï¿½ï¿½
                 # print(group, times, rest, period)
                 # period = 1000
             else:
@@ -1281,12 +1282,12 @@ class Curtain(QWidget):
         else:
             # print(len(self.cover))
             if self.cover and len(self.cover) > 1:
-                period = 3000  # 3Ãë
+                period = 3000  # 3ï¿½ï¿½
             else:
                 return
         # print(period)
         self._motion()
-        self.timer.start(period)  # ÉèÖÃ¼ÆÊ±¼ä¸ô²¢Æô¶¯£»µ¥Î»ºÁÃë
+        self.timer.start(period)  # ï¿½ï¿½ï¿½Ã¼ï¿½Ê±ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Î»ï¿½ï¿½ï¿½ï¿½
 
     def _motion(self):
         if self.is_acting:
@@ -1299,38 +1300,38 @@ class Curtain(QWidget):
         self._alone()
 
     def use_palette(self):
-        self.setWindowTitle("ÉèÖÃ±³¾°Í¼Æ¬")
+        self.setWindowTitle("ï¿½ï¿½ï¿½Ã±ï¿½ï¿½ï¿½Í¼Æ¬")
         window_pale = QtGui.QPalette()
         window_pale.setBrush(self.backgroundRole(),
                              QtGui.QBrush(QtGui.QPixmap("./res/background/bk1.jpg")))
         self.setPalette(window_pale)
 
-    #     # ¶àÏß³ÌÖ´ÐÐ¶¨Ê±ÈÎÎñ,ÓïÒô²¥±¨
+    #     # ï¿½ï¿½ï¿½ß³ï¿½Ö´ï¿½Ð¶ï¿½Ê±ï¿½ï¿½ï¿½ï¿½,ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
     #     # self._play_music()
-    #     # threading.Timer(2, self._talking, ("¶¯×÷²¥±¨",)).start()  # 10Ãëµ÷ÓÃº¯ÊýÒ»´Î
-    #     # threading.Timer(0, self._update_face, ("±³¾°ÒôÀÖ",)).start()  # 10Ãëµ÷ÓÃº¯ÊýÒ»´Î
+    #     # threading.Timer(2, self._talking, ("ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½",)).start()  # 10ï¿½ï¿½ï¿½ï¿½Ãºï¿½ï¿½ï¿½Ò»ï¿½ï¿½
+    #     # threading.Timer(0, self._update_face, ("ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½",)).start()  # 10ï¿½ï¿½ï¿½ï¿½Ãºï¿½ï¿½ï¿½Ò»ï¿½ï¿½
 
 
-# ÒõÓ°¡¢Ô²½Ç¡¢µ×Í¼µÄ×Ó´°Ìå£¬³äµ±Ö÷´°Ìå
+# ï¿½ï¿½Ó°ï¿½ï¿½Ô²ï¿½Ç¡ï¿½ï¿½ï¿½Í¼ï¿½ï¿½ï¿½Ó´ï¿½ï¿½å£¬ï¿½äµ±ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 class Canvas(QWidget):
     def __init__(self, parent):
         super(Canvas, self).__init__(parent)
 
         self.parent = parent
-        self.title_height = 50  # ±êÌâÀ¸¸ß¶È
-        self.left_width = 150  # ×ó²à¿í¶È
-        self.menu_height = 60  # ÁÐ±í²Ëµ¥ÏîµÄ¸ß¶È
+        self.title_height = 50  # ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ß¶ï¿½
+        self.left_width = 150  # ï¿½ï¿½ï¿½ï¿½ï¿½
+        self.menu_height = 60  # ï¿½Ð±ï¿½Ëµï¿½ï¿½ï¿½Ä¸ß¶ï¿½
 
         self.data_dir = 'e:/dumbbell'
 
-        self.data_plan = ['Ò»¸±ÑÆÁåÁ·È«Éí', '15Í¼', 'Ê®°Ë°ã']
-        self.data_video = []  # ×ÊÔ´£ºÊÓÆµÎÄ¼þ
-        self.data_menu = []  # ²Ëµ¥£º½çÃæ
-        self.body_arm = [('Ê¾·¶ÎÄ¼þ', '´ÎÊýÊ±¼ä', '¶¯×÷ÒªÁì', 'ÄÑ¶È')]
+        self.data_plan = ['Ò»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½È«ï¿½ï¿½', '15Í¼', 'Ê®ï¿½Ë°ï¿½']
+        self.data_video = []  # ï¿½ï¿½Ô´ï¿½ï¿½ï¿½ï¿½Æµï¿½Ä¼ï¿½
+        self.data_menu = []  # ï¿½Ëµï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+        self.body_arm = [('Ê¾ï¿½ï¿½ï¿½Ä¼ï¿½', 'ï¿½ï¿½ï¿½ï¿½Ê±ï¿½ï¿½', 'ï¿½ï¿½ï¿½ï¿½Òªï¿½ï¿½', 'ï¿½Ñ¶ï¿½')]
 
         # self.bg_label = QLabel()
 
-        self.layout_main = QHBoxLayout(self)  # ×óÓÒ²¼¾Ö
+        self.layout_main = QHBoxLayout(self)  # ï¿½ï¿½ï¿½Ò²ï¿½ï¿½ï¿½
         self.fm_left = QFrame()
         self.pb_person = EllipseButton(self, 50, 50)
         self.sub_menu = ChildMenu()
@@ -1338,34 +1339,34 @@ class Canvas(QWidget):
 
         self.fm_right = QFrame()
         self.titleBar = TitleBar()
-        self.stackedWidget = QStackedWidget()  # ¶ÑÕ»´°Ìå
+        self.stackedWidget = QStackedWidget()  # ï¿½ï¿½Õ»ï¿½ï¿½ï¿½ï¿½
 
-        # ¶à×Ó´°ÌåµÄ´°Ìå
+        # ï¿½ï¿½ï¿½Ó´ï¿½ï¿½ï¿½Ä´ï¿½ï¿½ï¿½
         # self.mdi = QMdiArea()QMdiSubWindow()
-        # # Îª×Ó´°¿Ú¼ÆÊý
+        # # Îªï¿½Ó´ï¿½ï¿½Ú¼ï¿½ï¿½ï¿½
         # self.count = self.count + 1
-        # # ´´½¨Ò»¸ö×Ó´°¿Ú
+        # # ï¿½ï¿½ï¿½ï¿½Ò»ï¿½ï¿½ï¿½Ó´ï¿½ï¿½ï¿½
         # sub = QMdiSubWindow()
-        # # Îª×Ó´°¿ÚÌí¼ÓÒ»¸öTextEdit¿Ø¼þ
+        # # Îªï¿½Ó´ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ò»ï¿½ï¿½TextEditï¿½Ø¼ï¿½
         # sub.setWidget(QTextEdit())
         # self.mdi.addSubWindow(sub)
         # sub.show()
-        # self.mdi.cascadeSubWindows()  # µ±µã»÷²Ëµ¥À¸ÖÐµÄCascadeÊ±£¬¶Ñµþ×Ó´°¿Ú
-        # self.mdi.tileSubWindows()  # µ±µã»÷²Ëµ¥À¸ÖÐµÄTiledÊ±£¬Æ½ÆÌ×Ó´°¿Ú
+        # self.mdi.cascadeSubWindows()  # ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ëµï¿½ï¿½ï¿½ï¿½Ðµï¿½CascadeÊ±ï¿½ï¿½ï¿½Ñµï¿½ï¿½Ó´ï¿½ï¿½ï¿½
+        # self.mdi.tileSubWindows()  # ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ëµï¿½ï¿½ï¿½ï¿½Ðµï¿½TiledÊ±ï¿½ï¿½Æ½ï¿½ï¿½ï¿½Ó´ï¿½ï¿½ï¿½
 
-        # # ´´½¨Ò»¸öDockWidget# Í£¿¿´°Ìå
+        # # ï¿½ï¿½ï¿½ï¿½Ò»ï¿½ï¿½DockWidget# Í£ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
         # self.items = QDockWidget()
         #
-        # # ¶¨ÒåÒ»Ð©ÄÚÈÝ£¨·Åµ½DockWidgetÖÐ£©
+        # # ï¿½ï¿½ï¿½ï¿½Ò»Ð©ï¿½ï¿½ï¿½Ý£ï¿½ï¿½Åµï¿½DockWidgetï¿½Ð£ï¿½
         # self.listWidget = QListWidget()
         # self.listWidget.setFixedSize(150, 300)
         # self.listWidget.addItem('item1')
         # self.listWidget.addItem('item2')
         # self.listWidget.addItem('item3')
         # self.items.setWidget(self.listWidget)
-        # # ½«DockWidget¼Óµ½Ö÷´°¿ÚÖÐ£¬Ä¬ÈÏÍ£¿¿ÔÚÓÒ±ß
+        # # ï¿½ï¿½DockWidgetï¿½Óµï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ð£ï¿½Ä¬ï¿½ï¿½Í£ï¿½ï¿½ï¿½ï¿½ï¿½Ò±ï¿½
         # self.addDockWidget(Qt.RightDockWidgetArea, self.items)
-        # # ¸øÖ÷´°¿ÚÌí¼ÓÒ»Ð©¿Ø¼þ
+        # # ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ò»Ð©ï¿½Ø¼ï¿½
         # self.setCentralWidget(QLineEdit())
 
         self.init_date()
@@ -1373,18 +1374,18 @@ class Canvas(QWidget):
         self.init_ui()
 
     def init_date(self):
-        # ³õÊ¼»¯Êý¾Ý
+        # ï¿½ï¿½Ê¼ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
         data = MyJson.read(os.path.join(self.data_dir, 'menu.json'))
         # data = None
         if data:
             self.data_menu.extend(data)
         else:
             self.data_menu.extend([
-                [('./res/images/1.ico', 'ÔË¶¯×ÊÔ´'), ('', 'ÎÄ°¸'), ('', 'ÊÓÆµ'), ('', 'ÍøÒ³')],
-                [('', '¶ÍÁ¶²¿Î»'), ('', '¼ç²¿'), ('', '±³²¿'), ('', 'ÐØ²¿'), ('', 'Ñü¸¹'), ('', 'ÊÖ±Û'), ('', 'ÍÈ½Å')],
-                [('', '¸öÐÔ¹æ»®'), ('', 'Õ¼Î»')],
-                [('', 'Êý¾ÝÖ¸Êý'), ('', 'Õ¼Î»')],
-                [('', 'ÉèÖÃ'), ('', 'Õ¼Î»')]
+                [('./res/images/1.ico', 'ï¿½Ë¶ï¿½ï¿½ï¿½Ô´'), ('', 'ï¿½Ä°ï¿½'), ('', 'ï¿½ï¿½Æµ'), ('', 'ï¿½ï¿½Ò³')],
+                [('', 'ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Î»'), ('', 'ï¿½ç²¿'), ('', 'ï¿½ï¿½ï¿½ï¿½'), ('', 'ï¿½Ø²ï¿½'), ('', 'ï¿½ï¿½ï¿½ï¿½'), ('', 'ï¿½Ö±ï¿½'), ('', 'ï¿½È½ï¿½')],
+                [('', 'ï¿½ï¿½ï¿½Ô¹æ»®'), ('', 'Õ¼Î»')],
+                [('', 'ï¿½ï¿½ï¿½ï¿½Ö¸ï¿½ï¿½'), ('', 'Õ¼Î»')],
+                [('', 'ï¿½ï¿½ï¿½ï¿½'), ('', 'Õ¼Î»')]
             ])
 
         # print(self.data_menu)
@@ -1398,39 +1399,39 @@ class Canvas(QWidget):
         #     print(child[1], path)
         #     MyJson.write(child[1], path)
 
-        # self.data_video.append(r'e:\¼ÒÍ¥ÑÆÁå¼Æ»®')  # µÚÒ»ÏîÊÇ´æ·ÅÎÄ¼þµÄÄ¿Â¼
+        # self.data_video.append(r'e:\ï¿½ï¿½Í¥ï¿½ï¿½ï¿½ï¿½Æ»ï¿½')  # ï¿½ï¿½Ò»ï¿½ï¿½ï¿½Ç´ï¿½ï¿½ï¿½Ä¼ï¿½ï¿½ï¿½Ä¿Â¼
         # files = Utils.files_in_dir(self.data_video[0], ['.mp4'])
-        # self.data_video.extend(files)  # Ä¿Â¼ÀïËùÓÐÎÄ¼þ
+        # self.data_video.extend(files)  # Ä¿Â¼ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ä¼ï¿½
         # print(self.data_menu)
 
-    # Ö÷½çÃæÉèÖÃ
+    # ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
     def init_canvas_ui(self):
         self.resize(500, 500)
         self.setObjectName('Canvas')
         # self.setStyleSheet('background-image:url(./res/images/background1.jpg);border-radius:20px;')
 
-        # self.setAttribute(Qt.WA_StyledBackground, True)  # ×ÓQWdiget±³¾°Í¸Ã÷
-        # self.setWindowFlags(Qt.FramelessWindowHint | Qt.WindowSystemMenuHint)  # ÉèÖÃÎÞ±ß¿ò´°¿Ú
-        # self.setAttribute(Qt.WA_TranslucentBackground)  # ÉèÖÃ´°¿Ú±³¾°Í¸Ã÷
-        # self.setWindowOpacity(0.9)  # ÉèÖÃ´°¿ÚÍ¸Ã÷¶È
+        # self.setAttribute(Qt.WA_StyledBackground, True)  # ï¿½ï¿½QWdigetï¿½ï¿½ï¿½ï¿½Í¸ï¿½ï¿½
+        # self.setWindowFlags(Qt.FramelessWindowHint | Qt.WindowSystemMenuHint)  # ï¿½ï¿½ï¿½ï¿½ï¿½Þ±ß¿ò´°¿ï¿½
+        # self.setAttribute(Qt.WA_TranslucentBackground)  # ï¿½ï¿½ï¿½Ã´ï¿½ï¿½Ú±ï¿½ï¿½ï¿½Í¸ï¿½ï¿½
+        # self.setWindowOpacity(0.9)  # ï¿½ï¿½ï¿½Ã´ï¿½ï¿½ï¿½Í¸ï¿½ï¿½ï¿½ï¿½
 
-        # ±¾Éí´øÉÏÒõÓ°ÌØÐ§£¬ÐèÒª¸¸´°ÌåÁô³ömargin
+        # ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ó°ï¿½ï¿½Ð§ï¿½ï¿½ï¿½ï¿½Òªï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½margin
         Utils.set_effect(self, 1, 20, 5, 5, QColor(0, 0, 0, 200))
         # the same QGraphicsEffect can not be shared by other widgets
-        # ×Ó´°Ìå´øÒõÓ°µÄÉèÖÃ
+        # ï¿½Ó´ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ó°ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
         # for children in self.findChildren(QWidget):
         #     shadow = QGraphicsDropShadowEffect(blurRadius=15, xOffset=5, yOffset=5, color=QColor(0, 0, 0, 255))
         #     children.setGraphicsEffect(shadow)
 
-        self.setMouseTracking(True)  # ¸ú×ÙÊó±êÒÆ¶¯ÊÂ¼þµÄ±Ø±¸
-        # self.setAttribute(Qt.WA_TransparentForMouseEvents, True)  # ÉèÖÃÊó±ê´©Í¸
+        self.setMouseTracking(True)  # ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Æ¶ï¿½ï¿½Â¼ï¿½ï¿½Ä±Ø±ï¿½
+        # self.setAttribute(Qt.WA_TransparentForMouseEvents, True)  # ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ê´©Í¸
 
         self.layout_main.setContentsMargins(0, 0, 0, 0)
         self.layout_main.setSpacing(0)
         self.layout_main.addWidget(self.fm_left)
         self.layout_main.addWidget(self.fm_right)
 
-        # ÐÅºÅ²Û£¬»¹ÊÇ·¢¸ø¸¸´°¿Ú´¦Àí
+        # ï¿½ÅºÅ²Û£ï¿½ï¿½ï¿½ï¿½Ç·ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ú´ï¿½ï¿½ï¿½
         self.titleBar.sign_pb_prev.connect(self.sign_title_clicked)
         self.titleBar.sign_pb_next.connect(self.sign_title_clicked)
         self.titleBar.sign_win_maximize.connect(self.parent.sign_showMaximized)
@@ -1440,19 +1441,19 @@ class Canvas(QWidget):
         # self.windowTitleChanged.connect(self.titleBar.setTitle)
         # self.windowIconChanged.connect(self.titleBar.setIcon)
 
-    # Ìí¼Ó¿Ø¼þ
+    # ï¿½ï¿½Ó¿Ø¼ï¿½
     def init_ui(self):
-        # ³õÊ¼»¯×ÜÌå½çÃæ
-        # self.fm_left.setAttribute(Qt.WA_TransparentForMouseEvents, True)  # ÉèÖÃÊó±ê´©Í¸
-        self.fm_left.setMouseTracking(True)  # ¸ú×ÙÊó±êÒÆ¶¯ÊÂ¼þµÄ±Ø±¸
-        self.pb_person.setMouseTracking(True)  # ×Ô¶¨ÒåÀàÖÐÒÑ¾­´òÉÏÁË
+        # ï¿½ï¿½Ê¼ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+        # self.fm_left.setAttribute(Qt.WA_TransparentForMouseEvents, True)  # ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ê´©Í¸
+        self.fm_left.setMouseTracking(True)  # ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Æ¶ï¿½ï¿½Â¼ï¿½ï¿½Ä±Ø±ï¿½
+        self.pb_person.setMouseTracking(True)  # ï¿½Ô¶ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ñ¾ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
         # self.listWidget.setMouseTracking(True)
-        self.fm_right.setMouseTracking(True)  # ¸ú×ÙÊó±êÒÆ¶¯ÊÂ¼þµÄ±Ø±¸
+        self.fm_right.setMouseTracking(True)  # ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Æ¶ï¿½ï¿½Â¼ï¿½ï¿½Ä±Ø±ï¿½
         self.titleBar.setMouseTracking(True)
         self.stackedWidget.setMouseTracking(True)
 
-        # region ×ó²à½çÃæ(ÉÏÃæ°´Å¥£¬ÏÂÃæQListWidget)
-        # region ×ó²àÕûÌå
+        # region ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½(ï¿½ï¿½ï¿½æ°´Å¥ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½QListWidget)
+        # region ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
         lv_left = QVBoxLayout(self.fm_left)
         lv_left.setContentsMargins(0, 15, 0, 0)
         # lh_tmp = QHBoxLayout()
@@ -1463,9 +1464,9 @@ class Canvas(QWidget):
         lv_left.addWidget(self.listWidget, 0, Qt.AlignCenter)
         lv_left.addStretch()
 
-        # self.fm_left.setWindowOpacity(0.5)  # ÉèÖÃ´°¿ÚÍ¸Ã÷¶È
+        # self.fm_left.setWindowOpacity(0.5)  # ï¿½ï¿½ï¿½Ã´ï¿½ï¿½ï¿½Í¸ï¿½ï¿½ï¿½ï¿½
         self.fm_left.setObjectName('left_fm')
-        # self.fm_left.setFixedWidth(self.left_width)  # Ö±½ÓÉèÖÃ¿í¶È£¬°´Å¥²»¾ÓÖÐ£»Í¨¹ýÑùÊ½ÉèÖÃÔò¾ÓÖÐ
+        # self.fm_left.setFixedWidth(self.left_width)  # Ö±ï¿½ï¿½ï¿½ï¿½ï¿½Ã¿ï¿½È£ï¿½ï¿½ï¿½Å¥ï¿½ï¿½ï¿½ï¿½ï¿½Ð£ï¿½Í¨ï¿½ï¿½ï¿½ï¿½Ê½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
         qss_left = '#left_fm{border-top-left-radius:%d;border-bottom-left-radius:%d;' \
                    'min-width: %dpx;max-width: %dpx;' \
                    'font-size:16px;font-weight:bold;font-family:Roman times;' \
@@ -1474,20 +1475,20 @@ class Canvas(QWidget):
                    (Const.MARGIN, Const.MARGIN, self.left_width, self.left_width)
         self.fm_left.setStyleSheet(qss_left)
         # self.fm_left.setStyleSheet('background-image: url(./res/background/background1.jpg);'
-        #                            '/*border-radius:20px;     »­³öÔ²½Ç*/'
-        #                            'background-repeat: no-repeat;       /*±³¾°²»ÒªÖØ¸´*/'
-        #                            'background-position: center center;      /*Í¼Æ¬µÄÎ»ÖÃ£¬¾ÓÖÐ£¬¿¿×ó¶ÔÆë*/')
+        #                            '/*border-radius:20px;     ï¿½ï¿½ï¿½ï¿½Ô²ï¿½ï¿½*/'
+        #                            'background-repeat: no-repeat;       /*ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Òªï¿½Ø¸ï¿½*/'
+        #                            'background-position: center center;      /*Í¼Æ¬ï¿½ï¿½Î»ï¿½Ã£ï¿½ï¿½ï¿½ï¿½Ð£ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½*/')
         # endregion
 
-        # region ×ó²àÍ¼±ê
+        # region ï¿½ï¿½ï¿½Í¼ï¿½ï¿½
         # self.lb_person.setAlignment(Qt.AlignCenter)
         # self.lb_person.setIcon(QIcon('./res/images/girl1.png'))
         # self.pb_person.setFixedSize(QSize(self.left_width, 40))
         self.pb_person.set('./res/images/girl1.png')
 
         # self.lb_person.setStyleSheet('border-top-left-radius:%d;'
-        #                              'background: transparent;     /*È«Í¸Ã÷*/'
-        #                              '/*background:rgba(0,0,0,0.1);      °ëÍ¸Ã÷*/' % self.margin)
+        #                              'background: transparent;     /*È«Í¸ï¿½ï¿½*/'
+        #                              '/*background:rgba(0,0,0,0.1);      ï¿½ï¿½Í¸ï¿½ï¿½*/' % self.margin)
         # self.lb_person.setStyleSheet("color:black;"
         #                              "color:red;"
         #                              "background-color:rgb(78,255,255);"
@@ -1506,42 +1507,42 @@ class Canvas(QWidget):
         # self.tb_person.setAutoFillBackground(True)
         # endregion
 
-        # region ÁÐ±í¿òÉèÖÃ
-        self.listWidget.setFrameShape(QListWidget.NoFrame)  # È¥µô±ß¿ò
-        self.listWidget.setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOff)  # Òþ²Ø¹ö¶¯Ìõ
+        # region ï¿½Ð±ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+        self.listWidget.setFrameShape(QListWidget.NoFrame)  # È¥ï¿½ï¿½ï¿½ß¿ï¿½
+        self.listWidget.setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOff)  # ï¿½ï¿½ï¿½Ø¹ï¿½ï¿½ï¿½ï¿½ï¿½
         self.listWidget.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
         self.listWidget.setCursor(QCursor(Qt.ArrowCursor))
         self.listWidget.setObjectName('menu_list')
-        # self.listWidget.setSpacing(10)  # ÉèÖÃQListWidgetÖÐµ¥ÔªÏîµÄ¼ä¾à
+        # self.listWidget.setSpacing(10)  # ï¿½ï¿½ï¿½ï¿½QListWidgetï¿½Ðµï¿½Ôªï¿½ï¿½Ä¼ï¿½ï¿½
         # self.listWidget.setViewportMargins(0, 0, 0, 0)
-        # Í¨¹ýQListWidgetµÄµ±Ç°item±ä»¯À´ÇÐ»»QStackedWidgetÖÐµÄÐòºÅ
+        # Í¨ï¿½ï¿½QListWidgetï¿½Äµï¿½Ç°itemï¿½ä»¯ï¿½ï¿½ï¿½Ð»ï¿½QStackedWidgetï¿½Ðµï¿½ï¿½ï¿½ï¿½
         # self.listWidget.resize(365, 400)
-        # ÉèÖÃÏÔÊ¾Ä£Ê½,Ò»°ãµÄÎÄ±¾ÅäºÏÍ¼±êÄ£Ê½(Ò²¿ÉÒÔÓÃIconÄ£Ê½,setViewMode)
+        # ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ê¾Ä£Ê½,Ò»ï¿½ï¿½ï¿½ï¿½Ä±ï¿½ï¿½ï¿½ï¿½Í¼ï¿½ï¿½Ä£Ê½(Ò²ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½IconÄ£Ê½,setViewMode)
         # self.listWidget.setViewMode(QListView.IconMode)
         # self.delegate = ItemDelegate()
-        # self.listWidget.setItemDelegate(self.delegate)#Í¼±êÔÚÓÒ²à
-        # # ÉèÖÃQListWidgetÖÐµ¥ÔªÏîµÄÍ¼Æ¬´óÐ¡
+        # self.listWidget.setItemDelegate(self.delegate)#Í¼ï¿½ï¿½ï¿½ï¿½ï¿½Ò²ï¿½
+        # # ï¿½ï¿½ï¿½ï¿½QListWidgetï¿½Ðµï¿½Ôªï¿½ï¿½ï¿½Í¼Æ¬ï¿½ï¿½Ð¡
         # self.listWidget.setIconSize(QSize(100, 100))
-        # # ÉèÖÃQListWidgetÖÐµ¥ÔªÏîµÄ¼ä¾à
+        # # ï¿½ï¿½ï¿½ï¿½QListWidgetï¿½Ðµï¿½Ôªï¿½ï¿½Ä¼ï¿½ï¿½
         # self.listWidget.setSpacing(10)
         # self.listWidget.setViewportMargins(0, 0, 0, 0)
-        # # ÉèÖÃ×Ô¶¯ÊÊÓ¦²¼¾Öµ÷Õû£¨AdjustÊÊÓ¦£¬Fixed²»ÊÊÓ¦£©£¬Ä¬ÈÏ²»ÊÊÓ¦
+        # # ï¿½ï¿½ï¿½ï¿½ï¿½Ô¶ï¿½ï¿½ï¿½Ó¦ï¿½ï¿½ï¿½Öµï¿½ï¿½ï¿½ï¿½ï¿½Adjustï¿½ï¿½Ó¦ï¿½ï¿½Fixedï¿½ï¿½ï¿½ï¿½Ó¦ï¿½ï¿½ï¿½ï¿½Ä¬ï¿½Ï²ï¿½ï¿½ï¿½Ó¦
         # self.listWidget.setResizeMode(QListWidget.Adjust)
-        # # ÉèÖÃ²»ÄÜÒÆ¶¯
+        # # ï¿½ï¿½ï¿½Ã²ï¿½ï¿½ï¿½ï¿½Æ¶ï¿½
         # self.listWidget.setMovement(QListWidget.Static)
 
         menu_count = len(self.data_menu)
         item_count = 10 if menu_count > 10 else menu_count
         self.listWidget.setFixedHeight(self.menu_height * item_count)
 
-        self.sub_menu.init_stack_menu(self.data_menu, self.listWidget)  # ×Ó²Ëµ¥Ò³Ãæ³õÊ¼»¯
+        self.sub_menu.init_stack_menu(self.data_menu, self.listWidget)  # ï¿½Ó²Ëµï¿½Ò³ï¿½ï¿½ï¿½Ê¼ï¿½ï¿½
         self.sub_menu.select_stack(0)
 
         for each in self.data_menu:
             item = QListWidgetItem(QIcon(each[0][0]), each[0][1], self.listWidget)
             #     item.setToolTip(self.data[i])
-            item.setSizeHint(QSize(16777215, self.menu_height))  # ÉèÖÃitemµÄÄ¬ÈÏ¿í¸ß(ÕâÀïÖ»ÓÐ¸ß¶È±È½ÏÓÐÓÃ)
-            item.setTextAlignment(Qt.AlignCenter)  # ÎÄ×Ö¾ÓÖÐ
+            item.setSizeHint(QSize(16777215, self.menu_height))  # ï¿½ï¿½ï¿½ï¿½itemï¿½ï¿½Ä¬ï¿½Ï¿ï¿½ï¿½(ï¿½ï¿½ï¿½ï¿½Ö»ï¿½Ð¸ß¶È±È½ï¿½ï¿½ï¿½ï¿½ï¿½)
+            item.setTextAlignment(Qt.AlignCenter)  # ï¿½ï¿½ï¿½Ö¾ï¿½ï¿½ï¿½
 
         # item = QListWidgetItem(QIcon(), '', self.listWidget)
         # item.setSizeHint(QSize(16777215, 1))
@@ -1556,8 +1557,8 @@ class Canvas(QWidget):
         # endregion
         # endregion
 
-        # region ÓÒ²à½çÃæÉèÖÃ(ÉÏ±ßTitleBar£¬ÏÂ±ßQStackedWidget)
-        # region ÓÒ²à×ÜÌå
+        # region ï¿½Ò²ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½(ï¿½Ï±ï¿½TitleBarï¿½ï¿½ï¿½Â±ï¿½QStackedWidget)
+        # region ï¿½Ò²ï¿½ï¿½ï¿½ï¿½ï¿½
         lv_right = QVBoxLayout(self.fm_right, spacing=0)
         lv_right.setContentsMargins(0, 0, 1, 0)
         lv_right.addWidget(self.titleBar)
@@ -1566,43 +1567,43 @@ class Canvas(QWidget):
         # lv_right.addStretch()
 
         self.fm_right.setObjectName('right_fm')
-        # self.fm_left.setFixedWidth(self.left_width)  # Ö±½ÓÉèÖÃ¿í¶È£¬°´Å¥²»¾ÓÖÐ£»Í¨¹ýÑùÊ½ÉèÖÃÔò¾ÓÖÐ
-        qss_right = '#right_fm{background: transparent;     /*È«Í¸Ã÷*/' \
+        # self.fm_left.setFixedWidth(self.left_width)  # Ö±ï¿½ï¿½ï¿½ï¿½ï¿½Ã¿ï¿½È£ï¿½ï¿½ï¿½Å¥ï¿½ï¿½ï¿½ï¿½ï¿½Ð£ï¿½Í¨ï¿½ï¿½ï¿½ï¿½Ê½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+        qss_right = '#right_fm{background: transparent;     /*È«Í¸ï¿½ï¿½*/' \
                     'border-top-right-radius:%d;border-bottom-right-radius:%d;' \
                     'font-size:16px;font-weight:bold;font-family:Roman times;' \
                     'background-position: center center}' % (Const.MARGIN, Const.MARGIN)
         self.fm_right.setStyleSheet(qss_right)
         # endregion
 
-        # region ÓÒ²à¹¤¾ßÀ¸
+        # region ï¿½Ò²à¹¤ï¿½ï¿½ï¿½ï¿½
         self.titleBar.setHeight(self.title_height)
         # self.titleBar.setStyleSheet('border-top-right-radius:15;border-bottom-right-radius:15')
         # self.titleBar.setAttribute(Qt.WA_StyledBackground, True)
         # endregion
 
-        # region ÓÒ²àstackedWidget
-        # ¶¨Òå²¥·ÅÒ³Ãæ
+        # region ï¿½Ò²ï¿½stackedWidget
+        # ï¿½ï¿½ï¿½å²¥ï¿½ï¿½Ò³ï¿½ï¿½
 
-        # region ÎÄ¼þÁÐ±í
+        # region ï¿½Ä¼ï¿½ï¿½Ð±ï¿½
         lw_videos = QListWidget()
-        # lw_videos.setViewMode(QListView.IconMode)  # ÏÔÊ¾Ä£Ê½,IconÄ£Ê½(Ò»°ãÎÄ±¾ÅäºÏÍ¼±ê,setViewMode)
-        # lw_videos.setFrameShape(QListView.NoFrame)  # ÎÞ±ß¿ò
-        # lw_videos.setFlow(QListWidget.LeftToRight)  # ´Ó×óµ½ÓÒ
-        # lw_videos.setWrapping(True)  # ÕâÈý¸ö×éºÏ¿ÉÒÔ´ïµ½ºÍFlowLayoutÒ»ÑùµÄÐ§¹û
-        # lw_videos.setResizeMode(QListWidget.Adjust)  # ÉèÖÃ×Ô¶¯ÊÊÓ¦²¼¾Öµ÷Õû£¨AdjustÊÊÓ¦£¬Fixed²»ÊÊÓ¦£©£¬Ä¬ÈÏ²»ÊÊÓ¦
-        # lw_videos.setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOff)  # Òþ²Ø¹ö¶¯Ìõ
+        # lw_videos.setViewMode(QListView.IconMode)  # ï¿½ï¿½Ê¾Ä£Ê½,IconÄ£Ê½(Ò»ï¿½ï¿½ï¿½Ä±ï¿½ï¿½ï¿½ï¿½Í¼ï¿½ï¿½,setViewMode)
+        # lw_videos.setFrameShape(QListView.NoFrame)  # ï¿½Þ±ß¿ï¿½
+        # lw_videos.setFlow(QListWidget.LeftToRight)  # ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+        # lw_videos.setWrapping(True)  # ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ï¿ï¿½ï¿½Ô´ïµ½ï¿½ï¿½FlowLayoutÒ»ï¿½ï¿½ï¿½ï¿½Ð§ï¿½ï¿½
+        # lw_videos.setResizeMode(QListWidget.Adjust)  # ï¿½ï¿½ï¿½ï¿½ï¿½Ô¶ï¿½ï¿½ï¿½Ó¦ï¿½ï¿½ï¿½Öµï¿½ï¿½ï¿½ï¿½ï¿½Adjustï¿½ï¿½Ó¦ï¿½ï¿½Fixedï¿½ï¿½ï¿½ï¿½Ó¦ï¿½ï¿½ï¿½ï¿½Ä¬ï¿½Ï²ï¿½ï¿½ï¿½Ó¦
+        # lw_videos.setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOff)  # ï¿½ï¿½ï¿½Ø¹ï¿½ï¿½ï¿½ï¿½ï¿½
         lw_videos.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
-        lw_videos.setIconSize(QSize(100, 100))  # ÉèÖÃQListWidgetÖÐµ¥ÔªÏîµÄÍ¼Æ¬´óÐ¡
-        lw_videos.setSpacing(10)  # ÉèÖÃQListWidgetÖÐµ¥ÔªÏîµÄ¼ä¾à
+        lw_videos.setIconSize(QSize(100, 100))  # ï¿½ï¿½ï¿½ï¿½QListWidgetï¿½Ðµï¿½Ôªï¿½ï¿½ï¿½Í¼Æ¬ï¿½ï¿½Ð¡
+        lw_videos.setSpacing(10)  # ï¿½ï¿½ï¿½ï¿½QListWidgetï¿½Ðµï¿½Ôªï¿½ï¿½Ä¼ï¿½ï¿½
 
         # lw_videos.setViewportMargins(0, 0, 0, 0)
-        lw_videos.setMovement(QListWidget.Static)  # ÉèÖÃ²»ÄÜÒÆ¶¯
-        lw_videos.setStyleSheet('/*background: transparent;     È«Í¸Ã÷*/'
+        lw_videos.setMovement(QListWidget.Static)  # ï¿½ï¿½ï¿½Ã²ï¿½ï¿½ï¿½ï¿½Æ¶ï¿½
+        lw_videos.setStyleSheet('/*background: transparent;     È«Í¸ï¿½ï¿½*/'
                                 'color: rgb(255, 200, 20);'
                                 'font-size:22px;font-weight:bold;font-family:Roman times;')
         # lw_videos.setCursor(QCursor(Qt.ArrowCursor))
 
-        # Á¬½ÓÊú×ÅµÄ¹ö¶¯Ìõ¹ö¶¯ÊÂ¼þ
+        # ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ÅµÄ¹ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Â¼ï¿½
         # lw_videos.verticalScrollBar().actionTriggered.connect(self.onActionTriggered)
         lw_videos.clicked.connect(self.submenu_resource)
         # item_height = 40
@@ -1613,25 +1614,25 @@ class Canvas(QWidget):
         # for each in self.data_video:
         #     item = QListWidgetItem(QIcon(), each, lw_videos)
         #     #     item.setToolTip(self.data[i])
-        #     item.setSizeHint(QSize(16777215, self.menu_height))  # ÉèÖÃitemµÄÄ¬ÈÏ¿í¸ß(ÕâÀïÖ»ÓÐ¸ß¶È±È½ÏÓÐÓÃ)
-        #     item.setTextAlignment(Qt.AlignCenter)  # ÎÄ×Ö¾ÓÖÐ
+        #     item.setSizeHint(QSize(16777215, self.menu_height))  # ï¿½ï¿½ï¿½ï¿½itemï¿½ï¿½Ä¬ï¿½Ï¿ï¿½ï¿½(ï¿½ï¿½ï¿½ï¿½Ö»ï¿½Ð¸ß¶È±È½ï¿½ï¿½ï¿½ï¿½ï¿½)
+        #     item.setTextAlignment(Qt.AlignCenter)  # ï¿½ï¿½ï¿½Ö¾ï¿½ï¿½ï¿½
         self.stackedWidget.addWidget(lw_videos)
         # endregion
 
-        # region ¶¯Í¼²¥·ÅÒ³Ãæ
+        # region ï¿½ï¿½Í¼ï¿½ï¿½ï¿½ï¿½Ò³ï¿½ï¿½
         stage = Curtain(self)
         self.stackedWidget.addWidget(stage)
         # endregion
 
-        # ÔÙÄ£Äâ20¸öÓÒ²àµÄÒ³Ãæ(¾Í²»ºÍÉÏÃæÒ»ÆðÑ­»··ÅÁË)
+        # ï¿½ï¿½Ä£ï¿½ï¿½20ï¿½ï¿½ï¿½Ò²ï¿½ï¿½Ò³ï¿½ï¿½(ï¿½Í²ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ò»ï¿½ï¿½Ñ­ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½)
         # for i in range(1):
-        #     # label = QLabel(f'ÎÒÊÇÒ³Ãæ{i}', self)
+        #     # label = QLabel(f'ï¿½ï¿½ï¿½ï¿½Ò³ï¿½ï¿½{i}', self)
         #     # label.setAlignment(Qt.AlignCenter)
-        #     label = MyQLabel('Ñ§Éú', self)
+        #     label = MyQLabel('Ñ§ï¿½ï¿½', self)
         #     label.resize(400, 400)
         #     # print('df fd', self.stackedWidget.size(), label.size())
-        #     # ÉèÖÃlabelµÄ±³¾°ÑÕÉ«(ÕâÀïËæ»ú)
-        #     # ÕâÀï¼ÓÁËÒ»¸ömargin±ß¾à(·½±ãÇø·ÖQStackedWidgetºÍQLabelµÄÑÕÉ«)
+        #     # ï¿½ï¿½ï¿½ï¿½labelï¿½Ä±ï¿½ï¿½ï¿½ï¿½ï¿½É«(ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½)
+        #     # ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ò»ï¿½ï¿½marginï¿½ß¾ï¿½(ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½QStackedWidgetï¿½ï¿½QLabelï¿½ï¿½ï¿½ï¿½É«)
         #     # self.stackedWidget.setStyleSheet('background: rgb(%d, %d, %d);margin: 0px;'
         #     #                     % (randint(0, 255), randint(0, 255), randint(0, 255)))
         #     label.setStyleSheet('background: green;margin: 50px;')
@@ -1643,9 +1644,9 @@ class Canvas(QWidget):
 
     def add_lw_items(self, img_path, flag=1):
         """
-        ¶ÁÈ¡ËõÂÔÍ¼
+        ï¿½ï¿½È¡ï¿½ï¿½ï¿½ï¿½Í¼
         :param img_path:
-        :param flag: stacked µÄÐòºÅ£¬1£ºgif  0£ºÊÓÆµÎÄ¼þÒ³Ãæ
+        :param flag: stacked ï¿½ï¿½ï¿½ï¿½Å£ï¿½1ï¿½ï¿½gif  0ï¿½ï¿½ï¿½ï¿½Æµï¿½Ä¼ï¿½Ò³ï¿½ï¿½
         :return:
         """
 
@@ -1686,7 +1687,7 @@ class Canvas(QWidget):
         queryButton.setFlags(QtCore.Qt.ItemIsSelectable | QtCore.Qt.ItemIsEnabled)
         self.contentsWidget.currentItemChanged.connect(self.changePage)
 
-    # QListWidget current ¸Ä±äÊ±´¥·¢
+    # QListWidget current ï¿½Ä±ï¿½Ê±ï¿½ï¿½ï¿½ï¿½
     def changePage(self, current, previous):
         print(self.contentsWidget.row(current))
 
@@ -1694,19 +1695,19 @@ class Canvas(QWidget):
         # print(name)
         res_names = self.data_menu[0][1:]
         res_names = [res_names[i][1] for i in range(len(res_names))]
-        body_names = self.data_menu[1][1:]  # ['¼ç²¿', 'ÊÖ±Û', '¼ç±³', 'Ñü¸¹', 'ÍÈ½Å']
+        body_names = self.data_menu[1][1:]  # ['ï¿½ç²¿', 'ï¿½Ö±ï¿½', 'ï¿½ç±³', 'ï¿½ï¿½ï¿½ï¿½', 'ï¿½È½ï¿½']
         body_names = [body_names[i][1] for i in range(len(body_names))]
         # print(type(res_names), res_names)
 
         if name in res_names:
             self.stackedWidget.setCurrentIndex(0)
-            widget = self.stackedWidget.currentWidget()  # µÚÒ»¸öÊÇÕ¹Ê¾¶à¸öÑ¡ÏîµÄÁÐ±í¿ò
+            widget = self.stackedWidget.currentWidget()  # ï¿½ï¿½Ò»ï¿½ï¿½ï¿½ï¿½Õ¹Ê¾ï¿½ï¿½ï¿½Ñ¡ï¿½ï¿½ï¿½ï¿½Ð±ï¿½ï¿½
             # widget = QListWidget()
             widget.clear()
             # widget.itemClicked.connect(self.submenu_resource)
 
             title = f'{self.data_menu[0][0][1]}/{name}'
-            widget.setObjectName(title)  # ²Ûº¯ÊýÐèÒª
+            widget.setObjectName(title)  # ï¿½Ûºï¿½ï¿½ï¿½ï¿½ï¿½Òª
 
             file = self.data_dir + f'/{title}/{name}.json'
             data_res = MyJson.read(file)
@@ -1716,14 +1717,14 @@ class Canvas(QWidget):
             # MyJson.write(ll, file)
             for each in data_res:
                 item = None
-                if name == 'ÎÄ°¸':
+                if name == 'ï¿½Ä°ï¿½':
                     item = QListWidgetItem(QIcon(each[0]), each[1], widget)
                     item.setToolTip(each[1])
-                elif name == 'ÊÓÆµ' or name == 'ÍøÒ³':
+                elif name == 'ï¿½ï¿½Æµ' or name == 'ï¿½ï¿½Ò³':
                     item = QListWidgetItem(QIcon(), each, widget)
                     item.setToolTip(each)
-                item.setSizeHint(QSize(16777215, self.menu_height))  # ÉèÖÃitemµÄÄ¬ÈÏ¿í¸ß(ÕâÀïÖ»ÓÐ¸ß¶È±È½ÏÓÐÓÃ)
-                item.setTextAlignment(Qt.AlignCenter)  # ÎÄ×Ö¾ÓÖÐ
+                item.setSizeHint(QSize(16777215, self.menu_height))  # ï¿½ï¿½ï¿½ï¿½itemï¿½ï¿½Ä¬ï¿½Ï¿ï¿½ï¿½(ï¿½ï¿½ï¿½ï¿½Ö»ï¿½Ð¸ß¶È±È½ï¿½ï¿½ï¿½ï¿½ï¿½)
+                item.setTextAlignment(Qt.AlignCenter)  # ï¿½ï¿½ï¿½Ö¾ï¿½ï¿½ï¿½
         elif name in body_names:
             self.submenu_body(name)
             # print(self.stackedWidget.count())
@@ -1747,7 +1748,7 @@ class Canvas(QWidget):
         path = self.data_dir + f'/{name}/{text}'
         print(name, text, path)
 
-        if 'ÎÄ°¸' in name:
+        if 'ï¿½Ä°ï¿½' in name:
             # imgs = Utils.files_in_dir(path, ['.jpg', '.jpeg', '.tiff', '.bmp', '.png'])
             # gifs = Utils.files_in_dir(path, ['.gif'])
             # json = Utils.files_in_dir(path, ['.json'])
@@ -1760,9 +1761,9 @@ class Canvas(QWidget):
             curtain.set_title(text)
             curtain.data_serialize(path)
             curtain.start(False)
-        elif 'ÊÓÆµ' in name:
-            # print('¶¯Ì¬À­Éì', path)
-            os.startfile(path)  # ÀûÓÃÏµÍ³µ÷ÓÃÄ¬ÈÏ³ÌÐò´ò¿ª±¾µØÎÄ¼þ
+        elif 'ï¿½ï¿½Æµ' in name:
+            # print('ï¿½ï¿½Ì¬ï¿½ï¿½ï¿½ï¿½', path)
+            os.startfile(path)  # ï¿½ï¿½ï¿½ï¿½ÏµÍ³ï¿½ï¿½ï¿½ï¿½Ä¬ï¿½Ï³ï¿½ï¿½ï¿½ò¿ª±ï¿½ï¿½ï¿½ï¿½Ä¼ï¿½
 
     def submenu_body(self, name):
         self.stackedWidget.setCurrentIndex(1)
@@ -1791,24 +1792,24 @@ class Canvas(QWidget):
         # self.stacked_menu.setCurrentIndex(cur_row)
         print(cur_row)
 
-        # Í¨¹ýQListWidgetµÄµ±Ç°item±ä»¯À´ÇÐ»»QStackedWidgetÖÐµÄÐòºÅ
+        # Í¨ï¿½ï¿½QListWidgetï¿½Äµï¿½Ç°itemï¿½ä»¯ï¿½ï¿½ï¿½Ð»ï¿½QStackedWidgetï¿½Ðµï¿½ï¿½ï¿½ï¿½
         # self.stackedWidget.setCurrentIndex(cur_row // 2)
 
     def paintEvent(self, event):
-        # # Ö÷´°ÌåÎÞ±ß¿òÊ±ÊÇ¼ÓÔØ²»ÁËÑùÊ½µÄ£¬½öÔÚ×Ó¿Ø¼þÉÏÊµÏÖÑùÊ½¡£
-        # # ÒªÔÚÖ÷´°Ìå±¾ÉíÊµÏÖÑùÊ½£¬ÐèÒªÔÚpaintEventÊÂ¼þÖÐ¼ÓÉÏÈçÏÂ´úÂë£¬ÉèÖÃµ×Í¼Ò²ÊÇÒ»ÑùµÄ
+        # # ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Þ±ß¿ï¿½Ê±ï¿½Ç¼ï¿½ï¿½Ø²ï¿½ï¿½ï¿½ï¿½ï¿½Ê½ï¿½Ä£ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ó¿Ø¼ï¿½ï¿½ï¿½Êµï¿½ï¿½ï¿½ï¿½Ê½ï¿½ï¿½
+        # # Òªï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½å±¾ï¿½ï¿½Êµï¿½ï¿½ï¿½ï¿½Ê½ï¿½ï¿½ï¿½ï¿½Òªï¿½ï¿½paintEventï¿½Â¼ï¿½ï¿½Ð¼ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Â´ï¿½ï¿½ë£¬ï¿½ï¿½ï¿½Ãµï¿½Í¼Ò²ï¿½ï¿½Ò»ï¿½ï¿½ï¿½ï¿½
         # opt = QStyleOption()
         # opt.initFrom(self)
         # p = QPainter(self)
-        # p.setRenderHint(QPainter.Antialiasing)  # ·´¾â³Ý
+        # p.setRenderHint(QPainter.Antialiasing)  # ï¿½ï¿½ï¿½ï¿½ï¿½
         # self.style().drawPrimitive(QStyle.PE_Widget, opt, p, self)
         # # super(Canvas, self).paintEvent(event)
 
-        # ²»Í¨¹ýÑùÊ½£¬Ö±½ÓÉèÖÃÔ²½Ç£¬Í¨ÓÃ£¬ÇÒ²»¼Ì³ÐÓÚ×Ó¿Ø¼þ
+        # ï¿½ï¿½Í¨ï¿½ï¿½ï¿½ï¿½Ê½ï¿½ï¿½Ö±ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ô²ï¿½Ç£ï¿½Í¨ï¿½Ã£ï¿½ï¿½Ò²ï¿½ï¿½Ì³ï¿½ï¿½ï¿½ï¿½Ó¿Ø¼ï¿½
         painter = QPainter(self)
-        painter.setRenderHint(QPainter.Antialiasing)  # ·´¾â³Ý
+        painter.setRenderHint(QPainter.Antialiasing)  # ï¿½ï¿½ï¿½ï¿½ï¿½
 
-        # ÏÔÊ¾È«Í¼³äÂú
+        # ï¿½ï¿½Ê¾È«Í¼ï¿½ï¿½ï¿½ï¿½
         img = QImage('./res//background/bk5.jpg')
         w, h = self.width(), self.height()
         ratio_w = img.width() / w
@@ -1817,7 +1818,7 @@ class Canvas(QWidget):
         is_w = True if ratio_w < ratio_h else False
         img_new = img.scaledToWidth(h) if is_w else img.scaledToHeight(w)
 
-        painter.setBrush(QBrush(QPixmap.fromImage(img_new)))  # ÉèÖÃµ×Í¼µÄ·½Ê½Ö®Ò»
+        painter.setBrush(QBrush(QPixmap.fromImage(img_new)))  # ï¿½ï¿½ï¿½Ãµï¿½Í¼ï¿½Ä·ï¿½Ê½Ö®Ò»
         # painter.setBrush(QBrush(Qt.blue))
         painter.setPen(Qt.transparent)
 
@@ -1825,12 +1826,12 @@ class Canvas(QWidget):
         rect.setWidth(rect.width() - 1)
         rect.setHeight(rect.height() - 1)
         painter.drawRoundedRect(rect, 20, 20)
-        # Ò²¿ÉÓÃQPainterPath »æÖÆ´úÌæ painter.drawRoundedRect(rect, 15, 15)
+        # Ò²ï¿½ï¿½ï¿½ï¿½QPainterPath ï¿½ï¿½ï¿½Æ´ï¿½ï¿½ï¿½ painter.drawRoundedRect(rect, 15, 15)
         # painterPath= QPainterPath()
         # painterPath.addRoundedRect(rect, 15, 15)
         # painter.drawPath(painterPath)
 
-        # Ö±½ÓÉèÖÃµ×Í¼£¬ÓëÔ²½ÇµÄ»­Ë¢ÉèÖÃ²»ÄÜÍ¬Ê±
+        # Ö±ï¿½ï¿½ï¿½ï¿½ï¿½Ãµï¿½Í¼ï¿½ï¿½ï¿½ï¿½Ô²ï¿½ÇµÄ»ï¿½Ë¢ï¿½ï¿½ï¿½Ã²ï¿½ï¿½ï¿½Í¬Ê±
         # pix = QPixmap('./res/images/background11.jpg')
         # painter.drawPixmap(self.rect(), pix)
 
@@ -1844,10 +1845,10 @@ class Canvas(QWidget):
     #     if a0 == 'menu_list':
     #         print('great')
     #     if a1.type() == QtCore.QEvent.HoverMove:
-    #         print('Êó±êÒÆ¶¯µ½°´Å¥ÉÏ')
+    #         print('ï¿½ï¿½ï¿½ï¿½Æ¶ï¿½ï¿½ï¿½ï¿½ï¿½Å¥ï¿½ï¿½')
     #         return True
     #     elif a1.type() == QtCore.QEvent.MouseMove:
-    #         print('°´Å¥±»µã»÷')
+    #         print('ï¿½ï¿½Å¥ï¿½ï¿½ï¿½ï¿½ï¿½')
     #         return True
 
     # def enterEvent(self, a0: QtCore.QEvent):
@@ -1859,21 +1860,21 @@ class Canvas(QWidget):
     #     return super().enterEvent(a0)
 
 
-# Ö÷´°ÌåµÄÓ°×Ó
+# ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ó°ï¿½ï¿½
 class MainWin(QWidget):
 
-    # region Ö÷´°¿ÚµÄÓ°×Ó£¬²»ÓÃÔÙ¸Ä
+    # region ï¿½ï¿½ï¿½ï¿½ï¿½Úµï¿½Ó°ï¿½Ó£ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ù¸ï¿½
     def __init__(self, *args, **kwargs):
         super(MainWin, self).__init__(*args, **kwargs)
 
         self.resize(1500, 1000)
-        self.setWindowFlags(Qt.FramelessWindowHint | Qt.WindowSystemMenuHint)  # ÉèÖÃÎÞ±ß¿ò´°¿Ú
-        self.setAttribute(Qt.WA_TranslucentBackground)  # ÉèÖÃ´°¿Ú±³¾°Í¸Ã÷
-        # self.setAttribute(Qt.WA_StyledBackground, True)  # ×ÓQWdiget±³¾°Í¸Ã÷
-        self.setMouseTracking(True)  # ¸ú×ÙÊó±êÒÆ¶¯ÊÂ¼þµÄ±Ø±¸
+        self.setWindowFlags(Qt.FramelessWindowHint | Qt.WindowSystemMenuHint)  # ï¿½ï¿½ï¿½ï¿½ï¿½Þ±ß¿ò´°¿ï¿½
+        self.setAttribute(Qt.WA_TranslucentBackground)  # ï¿½ï¿½ï¿½Ã´ï¿½ï¿½Ú±ï¿½ï¿½ï¿½Í¸ï¿½ï¿½
+        # self.setAttribute(Qt.WA_StyledBackground, True)  # ï¿½ï¿½QWdigetï¿½ï¿½ï¿½ï¿½Í¸ï¿½ï¿½
+        self.setMouseTracking(True)  # ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Æ¶ï¿½ï¿½Â¼ï¿½ï¿½Ä±Ø±ï¿½
 
         self.LOCATION = Const.CENTER
-        # self.dragPosition = 0  # ÍÏ¶¯Ê±×ø±ê
+        # self.dragPosition = 0  # ï¿½Ï¶ï¿½Ê±ï¿½ï¿½ï¿½ï¿½
 
         self.canvas = Canvas(self)
 
@@ -1883,19 +1884,19 @@ class MainWin(QWidget):
 
         layout = QHBoxLayout(self)
         layout.setContentsMargins(Const.MARGIN, Const.MARGIN,
-                                  Const.MARGIN, Const.MARGIN)  # ¸øÒõÓ°ÁôÏÂÎ»ÖÃ
-        # layout.setContentsMargins(0, 0, 0, 0)  # ¸øÒõÓ°ÁôÏÂÎ»ÖÃ
+                                  Const.MARGIN, Const.MARGIN)  # ï¿½ï¿½ï¿½ï¿½Ó°ï¿½ï¿½ï¿½ï¿½Î»ï¿½ï¿½
+        # layout.setContentsMargins(0, 0, 0, 0)  # ï¿½ï¿½ï¿½ï¿½Ó°ï¿½ï¿½ï¿½ï¿½Î»ï¿½ï¿½
         layout.addWidget(self.canvas)
         # layout.addWidget(child)
         Utils.center_win(self)
 
     def sign_showMaximized(self):
-        """×î´ó»¯,ÒªÏÈÈ¥³ýÉÏÏÂ×óÓÒ±ß½ç,Èç¹û²»È¥³ýÔò±ß¿òµØ·½»áÓÐ¿ÕÏ¶"""
+        """ï¿½ï¿½ï¿½,Òªï¿½ï¿½È¥ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ò±ß½ï¿½,ï¿½ï¿½ï¿½ï¿½ï¿½È¥ï¿½ï¿½ï¿½ï¿½ß¿ï¿½Ø·ï¿½ï¿½ï¿½ï¿½Ð¿ï¿½Ï¶"""
         self.layout().setContentsMargins(0, 0, 0, 0)
         self.showMaximized()
 
     def sign_showNormal(self):
-        """»¹Ô­,ÒªÏÈ±£ÁôÉÏÏÂ×óÓÒ±ß½ç,·ñÔòÃ»ÓÐ±ß¿òÎÞ·¨µ÷Õû"""
+        """ï¿½ï¿½Ô­,Òªï¿½È±ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ò±ß½ï¿½,ï¿½ï¿½ï¿½ï¿½Ã»ï¿½Ð±ß¿ï¿½ï¿½Þ·ï¿½ï¿½ï¿½ï¿½ï¿½"""
         self.layout().setContentsMargins(self.Const.MARGIN, self.Const.MARGIN,
                                          self.Const.MARGIN, self.Const.MARGIN)
         super(MainWin, self).showNormal()
@@ -1904,59 +1905,59 @@ class MainWin(QWidget):
     #     pass
 
     def mousePressEvent(self, event: QMouseEvent):
-        # if event.button() == Qt.LeftButton:#Ò²¿ÉÒÔ
+        # if event.button() == Qt.LeftButton:#Ò²ï¿½ï¿½ï¿½ï¿½
         if event.buttons() == Qt.LeftButton:
             if self.LOCATION != Const.CENTER:
-                self.mouseGrabber()  # µÃµ½ÕýÔÚ²¶»ñ¼üÅÌÊÂ¼þµÄ´°¿Ú
+                self.mouseGrabber()  # ï¿½Ãµï¿½ï¿½ï¿½ï¿½Ú²ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Â¼ï¿½ï¿½Ä´ï¿½ï¿½ï¿½
             else:
                 pass
                 # self.dragPosition = event.globalPos() - self.frameGeometry().topLeft()
 
     def mouseReleaseEvent(self, event: QMouseEvent):
-        # if event.buttons() == Qt.LeftButton:#¾Í²»ÐÐ
+        # if event.buttons() == Qt.LeftButton:#ï¿½Í²ï¿½ï¿½ï¿½
         if event.button() == Qt.LeftButton:
-            if self.LOCATION is not Const.CENTER:  # ·Ç±ßÏß¸½½üÒ»ÂÉ»Ö¸´Êó±êÐÎ×´
+            if self.LOCATION is not Const.CENTER:  # ï¿½Ç±ï¿½ï¿½ß¸ï¿½ï¿½ï¿½Ò»ï¿½É»Ö¸ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½×´
                 self.setCursor(QtGui.QCursor(Qt.ArrowCursor))
             self.unsetCursor()
 
     def cursor_location(self, pos_current):
         """
-            ¸ø¹â±ê±ê¶¨Î»
-            :param pos_current:Ïà¶ÔÎ»ÖÃ
+            ï¿½ï¿½ï¿½ï¿½ï¿½ê¶¨Î»
+            :param pos_current:ï¿½ï¿½ï¿½Î»ï¿½ï¿½
             :return:
             """
-        x, y = pos_current.x(), pos_current.y()  # Ïà¶ÔÓÚÎÞ±ß¿ò´°¿Ú×óÉÏ½ÇµÄÎ»ÖÃ
+        x, y = pos_current.x(), pos_current.y()  # ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Þ±ß¿ò´°¿ï¿½ï¿½ï¿½ï¿½Ï½Çµï¿½Î»ï¿½ï¿½
         # print(f'x={x}  y={y}')
-        width = self.width() - Const.PADDING  # ÎÞ±ß¿ò´°¿ÚµÄ¿í¼õÈ¥±ß¾à
-        height = self.height() - Const.PADDING  # ÎÞ±ß¿ò´°¿ÚµÄ³¤¼õÈ¥±ß¾à
+        width = self.width() - Const.PADDING  # ï¿½Þ±ß¿ò´°¿ÚµÄ¿ï¿½ï¿½È¥ï¿½ß¾ï¿½
+        height = self.height() - Const.PADDING  # ï¿½Þ±ß¿ò´°¿ÚµÄ³ï¿½ï¿½ï¿½È¥ï¿½ß¾ï¿½
 
-        if x < Const.PADDING and y < Const.PADDING:  # ×óÉÏ½ÇÄÚ²à
+        if x < Const.PADDING and y < Const.PADDING:  # ï¿½ï¿½ï¿½Ï½ï¿½ï¿½Ú²ï¿½
             self.LOCATION = Const.TL_CORNER
-            self.setCursor(QCursor(Qt.SizeFDiagCursor))  # ÉèÖÃÊó±êÐÎ×´
-        elif x > width and y > height:  # ÓÒÏÂ½ÇÄÚ²à
+            self.setCursor(QCursor(Qt.SizeFDiagCursor))  # ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½×´
+        elif x > width and y > height:  # ï¿½ï¿½ï¿½Â½ï¿½ï¿½Ú²ï¿½
             self.LOCATION = Const.BR_CORNER
             self.setCursor(QCursor(Qt.SizeFDiagCursor))
-        elif x < Const.PADDING and y > height:  # ×óÏÂ½ÇÄÚ²à
+        elif x < Const.PADDING and y > height:  # ï¿½ï¿½ï¿½Â½ï¿½ï¿½Ú²ï¿½
             self.LOCATION = Const.BL_CORNER
             self.setCursor(QCursor(Qt.SizeBDiagCursor))
-        elif x > width and y < Const.PADDING:  # ÓÒÉÏ½ÇÄÚ²à
+        elif x > width and y < Const.PADDING:  # ï¿½ï¿½ï¿½Ï½ï¿½ï¿½Ú²ï¿½
             self.LOCATION = Const.TR_CORNER
             self.setCursor(QCursor(Qt.SizeBDiagCursor))
 
-        elif x < Const.PADDING:  # ×ó±ßÄÚ²à
+        elif x < Const.PADDING:  # ï¿½ï¿½ï¿½ï¿½Ú²ï¿½
             self.LOCATION = Const.LEFT
             self.setCursor(QCursor(Qt.SizeHorCursor))
-        elif x > width:  # ÓÒ±ßÄÚ²à
+        elif x > width:  # ï¿½Ò±ï¿½ï¿½Ú²ï¿½
             self.LOCATION = Const.RIGHT
             self.setCursor(QCursor(Qt.SizeHorCursor))
-        elif y < Const.PADDING:  # ÉÏ±ß
+        elif y < Const.PADDING:  # ï¿½Ï±ï¿½
             self.LOCATION = Const.TOP
             self.setCursor(QCursor(Qt.SizeVerCursor))
-        elif y > height:  # ÏÂ±ß
+        elif y > height:  # ï¿½Â±ï¿½
             self.LOCATION = Const.BOTTOM
             self.setCursor(QCursor(Qt.SizeVerCursor))
 
-        else:  # ÖÐ¼ä Ä¬ÈÏ
+        else:  # ï¿½Ð¼ï¿½ Ä¬ï¿½ï¿½
             self.LOCATION = Const.CENTER
             self.setCursor(QCursor(Qt.ArrowCursor))
 
@@ -1970,7 +1971,7 @@ class MainWin(QWidget):
 
         # print(self.LOCATION)
 
-        # if event.buttons() and event.button() != Qt.LeftButton:  # Ò²²»ÐÐ
+        # if event.buttons() and event.button() != Qt.LeftButton:  # Ò²ï¿½ï¿½ï¿½ï¿½
         if not event.buttons():
             self.cursor_location(event.pos())
         else:
@@ -1979,13 +1980,13 @@ class MainWin(QWidget):
                 if self.LOCATION is Const.CENTER:
                     pass
                     # print('center')
-                    # self.move(event.globalPos() - self.dragPosition)  # ½«´°¿ÚÒÆ¶¯µ½Ö¸¶¨Î»ÖÃ
+                    # self.move(event.globalPos() - self.dragPosition)  # ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Æ¶ï¿½ï¿½ï¿½Ö¸ï¿½ï¿½Î»ï¿½ï¿½
                 else:
                     geo = QtCore.QRect(top_left, bottom_right)
 
                     if self.LOCATION == Const.LEFT:
-                        # if bottom_right.x() - mouse_pos.x() > self.minimumWidth():#²»ÐèÒª£¬ÓÐsetmin¡¢max¡¢fix¾ö¶¨
-                        # geo.setWidth(bottom_right.x() - mouse_pos.x())  # ×Ô¶¯¼ÆËãµÄ
+                        # if bottom_right.x() - mouse_pos.x() > self.minimumWidth():#ï¿½ï¿½ï¿½ï¿½Òªï¿½ï¿½ï¿½ï¿½setminï¿½ï¿½maxï¿½ï¿½fixï¿½ï¿½ï¿½ï¿½
+                        # geo.setWidth(bottom_right.x() - mouse_pos.x())  # ï¿½Ô¶ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
                         geo.setX(mouse_pos.x())
                     elif self.LOCATION is Const.RIGHT:
                         geo.setWidth(mouse_pos.x() - top_left.x())
@@ -2007,12 +2008,12 @@ class MainWin(QWidget):
                         geo.setHeight(mouse_pos.y() - top_left.y())
                     # else:  # is Const.CENTER
                     #     pass
-                    self.setGeometry(geo)  # ÉèÖÃÓ°×ÓµÄ¸¸´°¿ÚµÄÎ»ÖÃ
+                    self.setGeometry(geo)  # ï¿½ï¿½ï¿½ï¿½Ó°ï¿½ÓµÄ¸ï¿½ï¿½ï¿½ï¿½Úµï¿½Î»ï¿½ï¿½
 
             # else:
             #     print('other press')
-        # QEventµÄaccept£¨£©ºÍignore£¨£©Ò»°ã²»»áÓÃµ½£¬ÒòÎª²»ÈçÖ±½Óµ÷ÓÃQWidgetÀàµÄÊÂ¼þ´¦Àíº¯ÊýÖ±½Ó£¬¶øÇÒ×÷ÓÃÊÇÒ»ÑùµÄ
-        # Î¨ÓÐÔÚcloseEvent£¨£©ÖÐ±ØÐëµ÷ÓÃaccept£¨£©»òignore£¨£©¡£
+        # QEventï¿½ï¿½acceptï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ignoreï¿½ï¿½ï¿½ï¿½Ò»ï¿½ã²»ï¿½ï¿½ï¿½Ãµï¿½ï¿½ï¿½ï¿½ï¿½Îªï¿½ï¿½ï¿½ï¿½Ö±ï¿½Óµï¿½ï¿½ï¿½QWidgetï¿½ï¿½ï¿½ï¿½Â¼ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ö±ï¿½Ó£ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ò»ï¿½ï¿½ï¿½ï¿½
+        # Î¨ï¿½ï¿½ï¿½ï¿½closeEventï¿½ï¿½ï¿½ï¿½ï¿½Ð±ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½acceptï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ignoreï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
         event.ignore()
 
     def close(self):
@@ -2021,14 +2022,14 @@ class MainWin(QWidget):
 
     def sign_move(self, x_offset, pos):
         if self.windowState() == Qt.WindowMaximized or self.windowState() == Qt.WindowFullScreen:
-            # ×î´ó»¯»òÕßÈ«ÆÁÔò²»ÔÊÐíÒÆ¶¯
+            # ï¿½ï¿½ó»¯»ï¿½ï¿½ï¿½È«ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Æ¶ï¿½
             return
 
         # if self._widget is None:
         #     return
 
         pos_new = copy.copy(pos)
-        pos_new.setX(pos.x() - x_offset)  # ¼õÈ¥×ó²àÁÐ±í¿òÕ¼ÓÃµÄ
+        pos_new.setX(pos.x() - x_offset)  # ï¿½ï¿½È¥ï¿½ï¿½ï¿½ï¿½Ð±ï¿½ï¿½Õ¼ï¿½Ãµï¿½
         # print('this', pos_new.x(), pos.x())
 
         super(MainWin, self).move(pos_new)
@@ -2038,13 +2039,13 @@ class MainWin(QWidget):
 if __name__ == '__main__':
     app = QApplication(sys.argv)
 
-    g_style = StyleSheet()  # °üÎ§´°Ìå£¬¶¨ÒåÔÚÇ°
-    w = MainWin()  # Ìí¼ÓÔÚÖÐ¼ä
+    g_style = StyleSheet()  # ï¿½ï¿½Î§ï¿½ï¿½ï¿½å£¬ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ç°
+    w = MainWin()  # ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ð¼ï¿½
     # w = Canvas(None)
     # w = ChildMenu(None)
     # w = Curtain(None)
     # w.show()
-    g_style.set(app)  # °üÎ§´°Ìå£¬ÉèÖÃÔÚºó
+    g_style.set(app)  # ï¿½ï¿½Î§ï¿½ï¿½ï¿½å£¬ï¿½ï¿½ï¿½ï¿½ï¿½Úºï¿½
 
     sys.exit(app.exec_())
 

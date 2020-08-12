@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>741</width>
-    <height>614</height>
+    <height>624</height>
    </rect>
   </property>
   <property name="font">
@@ -140,6 +140,19 @@
       </widget>
      </item>
      <item>
+      <spacer name="horizontalSpacer_3">
+       <property name="orientation">
+        <enum>Qt::Horizontal</enum>
+       </property>
+       <property name="sizeHint" stdset="0">
+        <size>
+         <width>40</width>
+         <height>20</height>
+        </size>
+       </property>
+      </spacer>
+     </item>
+     <item>
       <widget class="QPushButton" name="pb_font_dlg">
        <property name="text">
         <string>水印字体</string>
@@ -163,7 +176,7 @@
       </spacer>
      </item>
      <item>
-      <widget class="QPushButton" name="pb_add_watermard">
+      <widget class="QPushButton" name="pb_add_watermark">
        <property name="text">
         <string>加入水印</string>
        </property>
@@ -172,42 +185,23 @@
        </property>
       </widget>
      </item>
+     <item>
+      <spacer name="horizontalSpacer_4">
+       <property name="orientation">
+        <enum>Qt::Horizontal</enum>
+       </property>
+       <property name="sizeHint" stdset="0">
+        <size>
+         <width>40</width>
+         <height>20</height>
+        </size>
+       </property>
+      </spacer>
+     </item>
     </layout>
    </item>
    <item>
-    <spacer name="verticalSpacer">
-     <property name="orientation">
-      <enum>Qt::Vertical</enum>
-     </property>
-     <property name="sizeHint" stdset="0">
-      <size>
-       <width>20</width>
-       <height>40</height>
-      </size>
-     </property>
-    </spacer>
-   </item>
-   <item>
-    <widget class="QLabel" name="lb_water">
-     <property name="mouseTracking">
-      <bool>true</bool>
-     </property>
-     <property name="acceptDrops">
-      <bool>true</bool>
-     </property>
-     <property name="autoFillBackground">
-      <bool>false</bool>
-     </property>
-     <property name="text">
-      <string>水印 水印 水印</string>
-     </property>
-    </widget>
-   </item>
-   <item>
-    <widget class="QLabel" name="label_img">
-     <property name="cursor">
-      <cursorShape>SizeAllCursor</cursorShape>
-     </property>
+    <widget class="QLabel" name="lb_img">
      <property name="acceptDrops">
       <bool>false</bool>
      </property>
@@ -227,7 +221,7 @@
       <enum>Qt::AutoText</enum>
      </property>
      <property name="pixmap">
-      <pixmap>C:/Users/big/.designer/backup/res/background/bk9.jpg</pixmap>
+      <pixmap>res/background/bk9.jpg</pixmap>
      </property>
      <property name="scaledContents">
       <bool>false</bool>

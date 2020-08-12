@@ -279,28 +279,195 @@ class CustomMainWindow(QtWidgets.QMainWindow):
 class ImgWatermark(QtWidgets.QDialog, Ui_Dialog):
     def __init__(self, parent=None):
         super(ImgWatermark, self).__init__(parent)
+        self.parent = parent
+
+        self.file_open = None
+        self.file_save = None
+        self.watermark = ''
+
+        self.lb_water = QtWidgets.QLabel()
+        self.cd = QtWidgets.QColorDialog(QtGui.QColor(100, 100, 200), self)
+        self.fd = QtWidgets.QFontDialog()
+
+        self._init_ui()
+        # self.show()
+        self._init_colorDialog()
+
+    def _init_ui(self):
         self.setupUi(self)
 
+        self.lb_img.setScaledContents(True)
+        self.lb_water.setParent(self.lb_img)
+        self.lb_water.setMouseTracking(True)
+        self.lb_water.setAcceptDrops(True)
+        self.lb_water.setAutoFillBackground(False)
+        self.lb_water.setCursor(QtGui.QCursor(QtCore.Qt.SizeAllCursor))
+        self.lb_water.setLineWidth(2)
+        self.lb_water.setAlignment(QtCore.Qt.AlignCenter)
+        self.lb_water.setObjectName("lb_water")
+        _translate = QtCore.QCoreApplication.translate
+        self.lb_water.setText(_translate("Dialog", "水印 水印 水印"))
+
         Dialog = self
-        self.le_file_src.editingFinished.connect(partial(Dialog.slot_text_edited, self.le_file_src))
-        self.le_file_dst.editingFinished.connect(partial(Dialog.slot_text_edited, self.le_file_dst))
-        self.le_watermark.editingFinished.connect(partial(Dialog.slot_text_edited, self.le_watermark))
+        self.le_file_src.textChanged['QString'].connect(partial(Dialog.slot_text_changed, self.le_file_src))
+        self.le_file_dst.textChanged['QString'].connect(partial(Dialog.slot_text_changed, self.le_file_dst))
+        self.le_watermark.textChanged['QString'].connect(partial(Dialog.slot_text_changed, self.le_watermark))
         self.tb_open_file.clicked.connect(partial(Dialog.slot_btn_clicked, self.tb_open_file))
         self.tb_save_file.clicked.connect(partial(Dialog.slot_btn_clicked, self.tb_save_file))
         self.pb_color_dlg.clicked.connect(partial(Dialog.slot_btn_clicked, self.pb_color_dlg))
         self.pb_font_dlg.clicked.connect(partial(Dialog.slot_btn_clicked, self.pb_font_dlg))
-        self.pb_add_watermard.clicked.connect(partial(Dialog.slot_btn_clicked, self.pb_add_watermard))
+        self.pb_add_watermark.clicked.connect(partial(Dialog.slot_btn_clicked, self.pb_add_watermark))
 
-    def slot_text_edited(self, obj):
-        ...
+    def _init_colorDialog(self):
+        def func(col):
+            # QPalette.Highlight # 被选中后文字的背景色.
+            # QPalette.HighlightText # 被选中后文字的前景色.
+            # QPalette.Text # 文字的前景色 QPalette.WindowText
+            # QPalette.Base # QTextEdit的背景色, 默认是白色的
+            if col.isValid():
+                # palette = QtGui.QPalette()
+                # palette.setColor(QtGui.QPalette.ButtonText, col)
+                # palette.setColor(QtGui.QPalette.Text, col)
+                # self.pb_add_watermard.setPalette(palette)
+                self.set_label_color(self.lb_water, col)
+                # self.lb_water.setStyleSheet(
+                #     f'background: transparent; color:{col.name()};')
+
+        # 颜色选择对话框的两个信号
+        #       一个是 颜色最终被选中 colorSelected
+        #       一个是 当前颜色的改变 currentColorChanged
+        # self.cd.colorSelected.connect(func)  # 颜色被选择
+        # 捕获当前颜色变化的信号，连接槽函数。用于实时展示颜色变化
+        self.cd.currentColorChanged.connect(func)
+
+        # 选择对话框的选项设置：隐藏确认取消按钮，允许用户选择颜色的Alpha分量
+        self.cd.setOptions(QtWidgets.QColorDialog.ShowAlphaChannel |
+                           QtWidgets.QColorDialog.NoButtons)
+
+    @staticmethod
+    def set_label_color(lb, color):
+        # print(type(color), color)
+
+        # 第一种，使用setPalette()方法
+        pe = QtGui.QPalette()
+        pe.setColor(QtGui.QPalette.WindowText, color)
+        lb.setPalette(pe)
+
+        # # 第二种，使用样式表
+        # lb.setStyleSheet(f"color:{color.name()};font-size:25px;")
+
+        # 第三种，使用QStyle
+
+        # # 第四种，使用一些简单的HTML格式
+        # self.lb_water.setText("Hello Qt!")
+        # self.lb_water = QtWidgets.QLabel("<h2><i>Hello</i><font color=red>Qt!</font></h2>")
+
+    def slot_text_changed(self, obj, text):
+        name = obj.objectName()
+        print(name, text)
+        if name == 'le_file_src':
+            self.file_open = text
+            if text and os.path.exists(text) and os.path.isfile(text):
+                self.lb_img.setPixmap(Utils.img_center(self.lb_img.width(),
+                                                       self.lb_img.height(),
+                                                       text))
+
+        elif name == 'le_file_dst':
+            self.file_save = text
+        elif name == 'le_watermark':
+            self.lb_water.setText(text)
 
     def slot_btn_clicked(self, obj):
         # obj = QtWidgets.QPushButton().text
-        print(obj.text())
+        # print(obj.text())
+        name = obj.objectName()
+        # print(name)
 
-    def slot_font_selected(self, font):
-        self.lb_water.setFont(font)
-        print(font)
+        if name == 'pb_font_dlg':
+            # self.fd.move(self.x()+self.width() - self.cd.width(),
+            #              self.y() + self.height() - self.cd.height())
+            font, ok = self.fd.getFont()
+            if ok:
+                self.lb_water.setFont(font)
+        elif name == 'pb_color_dlg':
+            self.getColorByShow()  # 颜色对话框弹出方式
+            # # p1 = self.mapToParent(tl)
+            # p2 = self.mapToGlobal(tl)
+            self.cd.move(self.x() - self.cd.width(),
+                         self.y() + self.height() - self.cd.height())
+            # col = QtWidgets.QColorDialog.getColor()
+            # print(col.rgba(), col.name())
+            # if col.isValid():
+            #     # p = self.lb_water.palette()  # QtGui.QPalette()
+            #     # p.setColor(QtGui.QPalette.Text, col)
+            #     # self.lb_water.setPalette(p)  # 修改了调色板.
+            #     self.lb_water.setStyleSheet(f'background: transparent; color:{col.name()};')
+        elif name == 'pb_add_watermark':
+            print('打水印，待完善')
+        else:
+            file, _ = QtWidgets.QFileDialog.getOpenFileName(
+                self, '单文件选取', '',
+                'img Files(*.png *.jpg *.jpeg *.gif *.bmp *.tiff);;All Files(*.*)',
+                '', QtWidgets.QFileDialog.DontUseNativeDialog)
+            # print(file, _)
+
+            if file and os.path.exists(file) and os.path.isfile(file):
+                if name == 'tb_open_file':
+                    self.le_file_src.setText(file)
+                elif name == 'tb_save_file':
+                    self.le_file_dst.setText(file)
+
+    def resizeEvent(self, a0: QtGui.QResizeEvent) -> None:
+        super(ImgWatermark, self).resizeEvent(a0)
+
+    # region 获取所设置的颜色对象，三种不同的对话框弹出方式，一个常用颜色表
+    # 使用 cd.show() 弹出颜色对话框并获取颜色
+    def getColorByShow(self):
+        def func(col):
+            print('getColorByShow')
+            palette = QtGui.QPalette()
+            palette.setColor(QtGui.QPalette.Text, col)
+            self.lb_water.setPalette(palette)
+
+        # self.connect(self.cd, QtCore.pyqtSignal('colorSelected()'), func)
+        self.cd.colorSelected.connect(func)  # 发射的信号cd.colorSelected
+        self.cd.show()
+
+    # 使用 cd.open(func)弹出颜色对话框并获取颜色
+    def getColorByOpen(self):
+        def func():
+            palette = QtGui.QPalette()
+            palette.setColor(QtGui.QPalette.Background, self.cd.selectedColor())  # 最终选中的颜色cd.selectedColor()
+            self.lb_water.setPalette(palette)
+
+        self.cd.open(func)
+
+    # 使用cd.exec() 的值0或1确定是否调用函数
+    def getColorByExec(self):
+        def func():
+            palette = QtGui.QPalette()
+            palette.setColor(QtGui.QPalette.Background, self.cd.selectedColor())
+            self.lb_water.setPalette(palette)
+
+        if self.cd.exec():
+            func()
+
+    # 颜色选择对话框的常用调色板色块的添加与获取
+    #           以下均为静态方法，类名调用
+    #           QColorDialog.setCustomColor( index, QColor() )
+    #           QColorDialog.setStandardColor( index, QColor() )
+    #           QColorDialog.getColor( QColor() )
+    def get_Custom_Color(self):
+        def func():
+            QtWidgets.QColorDialog.setCustomColor(3, QtGui.QColor(10, 60, 200))  # 设置自定义色块区的第三个色块颜色
+            color = QtWidgets.QColorDialog.getColor(QtWidgets.QColorDialog.customColor(3), self, '选择颜色')
+            palette = QtGui.QPalette()
+            palette.setColor(QtGui.QPalette.Background, color)
+            self.setPalette(palette)
+            self.cd.show()
+
+        self.btn.clicked.connect(func)
+    # endregion
 
 
 # 定制窗体，自定义工具栏
@@ -874,7 +1041,8 @@ if __name__ == '__main__':
     # win = MainWindow()
     win = CustomFrame()
     # win = CustomMainWindow()
-    win.show()
+    # win = ImgWatermark()
+
     g_style.set(app)  # 包围窗体，设置在后
     sys.exit(app.exec_())
 
