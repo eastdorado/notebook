@@ -508,7 +508,7 @@ class TitleBar(QWidget):
         # pb_prev.setStyleSheet('color:red')
         # ���ڱ���
         layout.addStretch()
-        self.lb_title = QLabel(self.tr('�˶�����'), self)
+        self.lb_title = QLabel('运动达人', self)
         self.lb_title.setMargin(2)
         self.lb_title.setStyleSheet(
             'color: red;font-size:24px;font-weight:bold;font-family:Roman times;')
@@ -566,8 +566,8 @@ class TitleBar(QWidget):
         self.buttonClose.setMaximumSize(height, height)
 
     def setTitle(self, title):
-        """���ñ���"""
-        self.titleLabel.setText(title)
+        """对话框标题"""
+        self.lb_title.setText(self.tr(title))
 
     def setIcon(self, icon):
         """����ͼ��"""
